@@ -5,5 +5,5 @@
 !README.md
 !.vimrc
 !.zshrc
-!.zsh/
-!.scripts/
+!.zsh/*
+!.scripts/*
