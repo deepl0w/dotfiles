@@ -1,10 +1,6 @@
 " ignore everything
 *
 " except
-!.gitignore
+!.*
 !install.sh
 !README.md
-!.vimrc
-!.zshrc
-!.zsh/*
-!.scripts/nvim/*
