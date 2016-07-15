@@ -6,9 +6,11 @@ Full **zsh** and **nvim** configurations and a handy installation script that *m
 ---
 
 Clone the repo:
+
     git clone https://github.com/dennisplosceanu/dotfiles.git --recursive
 
 If you're using the script use **sudo**:
+
     sudo ./install.sh
 
 ### Manual Installation
