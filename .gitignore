@@ -1,9 +1,9 @@
 " ignore everything
 *
 !.gitignore
-install.sh
-README.md
-.vimrc
-.zshrc
-.scripts
-.zsh
+!install.sh
+!README.md
+!.vimrc
+!.zshrc
+!.scripts
+!.zsh
