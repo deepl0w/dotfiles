@@ -44,6 +44,7 @@ create_links() {
     ln -fs `realpath ./.zsh` ~
     ln -fs `realpath ./.zshrc` ~
     ln -fs `realpath ./.vimrc` ~
+    ln -fs `realpath ./.vim` ~
 
     mkdir -p ~/.scripts
     rm -rf ~/.scripts/nvim &>/dev/null
