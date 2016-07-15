@@ -1,6 +1,11 @@
 " ignore everything
 *
 " except
-!.*
-!install.sh
+!.gitignore
 !README.md
+!install.sh
+!.vimrc
+!.zshrc
+!.zsh
+!.scripts
+!*/
