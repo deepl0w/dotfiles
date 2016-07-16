@@ -1,7 +1,12 @@
 ## About
 ---
-Full **zsh** and **nvim** configurations and a handy installation script that *might* work on *some* distributions of **Ubuntu** and **Mint**.
+Full **zsh** and **nvim** configuration and a handy installation script that *might* work on *some* distributions of **Ubuntu** and **Mint**.
 
+This configuration lets you run your shell by default inside a ```nvim``` window with full vim controlls.
+
+If you only want the vim configuration you can skip anything containing something zsh related, but I recommend it because the configuration adds some pretty neat features.
+
+```vim``` doesn't come with a terminal emulator and there isn't a very good plugin for that AFAIK so you **need** ```nvim``` to run this buid. It works on top of ```vim``` so it is compatible with any configuration you might have had before.
 ## Installation 
 ---
 
