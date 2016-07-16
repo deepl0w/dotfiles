@@ -28,7 +28,7 @@ install_zsh() {
         make
         make install
         cd ..
-        ln -fs /usr/local/bin/zsh /bin/zsh
+        ln -fs /usr/local/bin/zsh /usr/bin/zsh
     fi
 
     # make zsh default shell
@@ -59,8 +59,8 @@ nvim_python() {
         apt-get install python-dev python-pip python3-dev python3-pip    
     fi
 
-    pip2 install -U neovim
-    pip3 install -U neovim
+    pip2 install neovim
+    pip3 install neovim
 }
 
 install_fonts() {
