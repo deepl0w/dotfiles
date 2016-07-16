@@ -43,7 +43,7 @@ Check if ```apt``` will install a ```zsh``` package with at least that version:
 
     sudo apt-cache policy zsh
 
-If the version is ok then install use ```apt-get```:
+If the version is ok then install using ```apt-get```:
 
     sudo apt-get install zsh
 
