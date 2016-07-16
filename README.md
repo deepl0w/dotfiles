@@ -66,7 +66,7 @@ Make ```zsh``` your default shell (you will have to relog with your user for thi
 
     chsh -s `which zsh`
 
-Create symbolic links to the files:
+Create symbolic links to the files (or alternatively you could move the files in their appropriate location):
 
     ln -fs `realpath ./.zsh` ~
     ln -fs `realpath ./.zshrc` ~
@@ -74,7 +74,6 @@ Create symbolic links to the files:
     ln -fs `realpath ./.vim` ~
 
     mkdir -p ~/.scripts
-    rm -rf ~/.scripts/nvim &>/dev/null
     ln -fs `realpath ./.scripts/nvim` ~/.scripts/
 
     mkdir -p ~/.config/nvim
