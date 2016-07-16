@@ -79,10 +79,10 @@ You might need to install some python packages if you don't already have them:
 
     sudo apt-get install python-dev python-pip python3-dev python3-pip
 
-And if you want support for python plugins in nvim (you don't need both, you can choose depending on what python version do you use but running both installations  won't break anything):
+And if you want support for python plugins in ```nvim``` (you don't need both, you can choose depending on what python version do you use but running both installations  won't break anything):
 
-   pip2 install neovim
-   pip3 install neovim
+    pip2 install neovim
+    pip3 install neovim
 
 To install the ```nvim``` plugins run the following:
     
