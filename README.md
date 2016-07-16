@@ -53,7 +53,7 @@ Download the source (could be outdated by the time you read this):
     wget http://sourceforge.net/projects/zsh/files/zsh/5.2/zsh-5.2.tar.gz
     tar xzf zsh-5.2.tar.gz
 
-And install (make sure you run preconfig from the root directory like below):
+And install (make sure you run preconfig from the project root directory like below **not** from Util):
 
     cd zsh-5.2
     ./Util/preconfig
