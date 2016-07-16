@@ -92,8 +92,6 @@ To install the ```nvim``` plugins run the following:
     
     nvim +PluginInstall +qall
 
-It will start ```nvim``` to install al the plugins in the config file and then exit.
-
 Your current terminal font probably won't render some of the characters in the vim-airline plugin correclty so you will need some new fonts.
 
     git clone https://github.com/powerline/fonts
