@@ -62,7 +62,7 @@ And install (make sure you run preconfig from the project root directory like be
     make install
     ln -fs /usr/local/bin/zsh /usr/bin/zsh
 
-Make zsh your default shell (you will have to relog with your user for this change to take effect):
+Make ```zsh``` your default shell (you will have to relog with your user for this change to take effect):
 
     chsh -s `which zsh`
 
