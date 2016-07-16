@@ -14,7 +14,7 @@ Clone the repo:
 
     git clone https://github.com/dennisplosceanu/dotfiles.git --recursive
 
-If you're using the script use **sudo**:
+If you're using the script you have to run it using ```sudo```:
 
     sudo ./install.sh
 
