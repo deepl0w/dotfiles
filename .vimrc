@@ -45,15 +45,13 @@ nmap <F8> :TagbarToggle<CR>
 """"""""""""""""""""""""""""""
 "NerdTree
 """"""""""""""""""""""""""""""
-map <leader>nn :NERDTreeToggle<cr>
-map <leader>nb :NERDTreeFromBookmark
-map <leader>nf :NERDTreeFind<cr>
+let NERDTreeShowHidden=1
+map <F12> :NERDTreeToggle<cr>
 
 """"""""""""""""""""""""""""""
 "Syntastic
 """"""""""""""""""""""""""""""
 let g:syntastic_cpp_compiler_options = '-std=c++14 -Wall -Wextra'
-
 """"""""""""""""""""""""""""""
 " Vim-Airline
 """"""""""""""""""""""""""""""
@@ -75,6 +73,8 @@ let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#wordcount#enabled = 1
 
 let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline#extensions#tabline#show_buffers = 0
+
 nmap <leader>1 <Plug>AirlineSelectTab1
 nmap <leader>2 <Plug>AirlineSelectTab2
 nmap <leader>3 <Plug>AirlineSelectTab3
@@ -167,20 +167,31 @@ nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
 " Switch between tabs
-nnoremap <C-j> :tabprevious<CR>
-nnoremap <C-k> :tabnext<CR>
+nnoremap <C-j> gT
+nnoremap <C-k> gt
+inoremap <C-j> <ESC>>gT
+inoremap <C-k> <ESC>gt
+tnoremap <C-j> <C-\><C-n>gT
+tnoremap <C-k> <C-\><C-n>gt
 
 " Move tabs
 nnoremap <silent> <A-i> :execute 'silent! tabmove ' . (tabpagenr() - 2)<CR>
 nnoremap <silent> <A-o> :execute 'silent! tabmove ' . (tabpagenr() + 1)<CR>
 
+" Escape
+imap <C-o> <ESC>
+
 if has ('nvim')
+    tnoremap <C-o> <C-\><C-n>
+
     tmap <A-h> <C-\><C-n><C-w>h
     tmap <A-j> <C-\><C-n><C-w>j
     tmap <A-k> <C-\><C-n><C-w>k
     tmap <A-l> <C-\><C-n><C-w>l
     tmap <A-i> <C-\><C-n>:execute "tabmove" tabpagenr() - 2 <CR>
     tmap <A-o> <C-\><C-n>:execute "tabmove" tabpagenr() + 1 <CR>
+
+    autocmd BufEnter * if &buftype == "terminal" | startinsert | endif
 endif
 
 " UI
@@ -189,15 +200,11 @@ set t_Co=256
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
 syntax on
-colorscheme wombat256i
+set cursorline
 
-" http://www.nerdyweekly.com/posts/enable-italic-text-vim-tmux-gnome-terminal/
-" tutorial to enable italics
-highlight Todo cterm=bold,underline
-highlight Function cterm=bold
-highlight Normal ctermfg=256 ctermbg=none
-highlight Comments cterm=italic
-highlight Strings cterm=italic
+set background=dark
+let g:gruvbox_contrast_dark = 'medium'
+colorscheme gruvbox
 
 set ruler
 set showcmd
@@ -235,12 +242,3 @@ autocmd BufNewFile,BufRead * setlocal formatoptions=tcrq
 autocmd BufNewFile,BufRead *.h setlocal filetype=c
 autocmd BufNewFile,BufRead *.h setlocal filetype=cpp
 autocmd BufNewFile,BufRead *.hpp setlocal filetype=cpp
-
-" term
-""""""""""""""""""""""""""""""
-tnoremap <Esc> <C-\><C-n>
-
-tnoremap <A-h> <C-\><C-n><C-w>h
-tnoremap <A-j> <C-\><C-n><C-w>j
-tnoremap <A-k> <C-\><C-n><C-w>k
-tnoremap <A-l> <C-\><C-n><C-w>l
