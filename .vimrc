@@ -167,13 +167,10 @@ nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
 " Switch between tabs
-nnoremap <C-j> gT
-nnoremap <C-k> gt
-inoremap <C-j> <ESC>>gT
-inoremap <C-k> <ESC>gt
-tnoremap <C-j> <C-\><C-n>gT
-tnoremap <C-k> <C-\><C-n>gt
-
+nnoremap <C-h> gT
+nnoremap <C-l> gt
+inoremap <C-h> <ESC>>gT
+inoremap <C-l> <ESC>gt
 " Move tabs
 nnoremap <silent> <A-i> :execute 'silent! tabmove ' . (tabpagenr() - 2)<CR>
 nnoremap <silent> <A-o> :execute 'silent! tabmove ' . (tabpagenr() + 1)<CR>
@@ -189,9 +186,12 @@ if has ('nvim')
     tmap <A-k> <C-\><C-n><C-w>k
     tmap <A-l> <C-\><C-n><C-w>l
     tmap <A-i> <C-\><C-n>:execute "tabmove" tabpagenr() - 2 <CR>
-    tmap <A-o> <C-\><C-n>:execute "tabmove" tabpagenr() + 1 <CR>
+    tmap <A-o> <C-\><C-n>:execute "tabmove" tabpagenr() + 2 <CR>
 
-    autocmd BufEnter * if &buftype == "terminal" | startinsert | endif
+    tnoremap <C-h> <C-\><C-n>gT
+    tnoremap <C-l> <C-\><C-n>gt
+
+    autocmd BufEnter * if &buftype == "terminal" | startinsert | setlocal nonu | endif
 endif
 
 " UI
@@ -242,3 +242,19 @@ autocmd BufNewFile,BufRead * setlocal formatoptions=tcrq
 autocmd BufNewFile,BufRead *.h setlocal filetype=c
 autocmd BufNewFile,BufRead *.h setlocal filetype=cpp
 autocmd BufNewFile,BufRead *.hpp setlocal filetype=cpp
+
+" Duplicate current tab
+""""""""""""""""""""""""""""""
+command! -bar Dupt
+      \ let s:sessionoptions = &sessionoptions |
+      \ try |
+      \   let &sessionoptions = 'blank,help,folds,winsize,localoptions' |
+      \   let s:file = tempname() |
+      \   execute 'mksession ' . s:file |
+      \   tabnew |
+      \   execute 'source ' . s:file |
+      \ finally |
+      \   silent call delete(s:file) |
+      \   let &sessionoptions = s:sessionoptions |
+      \   unlet! s:file s:sessionoptions |
+      \ endtry
