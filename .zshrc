@@ -1,4 +1,5 @@
 # GRML upstream
+NOCOR=1
 [[ -f ~/.zsh/grml-arch.zsh ]] && source ~/.zsh/grml-arch.zsh
 
 # Antigen et plugins
@@ -10,6 +11,7 @@ antigen bundle sudo
 antigen bundle z
 antigen bundle git
 antigen bundle dirhistory
+antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle common-aliases
 antigen apply
 
