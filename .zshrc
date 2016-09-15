@@ -7,7 +7,8 @@ export ZSH_CACHE_DIR=~/.zsh/.antigen-cache
 [[ -f ~/.zsh/antigen-repo/antigen.zsh ]] && source ~/.zsh/antigen-repo/antigen.zsh
 antigen bundle wd
 antigen bundle sudo
-#antigen bundle last-working-dir
+antigen bundle z
+antigen bundle git
 antigen bundle dirhistory
 antigen bundle common-aliases
 antigen apply
