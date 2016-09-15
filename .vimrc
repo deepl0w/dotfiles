@@ -167,10 +167,10 @@ nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
 " Switch between tabs
-nnoremap <C-h> gT
-nnoremap <C-l> gt
-inoremap <C-h> <ESC>>gT
-inoremap <C-l> <ESC>gt
+nnoremap <C-j> gT
+nnoremap <C-k> gt
+inoremap <C-j> <ESC>>gT
+inoremap <C-k> <ESC>gt
 " Move tabs
 nnoremap <silent> <A-i> :execute 'silent! tabmove ' . (tabpagenr() - 2)<CR>
 nnoremap <silent> <A-o> :execute 'silent! tabmove ' . (tabpagenr() + 1)<CR>
@@ -188,8 +188,8 @@ if has ('nvim')
     tmap <A-i> <C-\><C-n>:execute "tabmove" tabpagenr() - 2 <CR>
     tmap <A-o> <C-\><C-n>:execute "tabmove" tabpagenr() + 2 <CR>
 
-    tnoremap <C-h> <C-\><C-n>gT
-    tnoremap <C-l> <C-\><C-n>gt
+    tnoremap <C-j> <C-\><C-n>gT
+    tnoremap <C-k> <C-\><C-n>gt
 
     autocmd BufEnter * if &buftype == "terminal" | startinsert | setlocal nonu | endif
 endif
