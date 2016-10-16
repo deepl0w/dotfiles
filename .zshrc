@@ -39,6 +39,10 @@ if command -v nvim > /dev/null; then
     cd $HOME
 fi
 
+wd() {
+  . /home/deeplow/.zsh/.antigen-cache/repos/https-COLON--SLASH--SLASH-github.com-SLASH-robbyrussell-SLASH-oh-my-zsh.git/plugins/wd/wd.sh
+}
+
 function weather {
     if [[ $# == 0 ]]; then
         curl -4 "http://wttr.in/bucharest"
