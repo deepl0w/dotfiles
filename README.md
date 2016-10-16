@@ -72,6 +72,8 @@ Create symbolic links to the files (or alternatively you could move the files in
     ln -fs `realpath ./.zshrc` ~
     ln -fs `realpath ./.vimrc` ~
     ln -fs `realpath ./.vim` ~
+    ln -fs `realpath ./.peda` ~
+    ln -fs `realpath ./.gdbinit` ~
 
     mkdir -p ~/.scripts
     ln -fs `realpath ./.scripts/nvim` ~/.scripts/
