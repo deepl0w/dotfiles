@@ -208,6 +208,9 @@ set background=dark
 let g:gruvbox_contrast_dark = 'medium'
 colorscheme gruvbox
 
+command! Colight set background=light
+command! Codark set background=dark
+
 set ruler
 set showcmd
 set number
@@ -215,7 +218,7 @@ set scrolloff=8
 set report=0
 set shortmess+=I
 set list
-set listchars=tab:»\ ,trail:·,extends:»,precedes:«
+set listchars=tab:»\ ,trail:·
 set wildmenu
 set wildmode=list:longest
 
