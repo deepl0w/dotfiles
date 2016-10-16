@@ -32,6 +32,7 @@ Plugin 'flazz/vim-colorschemes'             " color schemes
 Plugin 'qualiabyte/vim-colorstepper'        " cycle through color schemes
 Plugin 'godlygeek/csapprox'                 " make gvim only coloschemes work transparently in terminal vim
 Plugin 'octol/vim-cpp-enhanced-highlight'   " cpp enhanced syntax highlights
+Plugin 'Valloric/YouCompleteMe'             " tab completion
 Plugin 'joshhartigan/vim-reddit'            " reddit inside vim
 
 call vundle#end()
