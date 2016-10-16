@@ -4,7 +4,7 @@
 [submodule ".vim/bundle/Vundle.vim"]
 	path = .vim/bundle/Vundle.vim
     url = https://github.com/gmarik/Vundle.vim.git
-[submodule ".peda"]
-    path = .peda
-    url = https://github.com/longld/peda.git
 
+[submodule ".peda"]
+	path = .peda
+	url = https://github.com/longld/peda.git
