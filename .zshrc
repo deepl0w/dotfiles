@@ -146,6 +146,19 @@ if command -v nvim-host-cmd > /dev/null; then
         arg='execute "Bdelete!" | NERDTree '$file
         nvim-host-cmd $arg
     }
+    man() {
+        if [[ $# == 1 ]]; then
+            page=$1
+        elif [[ $# == 2 ]]; then
+            page="$1 $2"
+        fi
+
+        nvim-host-cmd "Man $page"
+    }
 fi
 
 alias chfont="gconftool-2 --set /apps/gnome-terminal/profiles/Default/font --type string"
+
+alias cat='vimcat'
+alias less=vimpager
+

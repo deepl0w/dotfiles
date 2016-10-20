@@ -29,11 +29,11 @@ Plugin 'terryma/vim-multiple-cursors'       " sublime-text style multiple cursor
 Plugin 'xolox/vim-misc'                     " auto-load vim scripts
 Plugin 'scrooloose/nerdcommenter'           " intensely orgasmic commenting
 Plugin 'flazz/vim-colorschemes'             " color schemes
-Plugin 'qualiabyte/vim-colorstepper'        " cycle through color schemes
 Plugin 'godlygeek/csapprox'                 " make gvim only coloschemes work transparently in terminal vim
 Plugin 'octol/vim-cpp-enhanced-highlight'   " cpp enhanced syntax highlights
 Plugin 'Valloric/YouCompleteMe'             " tab completion
-Plugin 'joshhartigan/vim-reddit'            " reddit inside vim
+Plugin 'gregsexton/vmail'                   " mail client
+Plugin 'rkitover/vimpager'                  " mita imi suge pula
 
 call vundle#end()
 
@@ -178,7 +178,8 @@ nnoremap <silent> <A-i> :execute 'silent! tabmove ' . (tabpagenr() - 2)<CR>
 nnoremap <silent> <A-o> :execute 'silent! tabmove ' . (tabpagenr() + 1)<CR>
 
 " Escape
-imap <C-o> <ESC>
+inoremap <C-o> <ESC>
+nnoremap <C-o> a
 
 if has ('nvim')
     tnoremap <C-o> <C-\><C-n>
