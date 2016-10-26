@@ -33,6 +33,7 @@ Plugin 'godlygeek/csapprox'                 " make gvim only coloschemes work tr
 Plugin 'octol/vim-cpp-enhanced-highlight'   " cpp enhanced syntax highlights
 Plugin 'Valloric/YouCompleteMe'             " tab completion
 Plugin 'gregsexton/vmail'                   " mail client
+Plugin 'joshhartigan/vim-reddit'            " reddit inside vim
 Plugin 'rkitover/vimpager'                  " mita imi suge pula
 
 call vundle#end()
