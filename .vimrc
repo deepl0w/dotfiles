@@ -1,3 +1,5 @@
+let mapleader = ','
+
 let $LD_LIBRARY_PATH=''
 set rtp^=~/.vim
 set rtp^=~/.vim/after
@@ -35,6 +37,8 @@ Plugin 'Valloric/YouCompleteMe'             " tab completion
 Plugin 'gregsexton/vmail'                   " mail client
 Plugin 'joshhartigan/vim-reddit'            " reddit inside vim
 Plugin 'rkitover/vimpager'                  " mita imi suge pula
+Plugin 'idanarye/vim-vebugger'              " vim debugger
+Plugin 'Shougo/vimproc.vim'                 " dependency for vebugger
 
 call vundle#end()
 
@@ -50,6 +54,11 @@ nmap <F8> :TagbarToggle<CR>
 """"""""""""""""""""""""""""""
 let NERDTreeShowHidden=1
 map <F12> :NERDTreeToggle<cr>
+
+""""""""""""""""""""""""""""""
+" Vebugger
+""""""""""""""""""""""""""""""
+let g:vebugger_leader='\'
 
 """"""""""""""""""""""""""""""
 "Syntastic
@@ -91,7 +100,7 @@ nmap <leader>- <Plug>AirlineSelectPrevTab
 nmap <leader>+ <Plug>AirlineSelectNextTab
 
 """"""""""""""""""""""""""""""
-"Miscellaneous
+" Miscellaneous
 """"""""""""""""""""""""""""""
 
 " General
@@ -137,10 +146,10 @@ endtry
 nnoremap <F2> :set invpaste paste?<cr>
 set pastetoggle=<F2>
 
-command Ev tabedit $MYVIMRC
-command Sv source $MYVIMRC
+command! Ev tabedit $MYVIMRC
+command! Sv source $MYVIMRC
 
-command ToggleColorColumn if &colorcolumn == "" | setlocal colorcolumn=81 | else | setlocal colorcolumn= | endif
+command! ToggleColorColumn if &colorcolumn == "" | setlocal colorcolumn=81 | else | setlocal colorcolumn= | endif
 map <A-c> :ToggleColorColumn<CR>
 
 " Toggle folding
@@ -150,9 +159,6 @@ nnoremap <space> za
 " Encoding
 """"""""""""""""""""""""""""""
 nnoremap <space> za
-set encoding=utf-8
-set fileformats=unix,dos
-set fileformat=unix
 
 " Cursor always in the center
 """"""""""""""""""""""""""""""
@@ -269,3 +275,7 @@ command! -bar Dupt
       \   let &sessionoptions = s:sessionoptions |
       \   unlet! s:file s:sessionoptions |
       \ endtry
+
+" Set clipboard to system clipboard
+""""""""""""""""""""""""""""
+set clipboard=unnamedplus
