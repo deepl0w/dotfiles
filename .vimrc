@@ -37,7 +37,6 @@ Plugin 'octol/vim-cpp-enhanced-highlight'   " cpp enhanced syntax highlights
 Plugin 'Valloric/YouCompleteMe'             " tab completion
 Plugin 'rdnetto/YCM-Generator'              " ycm config generator
 Plugin 'gregsexton/vmail'                   " mail client
-Plugin 'joshhartigan/vim-reddit'            " reddit inside vim
 Plugin 'rkitover/vimpager'                  " mita imi suge pula
 Plugin 'idanarye/vim-vebugger'              " vim debugger
 Plugin 'Shougo/vimproc.vim'                 " dependency for vebugger
