@@ -31,9 +31,11 @@ Plugin 'terryma/vim-multiple-cursors'       " sublime-text style multiple cursor
 Plugin 'xolox/vim-misc'                     " auto-load vim scripts
 Plugin 'scrooloose/nerdcommenter'           " intensely orgasmic commenting
 Plugin 'flazz/vim-colorschemes'             " color schemes
+Plugin 'morhetz/gruvbox'                    " gruvbox color scheme
 Plugin 'godlygeek/csapprox'                 " make gvim only coloschemes work transparently in terminal vim
 Plugin 'octol/vim-cpp-enhanced-highlight'   " cpp enhanced syntax highlights
 Plugin 'Valloric/YouCompleteMe'             " tab completion
+Plugin 'rdnetto/YCM-Generator'              " ycm config generator
 Plugin 'gregsexton/vmail'                   " mail client
 Plugin 'joshhartigan/vim-reddit'            " reddit inside vim
 Plugin 'rkitover/vimpager'                  " mita imi suge pula
