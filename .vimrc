@@ -34,6 +34,7 @@ Plugin 'flazz/vim-colorschemes'             " color schemes
 Plugin 'morhetz/gruvbox'                    " gruvbox color scheme
 Plugin 'godlygeek/csapprox'                 " make gvim only coloschemes work transparently in terminal vim
 Plugin 'octol/vim-cpp-enhanced-highlight'   " cpp enhanced syntax highlights
+Plugin 'justinmk/vim-syntax-extra'          " syntax highlight for bison and flex
 Plugin 'Valloric/YouCompleteMe'             " tab completion
 Plugin 'rdnetto/YCM-Generator'              " ycm config generator
 Plugin 'gregsexton/vmail'                   " mail client
