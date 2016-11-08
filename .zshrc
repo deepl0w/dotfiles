@@ -158,7 +158,3 @@ if command -v nvim-host-cmd > /dev/null; then
 fi
 
 alias chfont="gconftool-2 --set /apps/gnome-terminal/profiles/Default/font --type string"
-
-alias cat='vimcat'
-alias less=vimpager
-
