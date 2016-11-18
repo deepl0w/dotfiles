@@ -5,7 +5,7 @@ set rtp^=~/.vim
 set rtp^=~/.vim/after
 
 """"""""""""""""""""""""""""""
-"Vundle
+" Vundle
 """"""""""""""""""""""""""""""
 set nocompatible
 filetype off
@@ -46,12 +46,18 @@ call vundle#end()
 filetype plugin indent on
 
 """"""""""""""""""""""""""""""
-"Tagbar
+" YCM
+""""""""""""""""""""""""""""""
+let g:ycm_confirm_extra_conf = 0
+map <F9> :YcmCompleter GoToImprecise<CR>
+
+""""""""""""""""""""""""""""""
+" Tagbar
 """"""""""""""""""""""""""""""
 nmap <F8> :TagbarToggle<CR>
 
 """"""""""""""""""""""""""""""
-"NerdTree
+" NerdTree
 """"""""""""""""""""""""""""""
 let NERDTreeShowHidden=1
 map <F12> :NERDTreeToggle<cr>
@@ -215,7 +221,13 @@ set cursorline
 
 set background=dark
 let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_bold=1
+let g:gruvbox_italic=1
+let g:gruvbox_underline=1
+let g:gruvbox_italicize_strings=1
+
 colorscheme gruvbox
+
 
 command! Colight set background=light
 command! Codark set background=dark
@@ -256,6 +268,7 @@ autocmd BufNewFile,BufRead * setlocal formatoptions=tcrq
 autocmd BufNewFile,BufRead *.h setlocal filetype=c
 autocmd BufNewFile,BufRead *.h setlocal filetype=cpp
 autocmd BufNewFile,BufRead *.hpp setlocal filetype=cpp
+autocmd BufNewFile,BufRead *.txx setlocal filetype=cpp
 
 " Sudo save
 """"""""""""""""""""""""""""""
@@ -280,3 +293,6 @@ command! -bar Dupt
 " Set clipboard to system clipboard
 """"""""""""""""""""""""""""
 set clipboard=unnamedplus
+
+" Delete trailing whitespaces at write
+autocmd BufWritePre * %s/\s\+$//e
