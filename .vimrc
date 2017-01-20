@@ -32,6 +32,7 @@ Plugin 'xolox/vim-misc'                     " auto-load vim scripts
 Plugin 'scrooloose/nerdcommenter'           " intensely orgasmic commenting
 Plugin 'flazz/vim-colorschemes'             " color schemes
 Plugin 'morhetz/gruvbox'                    " gruvbox color scheme
+Plugin 'nathanaelkane/vim-indent-guides'    " indent guides
 Plugin 'godlygeek/csapprox'                 " make gvim only coloschemes work transparently in terminal vim
 Plugin 'octol/vim-cpp-enhanced-highlight'   " cpp enhanced syntax highlights
 Plugin 'justinmk/vim-syntax-extra'          " syntax highlight for bison and flex
@@ -61,7 +62,7 @@ inoremap <F2> :YcmCompleter GetType<CR>
 """"""""""""""""""""""""""""""
 " Tagbar
 """"""""""""""""""""""""""""""
-nmap <F8> :TagbarToggle<CR>
+nmap <F7> :TagbarToggle<CR>
 
 """"""""""""""""""""""""""""""
 " NerdTree
@@ -137,13 +138,13 @@ set secure
 set foldcolumn=1
 set foldlevelstart=99
 set foldmethod=indent
-set autoindent
 set cindent
 set shiftwidth=4
-set expandtab
 set smarttab
 set tabstop=4
 set softtabstop=4
+set expandtab
+set list
 filetype plugin indent on
 
 " persistent undo
@@ -217,21 +218,24 @@ endif
 
 " UI
 """"""""""""""""""""""""""""""
-set t_Co=256
-let &t_ZH="\e[3m"
-let &t_ZR="\e[23m"
 syntax on
 set cursorline
 
+syntax match Tab "    "
 set background=dark
 let g:gruvbox_contrast_dark = 'medium'
 let g:gruvbox_bold=1
 let g:gruvbox_italic=1
 let g:gruvbox_underline=1
 let g:gruvbox_italicize_strings=1
+let g:gruvbox_inverse=0
+let g:gruvbox_invert_selection=0
+let g:gruvbox_invert_indent_guides=1
+let g:gruvbox_invert_tabline=1
 
 colorscheme gruvbox
 
+set conceallevel=1 concealcursor=nvi
 
 command! Colight set background=light
 command! Codark set background=dark
@@ -242,15 +246,16 @@ set number
 set scrolloff=8
 set report=0
 set shortmess+=I
-set list
-set listchars=tab:»\ ,trail:·
 set wildmenu
 set wildmode=list:longest
 
+
+
+
 " ignore compiled files and executables
 """""""""""""""""""""""""""""""""""""""
- set wildignore=*.obj,*.o,*~,*.pyc,*.out,*.exe
- if has("win16") || has("win32")
+set wildignore=*.obj,*.o,*~,*.pyc,*.out,*.exe
+if has("win16") || has("win32")
     set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 else
     set wildignore+=.git\*,.hg\*,.svn\*
