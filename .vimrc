@@ -50,7 +50,13 @@ filetype plugin indent on
 " YCM
 """"""""""""""""""""""""""""""
 let g:ycm_confirm_extra_conf = 0
-map <F9> :YcmCompleter GoToImprecise<CR>
+
+nnoremap <F9> :tab split <bar> YcmCompleter GoToDeclaration<CR>
+inoremap <F9> :tab split <bar> YcmCompleter GoToDeclaration<CR>
+nnoremap <F8> :tab split <bar> YcmCompleter GoToDefinition<CR>
+inoremap <F8> :tab split <bar> YcmCompleter GoToDefinition<CR>
+nnoremap <F2> :YcmCompleter GetType<CR>
+inoremap <F2> :YcmCompleter GetType<CR>
 
 """"""""""""""""""""""""""""""
 " Tagbar
@@ -151,9 +157,6 @@ endtry
 
 " paste mode
 """"""""""""""""""""""""""""""
-nnoremap <F2> :set invpaste paste?<cr>
-set pastetoggle=<F2>
-
 command! Ev tabedit $MYVIMRC
 command! Sv source $MYVIMRC
 
