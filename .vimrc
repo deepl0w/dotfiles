@@ -15,7 +15,7 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin('~/.vim_runtime/bundle')
 
 Plugin 'VundleVim/Vundle.vim'               " plugin manager
-Plugin 'majutsushi/Tagbar'                  " Displays tags in a sidebar
+" Plugin 'majutsushi/Tagbar'                  " Displays tags in a sidebar
 Plugin 'vim-airline/vim-airline'            " status/tabline
 Plugin 'vim-airline/vim-airline-themes'     " vim airline themes
 Plugin 'tpope/vim-fugitive'                 " git wrapper
@@ -27,7 +27,6 @@ Plugin 'tpope/vim-surround'                 " mappings to easily delete, change 
 Plugin 'kien/ctrlp.vim'                     " Full path fuzzy file, buffer, mru, tag finder
 Plugin 'easymotion/vim-easymotion'          " easy movement
 Plugin 'sickill/vim-pasta'                  " pasting in vim with indentation adjusted
-Plugin 'terryma/vim-multiple-cursors'       " sublime-text style multiple cursors
 Plugin 'xolox/vim-misc'                     " auto-load vim scripts
 Plugin 'scrooloose/nerdcommenter'           " intensely orgasmic commenting
 Plugin 'flazz/vim-colorschemes'             " color schemes
@@ -37,11 +36,11 @@ Plugin 'godlygeek/csapprox'                 " make gvim only coloschemes work tr
 Plugin 'octol/vim-cpp-enhanced-highlight'   " cpp enhanced syntax highlights
 Plugin 'justinmk/vim-syntax-extra'          " syntax highlight for bison and flex
 Plugin 'Valloric/YouCompleteMe'             " tab completion
-Plugin 'rdnetto/YCM-Generator'              " ycm config generator
+" Plugin 'rdnetto/YCM-Generator'              " ycm config generator
 Plugin 'gregsexton/vmail'                   " mail client
 Plugin 'rkitover/vimpager'                  " mita imi suge pula
-Plugin 'idanarye/vim-vebugger'              " vim debugger
-Plugin 'Shougo/vimproc.vim'                 " dependency for vebugger
+" Plugin 'idanarye/vim-vebugger'              " vim debugger
+" Plugin 'Shougo/vimproc.vim'                 " dependency for vebugger
 
 call vundle#end()
 
@@ -95,7 +94,7 @@ let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#branch#empty_message = ''
 
 let g:airline#extensions#syntastic#enabled = 1
-let g:airline#extensions#tagbar#enabled = 1
+let g:airline#extensions#tagbar#enabled = 0
 
 let g:airline#extensions#wordcount#enabled = 1
 
@@ -168,10 +167,6 @@ map <A-c> :ToggleColorColumn<CR>
 """"""""""""""""""""""""""""""
 nnoremap <space> za
 
-" Encoding
-""""""""""""""""""""""""""""""
-nnoremap <space> za
-
 " Cursor always in the center
 """"""""""""""""""""""""""""""
 set so=999
@@ -235,6 +230,7 @@ let g:gruvbox_invert_selection=0
 let g:gruvbox_invert_indent_guides=1
 let g:gruvbox_invert_tabline=1
 
+
 colorscheme gruvbox
 
 set conceallevel=1 concealcursor=nvi
@@ -254,6 +250,14 @@ set shortmess+=I
 set wildmenu
 set wildmode=list:longest
 
+" ident guides
+"""""""""""""""""""""""""""""""""""""""
+
+let g:indent_guides_auto_colors = 0
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd ctermfg=3 ctermbg=None
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermfg=4 ctermbg=None
 
 
 
@@ -265,7 +269,6 @@ if has("win16") || has("win32")
 else
     set wildignore+=.git\*,.hg\*,.svn\*
 endif
-
 
 
 " Text editing and searching behavior
