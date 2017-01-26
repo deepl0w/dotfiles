@@ -182,6 +182,8 @@ set so=999
 map j gj
 map k gk
 
+nnoremap ; :
+
 nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
@@ -197,11 +199,11 @@ nnoremap <silent> <A-i> :execute 'silent! tabmove ' . (tabpagenr() - 2)<CR>
 nnoremap <silent> <A-o> :execute 'silent! tabmove ' . (tabpagenr() + 1)<CR>
 
 " Escape
-inoremap <C-o> <ESC>
-nnoremap <C-o> a
+nnoremap <ESC> a
 
 if has ('nvim')
     tnoremap <C-o> <C-\><C-n>
+    tnoremap <ESC> <C-\><C-n>
 
     tmap <A-h> <C-\><C-n><C-w>h
     tmap <A-j> <C-\><C-n><C-w>j
