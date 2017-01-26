@@ -242,6 +242,9 @@ set conceallevel=1 concealcursor=nvi
 command! Colight set background=light
 command! Codark set background=dark
 
+command! Transp hi Normal ctermbg=None | set nocursorline
+command! Solid set background=dark cursorline
+
 set ruler
 set showcmd
 set number
