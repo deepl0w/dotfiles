@@ -314,6 +314,8 @@ endif
 
 " Text editing and searching behavior
 """""""""""""""""""""""""""""""""""""
+set smartcase
+set ignorecase
 set incsearch
 set showmatch
 set matchtime=2
