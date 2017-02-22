@@ -10,39 +10,49 @@ set rtp^=~/.vim/after
 set nocompatible
 filetype off
 
-set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.vim/bundle/vim-plug
 
-call vundle#begin('~/.vim_runtime/bundle')
+function! BuildYCM(info)
+  " info is a dictionary with 3 fields
+  " - name:   name of the plugin
+  " - status: 'installed', 'updated', or 'unchanged'
+  " - force:  set on PlugInstall! or PlugUpdate!
+  if a:info.status == 'installed' || a:info.force
+    !./install.py
+  endif
+endfunction
 
-Plugin 'VundleVim/Vundle.vim'               " plugin manager
-" Plugin 'majutsushi/Tagbar'                  " Displays tags in a sidebar
-Plugin 'vim-airline/vim-airline'            " status/tabline
-Plugin 'vim-airline/vim-airline-themes'     " vim airline themes
-Plugin 'tpope/vim-fugitive'                 " git wrapper
-Plugin 'scrooloose/nerdtree'                " file browser
-Plugin 'jistr/vim-nerdtree-tabs'            " nerdtree and tabs together
-Plugin 'scrooloose/syntastic'               " syntax checker
-Plugin 'nvie/vim-flake8'                    " python syntax & style checker
-Plugin 'tpope/vim-surround'                 " mappings to easily delete, change and add such surroundings in pairs
-Plugin 'kien/ctrlp.vim'                     " Full path fuzzy file, buffer, mru, tag finder
-Plugin 'easymotion/vim-easymotion'          " easy movement
-Plugin 'sickill/vim-pasta'                  " pasting in vim with indentation adjusted
-Plugin 'xolox/vim-misc'                     " auto-load vim scripts
-Plugin 'scrooloose/nerdcommenter'           " intensely orgasmic commenting
-Plugin 'flazz/vim-colorschemes'             " color schemes
-Plugin 'morhetz/gruvbox'                    " gruvbox color scheme
-Plugin 'nathanaelkane/vim-indent-guides'    " indent guides
-Plugin 'godlygeek/csapprox'                 " make gvim only coloschemes work transparently in terminal vim
-Plugin 'octol/vim-cpp-enhanced-highlight'   " cpp enhanced syntax highlights
-Plugin 'justinmk/vim-syntax-extra'          " syntax highlight for bison and flex
-Plugin 'Valloric/YouCompleteMe'             " tab completion
-" Plugin 'rdnetto/YCM-Generator'              " ycm config generator
-Plugin 'gregsexton/vmail'                   " mail client
-Plugin 'rkitover/vimpager'                  " mita imi suge pula
-" Plugin 'idanarye/vim-vebugger'              " vim debugger
-" Plugin 'Shougo/vimproc.vim'                 " dependency for vebugger
+call plug#begin('~/.vim_runtime/bundle')
 
-call vundle#end()
+Plug 'VundleVim/Vundle.vim'                                     " plugin manager
+" Plug 'majutsushi/Tagbar'                                      " Displays tags in a sidebar
+Plug 'vim-airline/vim-airline'                                  " status/tabline
+Plug 'vim-airline/vim-airline-themes'                           " vim airline themes
+Plug 'tpope/vim-fugitive'                                       " git wrapper
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }          " file explorer
+Plug 'jistr/vim-nerdtree-tabs', {'on': 'NERDTreeToggle' }       " nerdtree and tabs together
+Plug 'scrooloose/syntastic'                                     " syntax checker
+Plug 'nvie/vim-flake8'                                          " python syntax & style checker
+Plug 'tpope/vim-surround'                                       " mappings to easily delete, change and add such surroundings in pairs
+Plug 'kien/ctrlp.vim'                                           " Full path fuzzy file, buffer, mru, tag finder
+Plug 'easymotion/vim-easymotion'                                " easy movement
+Plug 'sickill/vim-pasta'                                        " pasting in vim with indentation adjusted
+Plug 'xolox/vim-misc'                                           " auto-load vim scripts
+Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
+Plug 'flazz/vim-colorschemes'                                   " color schemes
+Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
+Plug 'nathanaelkane/vim-indent-guides'                          " indent guides
+Plug 'godlygeek/csapprox'                                       " make gvim only coloschemes work transparently in terminal vim
+Plug 'octol/vim-cpp-enhanced-highlight'                         " cpp enhanced syntax highlights
+Plug 'justinmk/vim-syntax-extra',                               " syntax highlight for bison and flex
+Plug 'Valloric/YouCompleteMe', {'do': function('BuildYCM')}     " tab completion
+" Plug 'rdnetto/YCM-Generator'                                  " ycm config generator
+Plug 'gregsexton/vmail'                                         " mail client
+Plug 'rkitover/vimpager'                                        " mita imi suge pula
+" Plug 'idanarye/vim-vebugger'                                  " vim debugger
+" Plug 'Shougo/vimproc.vim'                                     " dependency for vebugger
+
+call plug#end()
 
 filetype plugin indent on
 
