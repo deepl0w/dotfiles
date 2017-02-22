@@ -230,6 +230,7 @@ nnoremap <C-j> gT
 nnoremap <C-k> gt
 inoremap <C-j> <ESC>>gT
 inoremap <C-k> <ESC>gt
+inoremap <C-o> <ESC>
 " Move tabs
 nnoremap <silent> <A-i> :execute 'silent! tabmove ' . (tabpagenr() - 2)<CR>
 nnoremap <silent> <A-o> :execute 'silent! tabmove ' . (tabpagenr() + 1)<CR>
@@ -238,7 +239,6 @@ nnoremap <silent> <A-o> :execute 'silent! tabmove ' . (tabpagenr() + 1)<CR>
 nnoremap <ESC> a
 
 if has ('nvim')
-    tnoremap <C-o> <C-\><C-n>
     tnoremap <ESC> <C-\><C-n>
 
     tmap <A-h> <C-\><C-n><C-w>h
