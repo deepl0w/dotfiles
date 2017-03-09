@@ -33,6 +33,15 @@ theme_preexec () {
 }
 
 
+git_prompt_par() {
+    GIT_PROMPT=`git_prompt_info``git_prompt_status`
+    if [[ "$GIT_PROMPT" != "" ]]; then
+        GIT_PROMPT="$PR_BLUE(%{$reset_color%}%{$GIT_PROMPT%}$PR_BLUE)"
+    fi
+
+    echo $GIT_PROMPT
+}
+
 setprompt () {
     ###
     # Need this so the prompt will work.
@@ -121,12 +130,6 @@ setprompt () {
     ###
     # Finally, the prompt.
 
-git_prompt_par() {
-    GIT_PROMPT=`git_prompt_info``git_prompt_status`
-    if [[ "$GIT_PROMPT" != "" ]]; then
-        GIT_PROMPT="$PR_BLUE(%{$reset_color%}%{$GIT_PROMPT%}$PR_BLUE)"
-    fi
-}
 
     PROMPT='$PR_SET_CHARSET$PR_STITLE${(e)PR_TITLEBAR}\
 $PR_BLUE$PR_ULCORNER$PR_HBAR$PR_GREY(\
@@ -136,7 +139,7 @@ $PR_BLUE%(!.%SROOT%s.%n)$PR_GREY@$PR_GREEN%m:%l\
 $PR_GREY)$PR_BLUE$PR_HBAR$PR_URCORNER\
 
 $PR_BLUE$PR_LLCORNER$PR_BLUE$PR_HBAR\
-`git_prompt_par`PR_BLUE$PR_HBAR\
+`git_prompt_par`$PR_BLUE$PR_HBAR\
 >$PR_NO_COLOUR '
 
     # display exitcode on the right when >0
