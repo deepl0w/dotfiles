@@ -20,6 +20,5 @@
 
 !.gdbinit
 
-!git/
-!git/*
 !.gitignore
+!.gitmodules
