@@ -34,7 +34,7 @@ theme_preexec () {
 
 CRED=$FG[167]
 CBLUE=$FG[108]
-CGREEN=$FG[184]
+CGREEN=$FG[142]
 CMAGENTA=$FG[176]
 CWHITE=$FG[231]
 CITALIC=$FX[italic]
