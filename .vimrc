@@ -23,6 +23,10 @@ endfunction
 
 call plug#begin('~/.vim_runtime/bundle')
 
+<<<<<<< HEAD
+=======
+Plug 'VundleVim/Vundle.vim'                                     " plugin manager
+>>>>>>> 5418ab521c1ea530a440017c38b5eedb59c8fbda
 " Plug 'majutsushi/Tagbar'                                      " Displays tags in a sidebar
 Plug 'vim-airline/vim-airline'                                  " status/tabline
 Plug 'vim-airline/vim-airline-themes'                           " vim airline themes
