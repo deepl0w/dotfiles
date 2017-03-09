@@ -31,7 +31,7 @@ if command -v nvim > /dev/null; then
     alias vim='nvim'
 
     neovim_autocd() {
-        [[ $NVIM_LISTEN_ADDRESS ]] && ~/.scripts/nvim/neovim-autocd.py
+        [[ -w $NVIM_LISTEN_ADDRESS ]] && ~/.scripts/nvim/neovim-autocd.py
     }
     chpwd_functions+=( neovim_autocd )
 
@@ -158,3 +158,6 @@ if command -v nvim-host-cmd > /dev/null; then
 fi
 
 alias chfont="gconftool-2 --set /apps/gnome-terminal/profiles/Default/font --type string"
+
+export ANDROID_SDK_ROOT="/home/deeplow/android-sdk-linux"
+export PATH=$PATH:$ANDROID_SDK_ROOT/tools
