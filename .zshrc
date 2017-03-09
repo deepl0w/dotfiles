@@ -1,6 +1,8 @@
 # GRML upstream
 NOCOR=1
 [[ -f ~/.zsh/grml-arch.zsh ]] && source ~/.zsh/grml-arch.zsh
+prompt off
+[[ -d ~/.oh-my-zsh/lib ]] && for f in ~/.oh-my-zsh/lib/*; do source $f; done
 
 # Antigen et plugins
 export ADOTDIR=~/.zsh/.antigen-cache
@@ -13,6 +15,7 @@ antigen bundle git
 antigen bundle dirhistory
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle common-aliases
+antigen theme dennisplosceanu/dotfiles themes/deeplow
 antigen apply
 
 # Vars, aliases
