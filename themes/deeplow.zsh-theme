@@ -124,7 +124,7 @@ setprompt () {
 git_prompt_par() {
     GIT_PROMPT=`git_prompt_info``git_prompt_status`
     if [[ "$GIT_PROMPT" != "" ]]; then
-        GIT_PROMPT="$PR_BLUE(%{reset_color%}${GIT_PROMPT}$PR_BLUE)"
+        GIT_PROMPT="$PR_BLUE(%{$reset_color%}%{$GIT_PROMPT%}$PR_BLUE)"
     fi
 }
 
