@@ -1,3 +1,14 @@
+CRED=$FG[167]
+CBLUE=$FG[181]
+CBLUEGREEN=$FG[108]
+CORANGE=$FG[172]
+CGREEN=$FG[142]
+CMAGENTA=$FG[175]
+CWHITE=$FG[231]
+CITALIC=$FX[italic]
+CRESET=$FX[reset]
+CBOLD=$FX[bold]
+
 functions rbenv_prompt_info >& /dev/null || rbenv_prompt_info(){}
 
 function theme_precmd {
@@ -32,14 +43,6 @@ theme_preexec () {
     fi
 }
 
-CRED=$FG[167]
-CBLUE=$FG[108]
-CGREEN=$FG[142]
-CMAGENTA=$FG[176]
-CWHITE=$FG[231]
-CITALIC=$FX[italic]
-CRESET=$FX[reset]
-CBOLD=$FX[bold]
 
 git_prompt_par() {
     GIT_PROMPT=`git_prompt_info``git_prompt_status`
@@ -69,7 +72,7 @@ setprompt () { ###
 
     ###
     # Modify Git prompt
-    ZSH_THEME_GIT_PROMPT_PREFIX=" on %{$fg[green]%}"
+    ZSH_THEME_GIT_PROMPT_PREFIX="$CITALIC$CWHITE on $CGREEN$CRESET"
     ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
     ZSH_THEME_GIT_PROMPT_DIRTY=""
     ZSH_THEME_GIT_PROMPT_CLEAN=""
@@ -141,7 +144,7 @@ setprompt () { ###
 $CRED$PR_ULCORNER$PR_HBAR$CWHITE(\
 $CITALIC$CGREEN%$PR_PWDLEN<...<%~%<<\
 $CRESET$CWHITE)`rvm_prompt_info || rbenv_prompt_info`$CRED$PR_HBAR$PR_HBAR${(e)PR_FILLBAR}$PR_HBAR$CWHITE(\
-$CITALIC$CBLUE%(!.%SROOT%s.%n)$CWHITE@$CBLUE%m:%l\
+$CITALIC$CBLUE%(!.%SROOT%s.%n)$CWHITE@$CBLUE%m$CWHITE:$CORANGE%l\
 $CRESET$CWHITE)$CRED$PR_HBAR$PR_URCORNER\
 
 $CRED$PR_LLCORNER$CRED$PR_HBAR\
@@ -151,7 +154,7 @@ $CRED$PR_LLCORNER$CRED$PR_HBAR\
     # display exitcode on the right when >0
     return_code="%(?..%{$fg[red]%}%? ↵ %{$reset_color%})"
     RPROMPT=' $return_code$CRED$PR_HBAR$CRED$PR_HBAR\
-$CWHITE($CITALIC$CMAGENTA%D{%H:%M:%S}$CWHITE)%CRED$PR_HBAR$CRED$PR_LRCORNER$PR_NO_COLOUR'
+$CWHITE($CITALIC$CMAGENTA%D{%H:%M:%S}$CWHITE)$CRED$PR_HBAR$CRED$PR_LRCORNER$PR_NO_COLOUR'
 
     PS2='$CRED$PR_HBAR\
 $CRED$PR_HBAR(\
