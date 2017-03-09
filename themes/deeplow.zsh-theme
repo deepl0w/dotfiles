@@ -151,7 +151,7 @@ $CRED$PR_LLCORNER$CRED$PR_HBAR\
     # display exitcode on the right when >0
     return_code="%(?..%{$fg[red]%}%? ↵ %{$reset_color%})"
     RPROMPT=' $return_code$CRED$PR_HBAR$CRED$PR_HBAR\
-$CWHITE($CITALIC$CMAGENTA%D{%H:%M:%S}$CWHITE)$PR_HBAR$CRED$PR_LRCORNER$PR_NO_COLOUR'
+$CWHITE($CITALIC$CMAGENTA%D{%H:%M:%S}$CWHITE)%CRED$PR_HBAR$CRED$PR_LRCORNER$PR_NO_COLOUR'
 
     PS2='$CRED$PR_HBAR\
 $CRED$PR_HBAR(\
