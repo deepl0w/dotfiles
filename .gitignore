@@ -1,1 +1,25 @@
-.git
+" Function as a whitelist
+*
+
+!README.md
+
+!themes/
+!themes/*
+!fonts/
+!fonts/*
+
+!install.sh
+
+!.vimrc
+!.scripts/nvim/
+!.scripts/nvim/*
+
+!.zshrc
+!.zsh/
+!.zsh/grml-arch.zsh
+
+!.gdbinit
+
+!git/
+!git/*
+!.gitignore
