@@ -32,18 +32,25 @@ theme_preexec () {
     fi
 }
 
+CRED=$FG[169]
+CBLUE=$FG[151]
+CGREEN=$FG[148]
+CMAGENTA=$FG[176]
+CWHITE=$FG[231]
+CITALIC=$FX[italic]
+CRESET=$FX[reset]
+CBOLD=$FX[bold]
 
 git_prompt_par() {
     GIT_PROMPT=`git_prompt_info``git_prompt_status`
     if [[ "$GIT_PROMPT" != "" ]]; then
-        GIT_PROMPT="$PR_BLUE(%{$reset_color%}${GIT_PROMPT}$PR_BLUE)"
+        GIT_PROMPT="$CWHITE(%{$reset_color%}${GIT_PROMPT}$CWHITE)"
     fi
 
     echo $GIT_PROMPT
 }
 
-setprompt () {
-    ###
+setprompt () { ###
     # Need this so the prompt will work.
 
     setopt prompt_subst
@@ -130,27 +137,26 @@ setprompt () {
     ###
     # Finally, the prompt.
 
-
     PROMPT='$PR_SET_CHARSET$PR_STITLE${(e)PR_TITLEBAR}\
-$PR_BLUE$PR_ULCORNER$PR_HBAR$PR_GREY(\
-$PR_GREEN%$PR_PWDLEN<...<%~%<<\
-$PR_GREY)`rvm_prompt_info || rbenv_prompt_info`$PR_BLUE$PR_HBAR$PR_HBAR${(e)PR_FILLBAR}$PR_HBAR$PR_GREY(\
-$PR_BLUE%(!.%SROOT%s.%n)$PR_GREY@$PR_GREEN%m:%l\
-$PR_GREY)$PR_BLUE$PR_HBAR$PR_URCORNER\
+$CRED$PR_ULCORNER$PR_HBAR$CWHITE(\
+$CITALIC$CGREEN%$PR_PWDLEN<...<%~%<<\
+$CRESET$CWHITE)`rvm_prompt_info || rbenv_prompt_info`$CRED$PR_HBAR$PR_HBAR${(e)PR_FILLBAR}$PR_HBAR$CWHITE(\
+$CITALIC$CBLUE%(!.%SROOT%s.%n)$CWHITE@$CBLUE%m:%l\
+$CRESET$CWHITE)$CRED$PR_HBAR$PR_URCORNER\
 
-$PR_BLUE$PR_LLCORNER$PR_BLUE$PR_HBAR\
-`git_prompt_par`$PR_BLUE$PR_HBAR\
+$CRED$PR_LLCORNER$CRED$PR_HBAR\
+`git_prompt_par`$CRED$PR_HBAR\
 >$PR_NO_COLOUR '
 
     # display exitcode on the right when >0
     return_code="%(?..%{$fg[red]%}%? ↵ %{$reset_color%})"
-    RPROMPT=' $return_code$PR_BLUE$PR_HBAR$PR_BLUE$PR_HBAR\
-($PR_GREY%D{%H:%M:%S}$PR_BLUE)$PR_HBAR$PR_BLUE$PR_LRCORNER$PR_NO_COLOUR'
+    RPROMPT=' $return_code$CRED$PR_HBAR$CRED$PR_HBAR\
+$CWHITE($CITALIC$CMAGENTA%D{%H:%M:%S}$CRESET$CWHITE)$PR_HBAR$CRED$PR_LRCORNER$PR_NO_COLOUR'
 
-    PS2='$PR_BLUE$PR_HBAR\
-$PR_BLUE$PR_HBAR(\
-$PR_LIGHT_GREEN%_$PR_BLUE)$PR_HBAR\
-$PR_BLUE$PR_HBAR$PR_NO_COLOUR '
+    PS2='$CRED$PR_HBAR\
+$CRED$PR_HBAR(\
+$CGREEN%_$CRED)$PR_HBAR\
+$CRED$PR_HBAR$PR_NO_COLOUR '
 }
 
 setprompt
