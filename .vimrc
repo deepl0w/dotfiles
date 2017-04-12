@@ -7,6 +7,8 @@ set rtp^=~/.vim/after
 " vim-plug
 """"""""""""""""""""""""""""""
 set nocompatible
+set noswapfile
+set nobackup
 filetype off
 
 set rtp+=~/.vim/bundle/vim-plug
@@ -17,16 +19,13 @@ function! BuildYCM(info)
   " - status: 'installed', 'updated', or 'unchanged'
   " - force:  set on PlugInstall! or PlugUpdate!
   if a:info.status == 'installed' || a:info.force
-    !./install.py
+    !./install.py --clang-completer
   endif
 endfunction
 
 call plug#begin('~/.vim_runtime/bundle')
 
-<<<<<<< HEAD
-=======
 Plug 'VundleVim/Vundle.vim'                                     " plugin manager
->>>>>>> 5418ab521c1ea530a440017c38b5eedb59c8fbda
 " Plug 'majutsushi/Tagbar'                                      " Displays tags in a sidebar
 Plug 'vim-airline/vim-airline'                                  " status/tabline
 Plug 'vim-airline/vim-airline-themes'                           " vim airline themes
@@ -43,7 +42,6 @@ Plug 'xolox/vim-misc'                                           " auto-load vim 
 Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
 Plug 'flazz/vim-colorschemes'                                   " color schemes
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
-Plug 'nathanaelkane/vim-indent-guides'                          " indent guides
 Plug 'godlygeek/csapprox'                                       " make gvim only coloschemes work transparently in terminal vim
 Plug 'octol/vim-cpp-enhanced-highlight'                         " cpp enhanced syntax highlights
 Plug 'justinmk/vim-syntax-extra',                               " syntax highlight for bison and flex
@@ -131,6 +129,7 @@ let g:vebugger_leader='\'
 "Syntastic
 """"""""""""""""""""""""""""""
 let g:syntastic_cpp_compiler_options = '-std=c++14 -Wall -Wextra'
+let g:syntastic_c_checkers = ['checkpatch']
 """"""""""""""""""""""""""""""
 " Vim-Airline
 """"""""""""""""""""""""""""""
@@ -197,6 +196,7 @@ set tabstop=4
 set softtabstop=4
 set expandtab
 set list
+set listchars=tab:»\ ,
 filetype plugin indent on
 
 " persistent undo
@@ -326,6 +326,7 @@ endif
 
 " Text editing and searching behavior
 """""""""""""""""""""""""""""""""""""
+setglobal modeline
 set smartcase
 set ignorecase
 set incsearch
@@ -334,6 +335,7 @@ set matchtime=2
 set backspace=eol,start,indent
 autocmd BufNewFile,BufRead * setlocal textwidth=0
 autocmd BufNewFile,BufRead * setlocal formatoptions=tcrq
+
 
 " Language specific
 """"""""""""""""""""""""""""""
