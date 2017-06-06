@@ -121,6 +121,38 @@ let NERDTreeShowHidden=1
 map <F12> :NERDTreeToggle<cr>
 
 """"""""""""""""""""""""""""""
+" Vim Latex Live Previewer
+""""""""""""""""""""""""""""""
+
+" Run a shell command in background
+function! RunInBackground(cmd)
+
+python << EEOOFF
+
+try:
+    import vim
+    import tempfile
+    import subprocess
+    import os
+
+    subprocess.Popen(
+            vim.eval('a:cmd'),
+            shell = True,
+            universal_newlines = True,
+            stdout=open(os.devnull, 'w'), stderr=subprocess.STDOUT)
+
+except:
+    pass
+EEOOFF
+endfunction
+
+autocmd CursorHold,CursorHoldI,BufWritePost *.tex
+            \ let pth = substitute(expand('%:p:h'), 'src.*', '', '') |
+            \ exec 'lcd ' . pth |
+            \ call RunInBackground('make') |
+            \ lcd -
+
+""""""""""""""""""""""""""""""
 " Vebugger
 """"""""""""""""""""""""""""""
 let g:vebugger_leader='\'
