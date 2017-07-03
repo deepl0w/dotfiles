@@ -3,4 +3,7 @@
 	url = https://github.com/zsh-users/antigen.git
 [submodule ".peda"]
 	path = .peda
-	url = https://github.com/longld/peda.git
+    url = https://github.com/longld/peda.git
+[submodule "fonts"]
+	path = fonts
+	url = https://github.com/powerline/fonts.git
