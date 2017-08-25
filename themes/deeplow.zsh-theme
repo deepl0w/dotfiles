@@ -34,6 +34,11 @@ function theme_precmd {
 
 }
 
+TRAPWINCH ()
+{
+    theme_precmd
+}
+
 
 setopt extended_glob
 theme_preexec () {
