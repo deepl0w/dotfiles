@@ -145,21 +145,20 @@ setprompt () { ###
     ###
     # Finally, the prompt.
 
+    return_code="%(?..%{$fg[red]%}%? ↵ %{$reset_color%})"
+
     PROMPT='$PR_SET_CHARSET$PR_STITLE${(e)PR_TITLEBAR}\
-$CRED$PR_ULCORNER$PR_HBAR$CWHITE(\
-$CITALIC$CGREEN%$PR_PWDLEN<...<%~%<<\
-$CRESET$CWHITE)`rvm_prompt_info || rbenv_prompt_info`$CRED$PR_HBAR$PR_HBAR${(e)PR_FILLBAR}$PR_HBAR$CWHITE(\
-$CITALIC$CBLUE%(!.%SROOT%s.%n)$CWHITE@$CBLUE%m$CWHITE:$CORANGE%l\
-$CRESET$CWHITE)$CRED$PR_HBAR$PR_URCORNER\
+$CRED$PR_ULCORNER\
+$CRESET`rvm_prompt_info || rbenv_prompt_info`$CRED|$CITALIC$CMAGENTA%D{%H:%M:%S}$CRED|$CWHITE(\
+$CITALIC$CBLUE%(!.%SROOT%s.%n)$CWHITE@$CBLUE%m:$CGREEN%$PR_PWDLEN<...<%~%<<\
+$CRESET$CWHITE)$CRED$PR_HBAR$return_code\
 
 $CRED$PR_LLCORNER$CRED$PR_HBAR\
 `git_prompt_par`$CRED$PR_HBAR\
 >$PR_NO_COLOUR '
 
     # display exitcode on the right when >0
-    return_code="%(?..%{$fg[red]%}%? ↵ %{$reset_color%})"
-    RPROMPT=' $return_code$CRED$PR_HBAR$CRED$PR_HBAR\
-$CWHITE($CITALIC$CMAGENTA%D{%H:%M:%S}$CWHITE)$CRED$PR_HBAR$CRED$PR_LRCORNER$PR_NO_COLOUR'
+    RPROMPT=''
 
     PS2='$CRED$PR_HBAR\
 $CRED$PR_HBAR(\
