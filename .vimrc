@@ -28,13 +28,11 @@ endfunction
 
 call plug#begin('~/.vim_runtime/bundle')
 
-Plug 'majutsushi/Tagbar'                                        " Displays tags in a sidebar
 Plug 'vim-airline/vim-airline'                                  " status/tabline
 Plug 'vim-airline/vim-airline-themes'                           " vim airline themes
 Plug 'tpope/vim-fugitive'                                       " git wrapper
-Plug 'scrooloose/nerdtree',                                     " file explorer
-Plug 'jistr/vim-nerdtree-tabs',                                 " nerdtree and tabs together
-Plug 'scrooloose/syntastic'                                     " syntax checker
+"Plug 'scrooloose/syntastic'                                     " syntax checker
+Plug 'w0rp/ale'
 Plug 'tpope/vim-surround'                                       " mappings to easily delete, change and add such surroundings in pairs
 Plug 'kien/ctrlp.vim'                                           " Full path fuzzy file, buffer, mru, tag finder
 Plug 'easymotion/vim-easymotion'                                " easy movement
@@ -46,16 +44,53 @@ Plug 'morhetz/gruvbox'                                          " gruvbox color 
 Plug 'godlygeek/csapprox'                                       " make gvim only coloschemes work transparently in terminal vim
 Plug 'octol/vim-cpp-enhanced-highlight'                         " cpp enhanced syntax highlights
 Plug 'Valloric/YouCompleteMe', {'do': function('BuildYCM')}     " tab completion
-Plug 'Shougo/vimproc.vim', {'do': 'make'}                       " dependency for vebugger
-Plug 'idanarye/vim-vebugger'                                    " vim debugger
-Plug 'kana/vim-submode'                                         " vim submodes
+Plug 'sakhnik/nvim-gdb/', { 'do': ':!./install.sh', 'branch': 'legacy' }
 Plug 'SirVer/ultisnips'                                         " vim snippet engine
 Plug 'honza/vim-snippets'                                       " vim snippets
+Plug 'mileszs/ack.vim'                                          " search tool
+Plug 'juneedahamed/svnj.vim'                                    " SVN integration
 
 call plug#end()
 
-
 filetype plugin indent on
+
+
+""""""""""""""""""""""""""""""
+" NVIM GDB
+""""""""""""""""""""""""""""""
+let g:nvimgdb_config_override = {
+  \ 'key_frameup': '<f2>',
+  \ 'key_framedown': '<f3>',
+  \ }
+
+""""""""""""""""""""""""""""""
+" neobugger
+""""""""""""""""""""""""""""""
+
+let g:gdb_keymap_continue = '<f5>'
+let g:gdb_keymap_next = '<f10>'
+let g:gdb_keymap_step = '<f11>'
+" Usually, F23 is just Shift+F11
+let g:gdb_keymap_finish = '<f23>'
+let g:gdb_keymap_toggle_break = '<f9>'
+" Usually, F33 is just Ctrl+F9
+let g:gdb_keymap_toggle_break_all = '<f33>'
+let g:gdb_keymap_frame_up = '<f2>'
+let g:gdb_keymap_frame_down = '<f3>'
+" Usually, F21 is just Shift+F9
+let g:gdb_keymap_clear_break = '<f21>'
+" Usually, F17 is just Shift+F5
+let g:gdb_keymap_debug_stop = '<f4>'
+
+""""""""""""""""""""""""""""""
+" Tags
+""""""""""""""""""""""""""""""
+nnoremap g] g<C-]>
+
+""""""""""""""""""""""""""""""
+" Easy Motion
+""""""""""""""""""""""""""""""
+nnoremap <leader>. :CtrlPTag<cr>
 
 """"""""""""""""""""""""""""""
 " Easy Motion
@@ -72,7 +107,16 @@ map s <Plug>(easymotion-s2)
 map <Leader>l <Plug>(easymotion-lineforward)
 map <Leader>h <Plug>(easymotion-linebackward)
 
+let g:EasyMotion_keys = 'asdfjklghvncmxturiewo'
 let g:EasyMotion_smartcase = 1
+
+""""""""""""""""""""""""""""""
+" ACK
+""""""""""""""""""""""""""""""
+if executable('rg')
+  let g:ackprg = 'rg --vimgrep --ignore-file ~/.ignore'
+endif
+let g:ack_use_dispatch = 0
 
 """"""""""""""""""""""""""""""
 " YCM
@@ -92,11 +136,13 @@ let g:ycm_server_keep_logfiles = 1
 let g:ycm_warning_symbol = '>'
 let g:ycm_error_symbol = '>>'
 let g:ycm_server_use_vim_stdout = 1
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
 
 """"""""""""""""""""""""""""""
 " Vebugger
 """"""""""""""""""""""""""""""
-let g:vebugger_leader='\'
+let g:vebugger_leader='<Leader>d'
 
 """"""""""""""""""""""""""""""
 " Submodes
@@ -151,8 +197,8 @@ nmap <F7> :TagbarToggle<CR>
 """"""""""""""""""""""""""""""
 " NerdTree
 """"""""""""""""""""""""""""""
-let NERDTreeShowHidden=1
-map <F12> :NERDTreeTabsToggle<cr>
+"let NERDTreeShowHidden=1
+"map <F12> :NERDTreeTabsToggle<cr>
 
 """"""""""""""""""""""""""""""
 " Vim Latex Live Previewer
@@ -189,6 +235,12 @@ autocmd CursorHold,CursorHoldI,BufWritePost *.tex
 """"""""""""""""""""""""""""""
 "Syntastic
 """"""""""""""""""""""""""""""
+let g:ale_sign_error = '†'
+let g:ale_sign_warning = '★'
+let g:ale_linters = { 'c': ['cppcheck', 'clangd'], 'cpp': ['cppcheck', 'clangd'] }
+
+let g:airline#extensions#ale#enabled = 1
+
 let g:syntastic_c_compiler_options = '-std=c99 -Wall -Wextra'
 let g:syntastic_cpp_compiler_options = '-std=c++14 -Wall -Wextra'
 let g:loaded_syntastic_c_gcc_checker = 'gcc'
@@ -208,7 +260,7 @@ let g:airline_detect_modified=1
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#branch#empty_message = ''
 
-let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#syntastic#enabled = 0
 let g:airline#extensions#tagbar#enabled = 0
 
 let g:airline#extensions#wordcount#enabled = 1
@@ -237,7 +289,6 @@ nmap <leader>+ <Plug>AirlineSelectNextTab
 " General
 """"""""""""""""""""""""""""""
 set history=1000
-set autoread
 set mouse=a
 set nohidden
 set noshowmode
@@ -248,7 +299,7 @@ set splitbelow
 set splitright
 set exrc
 set secure
-set ttyfast
+"set ttyfast
 set lazyredraw
 let loaded_matchparen = 1
 
@@ -342,6 +393,7 @@ set cursorline
 
 set fillchars+=vert:│
 autocmd ColorScheme * highlight VertSplit cterm=NONE ctermbg=NONE
+autocmd ColorScheme * highlight CursorLine ctermbg=236
 
 set background=dark
 let g:gruvbox_contrast_dark = 'medium'
@@ -364,7 +416,7 @@ command! Solid set background=dark cursorline
 
 set ruler
 set showcmd
-set number
+set nonumber
 set scrolloff=8
 set report=0
 set shortmess+=I
