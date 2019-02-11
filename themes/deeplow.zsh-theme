@@ -58,6 +58,38 @@ git_prompt_par() {
     echo $GIT_PROMPT
 }
 
+svn_prompt_par() {
+    local rev branch full
+    if in_svn; then
+        rev=$(svn_get_rev_nr)
+        branch=$(svn_get_branch_name)
+        full="$CITALIC$CBLUEGREEN$rev$CRESET@$branch"
+        if [ `svn_dirty_choose_pwd 1 0` -eq 1 ]; then
+            full="$full $CRED±$reset_color"
+        fi
+        full="$CWHITE(%{$reset_color%}${full}$CWHITE)"
+    fi
+
+    echo $full
+}
+
+
+svn_prompt_par() {
+    local rev branch
+    if in_svn; then
+        rev=$(svn_get_rev_nr)
+        branch=$(svn_get_branch_name)
+        SVN_PROMPT="$rev@$branch"
+        if [ `svn_dirty_choose_pwd 1 0` -eq 1 ]; then
+            SVN_PROMPT="$SVN_PROMPT ±"
+        fi
+        SVN_PROMPT="$CWHITE(%{$reset_color%}${SVN_PROMPT}$CWHITE)"
+    fi
+
+    echo $SVN_PROMPT
+}
+
+
 setprompt () { ###
     # Need this so the prompt will work.
 
@@ -154,7 +186,7 @@ $CITALIC$CBLUE%(!.%SROOT%s.%n)$CWHITE@$CBLUE%m:$CGREEN%$PR_PWDLEN<...<%~%<<\
 $CRESET$CWHITE)$CRED$PR_HBAR$return_code\
 
 $CRED$PR_LLCORNER$CRED$PR_HBAR\
-`git_prompt_par`$CRED$PR_HBAR\
+`git_prompt_par``svn_prompt_par`$CRED$PR_HBAR\
 >$PR_NO_COLOUR '
 
     # display exitcode on the right when >0
