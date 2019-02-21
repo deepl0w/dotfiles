@@ -439,6 +439,7 @@ setglobal modeline
 set smartcase
 set ignorecase
 set incsearch
+set icm=nosplit
 set showmatch
 set matchtime=2
 set backspace=eol,start,indent
