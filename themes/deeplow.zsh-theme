@@ -63,32 +63,12 @@ svn_prompt_par() {
     if in_svn; then
         rev=$(svn_get_rev_nr)
         branch=$(svn_get_branch_name)
-        full="$CITALIC$CBLUEGREEN$rev$CRESET@$branch"
-        if [ `svn_dirty_choose_pwd 1 0` -eq 1 ]; then
-            full="$full $CRED±$reset_color"
-        fi
+        full="$CBLUEGREEN$rev$CRESET@$branch"
         full="$CWHITE(%{$reset_color%}${full}$CWHITE)"
     fi
 
     echo $full
 }
-
-
-svn_prompt_par() {
-    local rev branch
-    if in_svn; then
-        rev=$(svn_get_rev_nr)
-        branch=$(svn_get_branch_name)
-        SVN_PROMPT="$rev@$branch"
-        if [ `svn_dirty_choose_pwd 1 0` -eq 1 ]; then
-            SVN_PROMPT="$SVN_PROMPT ±"
-        fi
-        SVN_PROMPT="$CWHITE(%{$reset_color%}${SVN_PROMPT}$CWHITE)"
-    fi
-
-    echo $SVN_PROMPT
-}
-
 
 setprompt () { ###
     # Need this so the prompt will work.
