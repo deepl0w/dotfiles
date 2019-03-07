@@ -3,6 +3,14 @@ let mapleader = ','
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python2_host_prog = '/usr/bin/python2.7'
 
+""""""""""""""""""""""""""""""
+" ALE
+""""""""""""""""""""""""""""""
+let g:ale_lint_on_enter=1
+let g:ale_lint_on_insert_leave=1
+let g:ale_completion_enabled=0
+let g:ale_set_balloons=0
+
 set rtp^=~/.vim
 set rtp^=~/.vim/after
 
@@ -30,9 +38,8 @@ call plug#begin('~/.vim_runtime/bundle')
 
 Plug 'vim-airline/vim-airline'                                  " status/tabline
 Plug 'vim-airline/vim-airline-themes'                           " vim airline themes
+Plug 'majutsushi/tagbar'                                        " tagbar
 Plug 'tpope/vim-fugitive'                                       " git wrapper
-"Plug 'scrooloose/syntastic'                                     " syntax checker
-Plug 'w0rp/ale'
 Plug 'tpope/vim-surround'                                       " mappings to easily delete, change and add such surroundings in pairs
 Plug 'kien/ctrlp.vim'                                           " Full path fuzzy file, buffer, mru, tag finder
 Plug 'easymotion/vim-easymotion'                                " easy movement
@@ -48,12 +55,17 @@ Plug 'sakhnik/nvim-gdb/', { 'do': ':!./install.sh', 'branch': 'legacy' }
 Plug 'SirVer/ultisnips'                                         " vim snippet engine
 Plug 'honza/vim-snippets'                                       " vim snippets
 Plug 'mileszs/ack.vim'                                          " search tool
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'juneedahamed/svnj.vim'                                    " SVN integration
 
 call plug#end()
 
 filetype plugin indent on
 
+""""""""""""""""""""""""""""""
+" Tagbar
+""""""""""""""""""""""""""""""
+nnoremap <F12> :TagbarToggle<CR>
 
 """"""""""""""""""""""""""""""
 " NVIM GDB
@@ -83,14 +95,11 @@ let g:gdb_keymap_clear_break = '<f21>'
 let g:gdb_keymap_debug_stop = '<f4>'
 
 """"""""""""""""""""""""""""""
-" Tags
-""""""""""""""""""""""""""""""
-nnoremap g] g<C-]>
-
-""""""""""""""""""""""""""""""
-" Easy Motion
+" CTags
 """"""""""""""""""""""""""""""
 nnoremap <leader>. :CtrlPTag<cr>
+nnoremap g] g<C-]>
+nnoremap G] :tab split<CR>:exec("tjump ".expand("<cword>"))<CR>
 
 """"""""""""""""""""""""""""""
 " Easy Motion
@@ -138,6 +147,7 @@ let g:ycm_error_symbol = '>>'
 let g:ycm_server_use_vim_stdout = 1
 let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
 
 """"""""""""""""""""""""""""""
 " Vebugger
@@ -237,7 +247,18 @@ autocmd CursorHold,CursorHoldI,BufWritePost *.tex
 """"""""""""""""""""""""""""""
 let g:ale_sign_error = '†'
 let g:ale_sign_warning = '★'
-let g:ale_linters = { 'c': ['cppcheck', 'clangd'], 'cpp': ['cppcheck', 'clangd'] }
+let g:ale_linters = { 'c': ['clangd'], 'cpp': ['clangd']}
+
+let g:ale_c_build_dir_names= ['build', 'bin', 'platform/linux/build']
+let g:ale_c_parse_compile_commands=1
+
+"let g:ale_c_clangtidy_executable='clang-tidy-6.0'
+let g:ale_c_clangd_executable='clangd-6.0'
+let g:ale_c_clang_executable='clang-6.0'
+
+"let g:ale_cpp_clangtidy_executable='clang-tidy-6.0'
+let g:ale_cpp_clangd_executable='clangd-6.0'
+let g:ale_cpp_clang_executable='clang++-6.0'
 
 let g:airline#extensions#ale#enabled = 1
 
