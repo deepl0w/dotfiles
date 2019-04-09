@@ -57,10 +57,16 @@ Plug 'honza/vim-snippets'                                       " vim snippets
 Plug 'mileszs/ack.vim'                                          " search tool
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'juneedahamed/svnj.vim'                                    " SVN integration
+Plug 'aaronbieber/vim-quicktask'                                " task management
 
 call plug#end()
 
 filetype plugin indent on
+
+""""""""""""""""""""""""""""""
+" QuickTask
+""""""""""""""""""""""""""""""
+let g:quicktask_autosave = 1
 
 """"""""""""""""""""""""""""""
 " Tagbar
