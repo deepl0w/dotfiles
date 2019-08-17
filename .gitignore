@@ -10,6 +10,9 @@
 
 !install.sh
 
+!.config
+!.i3
+
 !.vimrc
 !.scripts/nvim/
 !.scripts/nvim/*
