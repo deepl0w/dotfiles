@@ -57,11 +57,9 @@ Plug 'SirVer/ultisnips'                                         " vim snippet en
 Plug 'honza/vim-snippets'                                       " vim snippets
 Plug 'mileszs/ack.vim'                                          " search tool
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
-Plug 'juneedahamed/svnj.vim'                                    " SVN integration
 Plug 'aaronbieber/vim-quicktask'                                " task management
 Plug 'juneedahamed/vc.vim'                                      " SVN integration
 Plug 'lyuts/vim-rtags'                                          " rtags integration
->>>>>>> Stashed changes
 
 call plug#end()
 
