@@ -6,8 +6,9 @@ let g:python2_host_prog = '/usr/bin/python2.7'
 """"""""""""""""""""""""""""""
 " ALE
 """"""""""""""""""""""""""""""
-let g:ale_lint_on_enter=1
+let g:ale_lint_on_enter=0
 let g:ale_lint_on_insert_leave=1
+let g:ale_lint_on_save = 1
 let g:ale_completion_enabled=0
 let g:ale_set_balloons=0
 
@@ -23,6 +24,7 @@ set nobackup
 filetype off
 
 set rtp+=~/.vim/bundle/vim-plug
+set rtp+=~/git/debubber
 
 function! BuildYCM(info)
   " info is a dictionary with 3 fields
@@ -46,7 +48,6 @@ Plug 'easymotion/vim-easymotion'                                " easy movement
 Plug 'sickill/vim-pasta'                                        " pasting in vim with indentation adjusted
 Plug 'xolox/vim-misc'                                           " auto-load vim scripts
 Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
-Plug 'flazz/vim-colorschemes'                                   " color schemes
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
 Plug 'godlygeek/csapprox'                                       " make gvim only coloschemes work transparently in terminal vim
 Plug 'octol/vim-cpp-enhanced-highlight'                         " cpp enhanced syntax highlights
@@ -58,6 +59,9 @@ Plug 'mileszs/ack.vim'                                          " search tool
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'juneedahamed/svnj.vim'                                    " SVN integration
 Plug 'aaronbieber/vim-quicktask'                                " task management
+Plug 'juneedahamed/vc.vim'                                      " SVN integration
+Plug 'lyuts/vim-rtags'                                          " rtags integration
+>>>>>>> Stashed changes
 
 call plug#end()
 
@@ -141,6 +145,7 @@ let g:ycm_goto_buffer_command = 'new-or-existing-tab'
 
 set completeopt-=preview
 
+nnoremap <leader>,d :YcmDiags<CR>
 nnoremap gt :YcmCompleter GoTo<CR>
 nnoremap Gt :tab split <bar> YcmCompleter GoTo<CR>
 "nnoremap gt :YcmCompleter GoToDeclaration<CR>
@@ -253,18 +258,14 @@ autocmd CursorHold,CursorHoldI,BufWritePost *.tex
 """"""""""""""""""""""""""""""
 let g:ale_sign_error = '†'
 let g:ale_sign_warning = '★'
-let g:ale_linters = { 'c': ['clangd'], 'cpp': ['clangd']}
+let g:ale_linters = { 'c': ['cppcheck'], 'cpp': ['cppcheck']}
 
 let g:ale_c_build_dir_names= ['build', 'bin', 'platform/linux/build']
 let g:ale_c_parse_compile_commands=1
 
-"let g:ale_c_clangtidy_executable='clang-tidy-6.0'
-let g:ale_c_clangd_executable='clangd-6.0'
-let g:ale_c_clang_executable='clang-6.0'
+let g:ale_c_clang_executable='clang'
 
-"let g:ale_cpp_clangtidy_executable='clang-tidy-6.0'
-let g:ale_cpp_clangd_executable='clangd-6.0'
-let g:ale_cpp_clang_executable='clang++-6.0'
+let g:ale_cpp_clang_executable='clang'
 
 let g:airline#extensions#ale#enabled = 1
 
@@ -420,7 +421,7 @@ set cursorline
 
 set fillchars+=vert:│
 autocmd ColorScheme * highlight VertSplit cterm=NONE ctermbg=NONE
-autocmd ColorScheme * highlight CursorLine ctermbg=236
+"autocmd ColorScheme * highlight CursorLine ctermbg=236
 
 set background=dark
 let g:gruvbox_contrast_dark = 'medium'
