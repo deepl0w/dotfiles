@@ -12,6 +12,7 @@ antigen bundle wd
 antigen bundle sudo
 antigen bundle z
 antigen bundle git
+antigen bundle svn
 antigen bundle dirhistory
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle common-aliases
@@ -162,5 +163,5 @@ fi
 
 alias chfont="gconftool-2 --set /apps/gnome-terminal/profiles/Default/font --type string"
 
-export ANDROID_SDK_ROOT="/home/deeplow/android-sdk-linux"
-export PATH=$PATH:$ANDROID_SDK_ROOT/tools
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/.zshrc_user ] && source ~/.zshrc_user
