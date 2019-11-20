@@ -43,46 +43,6 @@ call plug#end()
 filetype plugin indent on
 
 """"""""""""""""""""""""""""""
-" UI
-""""""""""""""""""""""""""""""
-syntax on
-set cursorline
-
-set fillchars+=vert:│
-autocmd ColorScheme * highlight VertSplit cterm=NONE ctermbg=NONE
-autocmd ColorScheme * highlight CursorLine ctermbg=236
-
-set background=dark
-let g:gruvbox_contrast_dark = 'medium'
-let g:gruvbox_bold=1
-let g:gruvbox_italic=1
-let g:gruvbox_underline=1
-let g:gruvbox_italicize_strings=1
-let g:gruvbox_inverse=0
-let g:gruvbox_invert_selection=0
-let g:gruvbox_invert_indent_guides=1
-let g:gruvbox_invert_tabline=1
-
-colorscheme gruvbox
-
-hi CocHighlightText guibg=239 ctermbg=239
-
-command! Colight set background=light
-command! Codark set background=dark
-
-command! Transp hi Normal ctermbg=None | set nocursorline
-command! Solid set background=dark cursorline
-
-set ruler
-set showcmd
-set nonumber
-set scrolloff=8
-set report=0
-set shortmess+=I
-set wildmenu
-set wildmode=list:longest
-
-""""""""""""""""""""""""""""""
 " Local config
 """"""""""""""""""""""""""""""
 if !empty(glob("$HOME/.$USER.vimrc"))
@@ -97,6 +57,9 @@ let g:coc_global_extensions = ['coc-json', 'coc-python', 'coc-highlight', 'coc-l
 " CtrlP replacement
 nnoremap <C-p> :CocList files<cr>
 inoremap <C-p> <esc>:CocList files<cr>
+
+nnoremap <C-s> :CocList symbols<cr>
+inoremap <C-s> <esc>:CocList symbols<cr>
 
 nnoremap <C-g> :CocList grep<cr>
 
@@ -123,8 +86,9 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-nnoremap gt <Plug>(coc-definition)
-nnoremap Gt :tab split <bar> <Plug>(coc-definition)<cr>
+nmap gt <Plug>(coc-definition)
+nmap Gt :tab split <bar> <Plug>(coc-definition)<cr>
+nmap gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -192,24 +156,6 @@ let NERDTreeShowHidden=0
 map <leader><leader>n :NERDTreeToggle<cr>
 nnoremap <leader><leader>t :TagbarToggle<CR>
 nnoremap <leader><leader>m :make!<CR>
-
-""""""""""""""""""""""""""""""
-" TermDebug
-""""""""""""""""""""""""""""""
-packadd termdebug
-
-nnoremap <F5> :Continue<CR>
-nnoremap <F10> :Over<CR>
-nnoremap <F11> :Step<CR>
-nnoremap <F9> :Finish<CR>
-nnoremap <F8> :Break<CR>
-
-let termdebugger = "gdb-multiarch"
-
-let g:termdebug_useFloatingHover = 1
-
-hi debugPC term=reverse ctermbg=darkblue guibg=darkblue
-hi debugBreakpoint term=reverse ctermbg=red guibg=red
 
 """"""""""""""""""""""""""""""
 " CTags
@@ -312,6 +258,57 @@ nmap <leader>8 <Plug>AirlineSelectTab8
 nmap <leader>9 <Plug>AirlineSelectTab9
 nmap <leader>- <Plug>AirlineSelectPrevTab
 nmap <leader>+ <Plug>AirlineSelectNextTab
+
+""""""""""""""""""""""""""""""
+" UI
+""""""""""""""""""""""""""""""
+syntax on
+set cursorline
+
+set fillchars+=vert:│
+autocmd ColorScheme * highlight VertSplit cterm=NONE ctermbg=NONE
+autocmd ColorScheme * highlight CursorLine ctermbg=236
+
+set background=dark
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_bold=1
+let g:gruvbox_italic=1
+let g:gruvbox_underline=1
+let g:gruvbox_italicize_strings=1
+let g:gruvbox_inverse=0
+let g:gruvbox_invert_selection=0
+let g:gruvbox_invert_indent_guides=1
+let g:gruvbox_invert_tabline=1
+
+colorscheme gruvbox
+
+hi CocHighlightText guibg=239 ctermbg=239
+hi CocCodeLens cterm=italic gui=italic ctermfg=238 guifg=238
+
+hi default link CocErrorHighlight   CocUnderline
+hi default link CocWarningHighlight   CocUnderline
+
+hi default link CocErrorFloat CocErrorSign
+hi default link CocWarningFloat CocWarningSign
+
+hi CocErrorSign  ctermfg=Red guifg=#ff0000
+hi CocWarningSign  ctermfg=Yellow guifg=#ff922b
+
+command! Colight set background=light
+command! Codark set background=dark
+
+command! Transp hi Normal ctermbg=None | set nocursorline
+command! Solid set background=dark cursorline
+
+set ruler
+set showcmd
+set nonumber
+set scrolloff=8
+set report=0
+set shortmess+=I
+set wildmenu
+set wildmode=list:longest
+
 
 """"""""""""""""""""""""""""""
 " Miscellaneous
