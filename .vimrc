@@ -35,6 +35,7 @@ Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
 Plug 'amiorin/vim-project'                                      " define projects
 Plug 'scrooloose/nerdtree'                                      " file explorer
+Plug 'neomake/neomake'                                          " async make
 
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
 
@@ -50,6 +51,11 @@ if !empty(glob("$HOME/.$USER.vimrc"))
 endif
 
 """"""""""""""""""""""""""""""
+" NeoMake
+""""""""""""""""""""""""""""""
+let g:neomake_open_list = 2
+
+""""""""""""""""""""""""""""""
 " coc completion
 """"""""""""""""""""""""""""""
 let g:coc_global_extensions = ['coc-json', 'coc-python', 'coc-highlight', 'coc-lists', 'coc-yank', 'coc-vimlsp', 'coc-tabnine', 'coc-markdownlint']
@@ -63,7 +69,7 @@ inoremap <C-s> <esc>:CocList symbols<cr>
 
 nnoremap <C-g> :CocList grep<cr>
 
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+set statusline^=%{coc#status()}
 
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
@@ -155,7 +161,7 @@ let g:quicktask_autosave = 1
 let NERDTreeShowHidden=0
 map <leader><leader>n :NERDTreeToggle<cr>
 nnoremap <leader><leader>t :TagbarToggle<CR>
-nnoremap <leader><leader>m :make!<CR>
+nnoremap <leader><leader>m :execute "NeomakeSh " . &makeprg<CR>
 
 """"""""""""""""""""""""""""""
 " CTags
@@ -282,7 +288,7 @@ let g:gruvbox_invert_tabline=1
 
 colorscheme gruvbox
 
-hi CocHighlightText guibg=239 ctermbg=239
+hi CocHighlightText guibg=238 ctermbg=238
 hi CocCodeLens cterm=italic gui=italic ctermfg=238 guifg=238
 
 hi default link CocErrorHighlight   CocUnderline
