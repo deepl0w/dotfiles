@@ -38,6 +38,7 @@ Plug 'scrooloose/nerdtree'                                      " file explorer
 Plug 'neomake/neomake'                                          " async make
 
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
+Plug 'ryanoasis/vim-devicons'                                   " devicons for files
 
 call plug#end()
 
@@ -244,7 +245,7 @@ let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#branch#empty_message = ''
 
 let g:airline#extensions#syntastic#enabled = 0
-let g:airline#extensions#tagbar#enabled = 0
+let g:airline#extensions#tagbar#enabled = 1
 
 let g:airline#extensions#wordcount#enabled = 1
 
@@ -252,6 +253,11 @@ let g:airline#extensions#tabline#buffer_idx_mode = 1
 let g:airline#extensions#tabline#show_buffers = 0
 
 let g:airline#extensions#tabline#show_splits = 0
+
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
 
 nmap <leader>1 <Plug>AirlineSelectTab1
 nmap <leader>2 <Plug>AirlineSelectTab2
@@ -289,7 +295,7 @@ let g:gruvbox_invert_tabline=1
 colorscheme gruvbox
 
 hi CocHighlightText guibg=238 ctermbg=238
-hi CocCodeLens cterm=italic gui=italic ctermfg=238 guifg=238
+hi CocCodeLens ctermfg=238 guifg=238
 
 hi default link CocErrorHighlight   CocUnderline
 hi default link CocWarningHighlight   CocUnderline
@@ -297,8 +303,8 @@ hi default link CocWarningHighlight   CocUnderline
 hi default link CocErrorFloat CocErrorSign
 hi default link CocWarningFloat CocWarningSign
 
-hi CocErrorSign  ctermfg=Red guifg=#ff0000
-hi CocWarningSign  ctermfg=Yellow guifg=#ff922b
+hi CocErrorSign  ctermfg=Red ctermbg=237 guifg=#ff0000
+hi CocWarningSign  ctermfg=Yellow ctermbg=237 guifg=#ff922b
 
 command! Colight set background=light
 command! Codark set background=dark
@@ -315,6 +321,9 @@ set shortmess+=I
 set wildmenu
 set wildmode=list:longest
 
+let g:webdevicons_enable_nerdtree = 1
+let g:webdevicons_enable_airline_tabline = 1
+let g:webdevicons_enable_airline_statusline = 1
 
 """"""""""""""""""""""""""""""
 " Miscellaneous
@@ -328,6 +337,8 @@ set nohidden
 set noshowmode
 set noerrorbells
 set novisualbell
+set ttimeout
+set ttimeoutlen=0
 set timeoutlen=500
 set updatetime=300
 set splitbelow
