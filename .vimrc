@@ -36,6 +36,7 @@ Plug 'ncm2/float-preview.nvim'                                  " preview in flo
 Plug 'amiorin/vim-project'                                      " define projects
 Plug 'scrooloose/nerdtree'                                      " file explorer
 Plug 'neomake/neomake'                                          " async make
+Plug 'chrisbra/vim-diff-enhanced'                               " better diff
 
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
 Plug 'ryanoasis/vim-devicons'                                   " devicons for files
@@ -50,6 +51,11 @@ filetype plugin indent on
 if !empty(glob("$HOME/.$USER.vimrc"))
     source $HOME/.$USER.vimrc
 endif
+
+""""""""""""""""""""""""""""""
+" Diff
+""""""""""""""""""""""""""""""
+let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 
 """"""""""""""""""""""""""""""
 " NeoMake
@@ -254,11 +260,6 @@ let g:airline#extensions#tabline#show_buffers = 0
 
 let g:airline#extensions#tabline#show_splits = 0
 
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-
 nmap <leader>1 <Plug>AirlineSelectTab1
 nmap <leader>2 <Plug>AirlineSelectTab2
 nmap <leader>3 <Plug>AirlineSelectTab3
@@ -455,6 +456,9 @@ set backspace=eol,start,indent
 autocmd BufNewFile,BufRead * setlocal textwidth=0
 autocmd BufNewFile,BufRead * setlocal formatoptions=tcrqnj
 
+" ignore scrolloff in interminal
+au TermEnter * setlocal scrolloff=0
+au TermLeave * setlocal scrolloff=8
 
 " Language specific
 """"""""""""""""""""""""""""""
@@ -483,6 +487,39 @@ command! -bar Dupt
       \   let &sessionoptions = s:sessionoptions |
       \   unlet! s:file s:sessionoptions |
       \ endtry
+
+function! Wipeout()
+  " list of *all* buffer numbers
+  let l:buffers = range(1, bufnr('$'))
+
+  " what tab page are we in?
+  let l:currentTab = tabpagenr()
+  try
+    " go through all tab pages
+    let l:tab = 0
+    while l:tab < tabpagenr('$')
+      let l:tab += 1
+
+      " go through all windows
+      let l:win = 0
+      while l:win < winnr('$')
+        let l:win += 1
+        " whatever buffer is in this window in this tab, remove it from
+        " l:buffers list
+        let l:thisbuf = winbufnr(l:win)
+        call remove(l:buffers, index(l:buffers, l:thisbuf))
+      endwhile
+    endwhile
+
+    " if there are any buffers left, delete them
+    if len(l:buffers)
+      execute 'bwipeout' join(l:buffers)
+    endif
+  finally
+    " go back to our original tab page
+    execute 'tabnext' l:currentTab
+  endtry
+endfunction
 
 " Set clipboard to system clipboard
 """"""""""""""""""""""""""""
