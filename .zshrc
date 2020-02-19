@@ -1,23 +1,27 @@
 # GRML upstream
 NOCOR=1
-[[ -f ~/.zsh/grml-arch.zsh ]] && source ~/.zsh/grml-arch.zsh
-prompt off
-[[ -d ~/.oh-my-zsh/lib ]] && for f in ~/.oh-my-zsh/lib/*; do source $f; done
+function compdef { }
+[[ -d ~/.zplug/repos/robbyrussell/oh-my-zsh/lib ]] && for f in ~/.zplug/repos/robbyrussell/oh-my-zsh/lib/*; do source $f; done
 
-# Antigen et plugins
+# zplug plugins
 export ADOTDIR=~/.zsh/.antigen-cache
 export ZSH_CACHE_DIR=~/.zsh/.antigen-cache
-[[ -f ~/.zsh/antigen-repo/antigen.zsh ]] && source ~/.zsh/antigen-repo/antigen.zsh
-antigen bundle wd
-antigen bundle sudo
-antigen bundle z
-antigen bundle git
-antigen bundle svn
-antigen bundle dirhistory
-antigen bundle zsh-users/zsh-syntax-highlighting
-antigen bundle common-aliases
-antigen theme dennisplosceanu/dotfiles themes/deeplow
-antigen apply
+[[ -f ~/.zplug/init.zsh ]] && source ~/.zplug/init.zsh
+zplug "plugins/fzf", from:oh-my-zsh
+zplug "plugins/wd", from:oh-my-zsh
+zplug "plugins/z", from:oh-my-zsh
+zplug "plugins/git", from:oh-my-zsh
+zplug "plugins/common-aliases", from:oh-my-zsh
+zplug "zsh-users/zsh-syntax-highlighting"
+zplug "~/git/dotfiles/themes", from:local, as:theme
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+# Then, source plugins and add commands to $PATH
+zplug load
 
 # Vars, aliases
 export BROWSER='firefox'
@@ -35,17 +39,13 @@ if command -v nvim > /dev/null; then
     alias vim='nvim'
 
     neovim_autocd() {
-        [[ -w $NVIM_LISTEN_ADDRESS ]] && ~/.scripts/nvim/neovim-autocd.py
+        [[ -w $NVIM_LISTEN_ADDRESS ]] && nvr -c "silent lcd! $PWD"
     }
     chpwd_functions+=( neovim_autocd )
 
     # quickest way to set nvim's cwd to home
     cd $HOME
 fi
-
-wd() {
-  . /home/deeplow/.zsh/.antigen-cache/repos/https-COLON--SLASH--SLASH-github.com-SLASH-robbyrussell-SLASH-oh-my-zsh.git/plugins/wd/wd.sh
-}
 
 function weather {
     if [[ $# == 0 ]]; then
@@ -96,68 +96,21 @@ fi
 
 # Nvim host control
 export PATH="$PATH:$HOME/.scripts/nvim"
-if command -v nvim-host-cmd > /dev/null; then
-    v() {
-        if [[ $# == 0 ]]; then
-            return 0;
-        fi
-
-        arg="$1"
-
-        if [[ $# > 0 ]]; then
-            shift
-            for i in "$@"; do
-                crt=`realpath $i | sed 's/ /\\ /g'`
-                arg="$arg $crt"
-            done
-        fi
-        nvim-host-cmd $arg
-    }
+if command -v nvr > /dev/null; then
     e() {
-        if [[ $# == 1 ]]; then
-            file=`realpath $1 | sed 's/ /\\ /g'`
-        fi
-        arg="edit $file"
-        nvim-host-cmd $arg
+        nvr "$@"
     }
     tabe() {
-        if [[ $# == 1 ]]; then
-            file=`realpath $1 | sed 's/ /\\ /g'`
-        fi
-        arg="tabedit $file"
-        nvim-host-cmd $arg
+        nvr -p "$@"
     }
     sp() {
-        if [[ $# == 1 ]]; then
-            file=`realpath $1 | sed 's/ /\\ /g'`
-        fi
-        arg="split $file"
-        nvim-host-cmd $arg
+        nvr -c "sp $@"
     }
     vsp() {
-        if [[ $# == 1 ]]; then
-            file=`realpath $1 | sed 's/ /\\ /g'`
-        fi
-        arg="vsplit $file"
-        nvim-host-cmd $arg
-    }
-    nerd() {
-        if [[ $# == 1 ]]; then
-            file=`realpath $1 | sed 's/ /\\ /g'`
-        else
-            file=`realpath .`
-        fi
-        arg='execute "Bdelete!" | NERDTree '$file
-        nvim-host-cmd $arg
+        nvr -c "vsp $@"
     }
     man() {
-        if [[ $# == 1 ]]; then
-            page=$1
-        elif [[ $# == 2 ]]; then
-            page="$1 $2"
-        fi
-
-        nvim-host-cmd "Man $page"
+        nvr -c "Man $@"
     }
 fi
 
