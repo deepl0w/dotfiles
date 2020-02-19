@@ -3,8 +3,11 @@ let mapleader = ','
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python2_host_prog = '/usr/bin/python2.7'
 
+packadd termdebug
+
 set rtp^=~/.vim
 set rtp^=~/.vim/after
+set rtp^=~/git/debubber
 
 """"""""""""""""""""""""""""""
 " vim-plug
@@ -29,14 +32,11 @@ Plug 'scrooloose/nerdcommenter'                                 " intensely orga
 Plug 'godlygeek/csapprox'                                       " make gvim only coloschemes work transparently in terminal vim
 Plug 'sheerun/vim-polyglot'                                     " enhanced syntax highlights
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
-Plug 'mileszs/ack.vim'                                          " search tool
-Plug 'aaronbieber/vim-quicktask'                                " task management
 Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
 Plug 'amiorin/vim-project'                                      " define projects
 Plug 'scrooloose/nerdtree'                                      " file explorer
 Plug 'neomake/neomake'                                          " async make
-Plug 'chrisbra/vim-diff-enhanced'                               " better diff
 
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
 Plug 'ryanoasis/vim-devicons'                                   " devicons for files
@@ -51,11 +51,6 @@ filetype plugin indent on
 if !empty(glob("$HOME/.$USER.vimrc"))
     source $HOME/.$USER.vimrc
 endif
-
-""""""""""""""""""""""""""""""
-" Diff
-""""""""""""""""""""""""""""""
-let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 
 """"""""""""""""""""""""""""""
 " NeoMake
@@ -158,11 +153,6 @@ augroup end
 nnoremap <leader>gd :Gvdiffsplit<CR>
 
 """"""""""""""""""""""""""""""
-" QuickTask
-""""""""""""""""""""""""""""""
-let g:quicktask_autosave = 1
-
-""""""""""""""""""""""""""""""
 " IDE UI
 """"""""""""""""""""""""""""""
 let NERDTreeShowHidden=0
@@ -193,15 +183,6 @@ map <Leader>h <Plug>(easymotion-linebackward)
 
 let g:EasyMotion_keys = 'asdfjklghvncmxturiewo'
 let g:EasyMotion_smartcase = 1
-
-""""""""""""""""""""""""""""""
-" ACK
-""""""""""""""""""""""""""""""
-if executable('rg')
-  let g:ackprg = 'rg --vimgrep --ignore-file ~/.ignore'
-endif
-let g:ack_use_dispatch = 0
-
 
 """"""""""""""""""""""""""""""
 " Vim Latex Live Previewer
