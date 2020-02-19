@@ -9,8 +9,6 @@ CITALIC=$FX[italic]
 CRESET=$FX[reset]
 CBOLD=$FX[bold]
 
-functions rbenv_prompt_info >& /dev/null || rbenv_prompt_info(){}
-
 function theme_precmd {
     local TERMWIDTH
     (( TERMWIDTH = ${COLUMNS} - 1 ))
@@ -23,15 +21,6 @@ function theme_precmd {
     PR_PWDLEN=""
 
     local promptsize=${#${(%):---(%n@%m:%l)---()--}}
-    local rubyprompt=`rvm_prompt_info || rbenv_prompt_info`
-    local rubypromptsize=${#${rubyprompt}} local pwdsize=${#${(%):-%~}}
-
-    if [[ "$promptsize + $rubypromptsize + $pwdsize" -gt $TERMWIDTH ]]; then
-      ((PR_PWDLEN=$TERMWIDTH - $promptsize))
-    else
-      PR_FILLBAR="\${(l.(($TERMWIDTH - ($promptsize + $rubypromptsize + $pwdsize)))..${PR_HBAR}.)}"
-    fi
-
 }
 
 TRAPWINCH ()
@@ -46,28 +35,6 @@ theme_preexec () {
 	local CMD=${1[(wr)^(*=*|sudo|-*)]}
 	echo -n "\ek$CMD\e\\"
     fi
-}
-
-
-git_prompt_par() {
-    GIT_PROMPT=`git_prompt_info``git_prompt_status`
-    if [[ "$GIT_PROMPT" != "" ]]; then
-        GIT_PROMPT="$CWHITE(%{$reset_color%}${GIT_PROMPT}$CWHITE)"
-    fi
-
-    echo $GIT_PROMPT
-}
-
-svn_prompt_par() {
-    local rev branch full
-    if in_svn; then
-        rev=$(svn_get_rev_nr)
-        branch=$(svn_get_branch_name)
-        full="$CBLUEGREEN$rev$CRESET@$branch"
-        full="$CWHITE(%{$reset_color%}${full}$CWHITE)"
-    fi
-
-    echo $full
 }
 
 setprompt () { ###
@@ -161,13 +128,9 @@ setprompt () { ###
 
     PROMPT='$PR_SET_CHARSET$PR_STITLE${(e)PR_TITLEBAR}\
 $CRED$PR_ULCORNER\
-$CRESET`rvm_prompt_info || rbenv_prompt_info`$CRED|$CITALIC$CMAGENTA%D{%H:%M:%S}$CRED|$CWHITE(\
-$CITALIC$CBLUE%(!.%SROOT%s.%n)$CWHITE@$CBLUE%m:$CGREEN%$PR_PWDLEN<...<%~%<<\
-$CRESET$CWHITE)$CRED$PR_HBAR$return_code\
+$CITALIC$CBLUE%(!.%SROOT%s.%n)$CWHITE@$CBLUE%m:$CGREEN%$PR_PWDLEN<...<%~%<< $return_code\
 
-$CRED$PR_LLCORNER$CRED$PR_HBAR\
-`git_prompt_par``svn_prompt_par`$CRED$PR_HBAR\
->$PR_NO_COLOUR '
+$CRED$PR_LLCORNER$CRED`git_prompt_info`$CRED>$PR_NO_COLOUR '
 
     # display exitcode on the right when >0
     RPROMPT=''
