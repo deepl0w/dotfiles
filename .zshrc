@@ -1,11 +1,13 @@
 # GRML upstream
 NOCOR=1
-function compdef { }
+[[ -f ~/.zsh/grml-arch.zsh ]] && source ~/.zsh/grml-arch.zsh
+prompt off
+omz_lib_path="~/.zplug/repos/robbyrussell/oh-my-zsh/lib"
 [[ -d ~/.zplug/repos/robbyrussell/oh-my-zsh/lib ]] && for f in ~/.zplug/repos/robbyrussell/oh-my-zsh/lib/*; do source $f; done
 
+export PYTHONPATH=$PYTHONPATH:$HOME/extra/python_modules
+
 # zplug plugins
-export ADOTDIR=~/.zsh/.antigen-cache
-export ZSH_CACHE_DIR=~/.zsh/.antigen-cache
 [[ -f ~/.zplug/init.zsh ]] && source ~/.zplug/init.zsh
 zplug "plugins/fzf", from:oh-my-zsh
 zplug "plugins/wd", from:oh-my-zsh
@@ -38,13 +40,6 @@ if command -v nvim > /dev/null; then
     alias vi='nvim'
     alias vim='nvim'
 
-    neovim_autocd() {
-        [[ -w $NVIM_LISTEN_ADDRESS ]] && nvr -c "silent lcd! $PWD"
-    }
-    chpwd_functions+=( neovim_autocd )
-
-    # quickest way to set nvim's cwd to home
-    cd $HOME
 fi
 
 function weather {
@@ -101,20 +96,17 @@ if command -v nvr > /dev/null; then
         nvr "$@"
     }
     tabe() {
-        nvr -p "$@"
+        nvr -c "lcd $PWD | tabe $@"
     }
     sp() {
-        nvr -c "sp $@"
+        nvr -c "lcd $PWD | sp $@"
     }
     vsp() {
-        nvr -c "vsp $@"
+        nvr -c "lcd $PWD | vsp $@"
     }
     man() {
-        nvr -c "Man $@"
+        nvr -c "lcd $PWD | Man $@"
     }
 fi
 
 alias chfont="gconftool-2 --set /apps/gnome-terminal/profiles/Default/font --type string"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-[ -f ~/.zshrc_user ] && source ~/.zshrc_user

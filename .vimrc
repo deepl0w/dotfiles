@@ -1,6 +1,13 @@
 let mapleader = ','
 
+" clear autocmd
 au!
+
+packadd termdebug
+
+" enable true colors
+execute "set t_8f=\e[38;2;%lu;%lu;%lum"
+execute "set t_8b=\e[48;2;%lu;%lu;%lum"
 
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python2_host_prog = '/usr/bin/python2.7'
@@ -9,7 +16,6 @@ packadd termdebug
 
 set rtp^=~/.vim
 set rtp^=~/.vim/after
-set rtp^=~/git/debubber
 
 """"""""""""""""""""""""""""""
 " vim-plug
@@ -38,7 +44,10 @@ Plug 'ncm2/float-preview.nvim'                                  " preview in flo
 Plug 'amiorin/vim-project'                                      " define projects
 Plug 'scrooloose/nerdtree'                                      " file explorer
 Plug 'neomake/neomake'                                          " async make
+Plug 'puremourning/vimspector'                                  " debugger
+Plug 'voldikss/vim-floaterm'                                    " floating terminal
 
+Plug 'arcticicestudio/nord-vim'                                 " nord color scheme
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
 Plug 'ryanoasis/vim-devicons'                                   " devicons for files
 
@@ -54,14 +63,26 @@ if !empty(glob("$HOME/.$USER.vimrc"))
 endif
 
 """"""""""""""""""""""""""""""
+" Float Term
+""""""""""""""""""""""""""""""
+let g:floaterm_keymap_toggle = '<A-`>'
+let g:floaterm_position = 'center'
+let g:floaterm_winblend = 0
+
+""""""""""""""""""""""""""""""
 " NeoMake
 """"""""""""""""""""""""""""""
 let g:neomake_open_list = 2
 
 """"""""""""""""""""""""""""""
+" Vimspector
+""""""""""""""""""""""""""""""
+let g:vimspector_enable_mappings = 'HUMAN'
+
+""""""""""""""""""""""""""""""
 " coc completion
 """"""""""""""""""""""""""""""
-let g:coc_global_extensions = ['coc-json', 'coc-python', 'coc-highlight', 'coc-lists', 'coc-yank', 'coc-vimlsp', 'coc-tabnine', 'coc-markdownlint']
+let g:coc_global_extensions = ['coc-json', 'coc-python', 'coc-highlight', 'coc-lists', 'coc-yank', 'coc-vimlsp', 'coc-tabnine', 'coc-markdownlint', 'coc-diagnostic']
 
 " CtrlP replacement
 nnoremap <C-p> :CocList files<cr>
@@ -160,12 +181,6 @@ nnoremap <leader><leader>t :TagbarToggle<CR>
 nnoremap <leader><leader>m :execute "NeomakeSh " . &makeprg<CR>
 
 """"""""""""""""""""""""""""""
-" CTags
-""""""""""""""""""""""""""""""
-nnoremap g] g<C-]>
-nnoremap G] :tab split<CR>:exec("tjump ".expand("<cword>"))<CR>
-
-""""""""""""""""""""""""""""""
 " Easy Motion
 """"""""""""""""""""""""""""""
 map <Leader> <Plug>(easymotion-prefix)
@@ -215,6 +230,7 @@ autocmd CursorHold,CursorHoldI,BufWritePost *.tex
             \ call RunInBackground('make') |
             \ lcd -
 
+
 """"""""""""""""""""""""""""""
 " UI
 """"""""""""""""""""""""""""""
@@ -223,32 +239,49 @@ set cursorline
 
 set fillchars+=vert:│
 autocmd ColorScheme * highlight VertSplit cterm=NONE ctermbg=NONE
-autocmd ColorScheme * highlight CursorLine ctermbg=236
 
-set background=dark
-let g:gruvbox_contrast_dark = 'medium'
-let g:gruvbox_bold=1
-let g:gruvbox_italic=1
-let g:gruvbox_underline=1
-let g:gruvbox_italicize_strings=1
-let g:gruvbox_inverse=0
-let g:gruvbox_invert_selection=0
-let g:gruvbox_invert_indent_guides=1
-let g:gruvbox_invert_tabline=1
+if (colorscheme == "nord")
+    let g:nord_italic=1
+    let g:nord_italic_comments=1
+    let g:nord_underline = 1
 
-colorscheme gruvbox
+    colorscheme nord
 
-hi CocHighlightText guibg=238 ctermbg=238
-hi CocCodeLens ctermfg=238 guifg=238
+    hi String cterm=italic
+    hi link Comment SpecialKey
+    hi link CocHighlightText MsgSeparator
 
-hi default link CocErrorHighlight   CocUnderline
-hi default link CocWarningHighlight   CocUnderline
+    hi CocErrorSign  ctermfg=Red
+    hi CocWarningSign  ctermfg=Yellow
+
+    "hi Comment ctermfg=14
+elseif (colorscheme == "gruvbox")
+    autocmd ColorScheme * highlight CursorLine ctermbg=236
+
+    set background=dark
+    let g:gruvbox_contrast_dark = 'medium'
+    let g:gruvbox_bold=1
+    let g:gruvbox_italic=1
+    let g:gruvbox_underline=1
+    let g:gruvbox_italicize_strings=1
+    let g:gruvbox_inverse=0
+    let g:gruvbox_invert_selection=0
+    let g:gruvbox_invert_indent_guides=1
+    let g:gruvbox_invert_tabline=1
+
+    colorscheme gruvbox
+
+    hi CocHighlightText guibg=238 ctermbg=238
+    hi link CocErrorSign GruvboxRed
+    hi link CocWarningSign GruvboxYellow
+
+endif
+
+hi default CocErrorHighlight   cterm=underline gui=underline
+hi default CocWarningHighlight cterm=underline gui=underline
 
 hi default link CocErrorFloat CocErrorSign
 hi default link CocWarningFloat CocWarningSign
-
-hi CocErrorSign  ctermfg=Red ctermbg=237 guifg=#ff0000
-hi CocWarningSign  ctermfg=Yellow ctermbg=237 guifg=#ff922b
 
 command! Colight set background=light
 command! Codark set background=dark
@@ -332,7 +365,7 @@ let g:crystalline_theme = 'gruvbox'
 """"""""""""""""""""""""""""""
 set history=1000
 set mouse=a
-set nohidden
+set hidden
 set noshowmode
 set noerrorbells
 set novisualbell

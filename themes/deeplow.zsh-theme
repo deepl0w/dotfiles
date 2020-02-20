@@ -1,8 +1,13 @@
-CRED=$FG[167]
-CBLUE=$FG[081]
-CBLUEGREEN=$FG[108]
-CORANGE=$FG[172]
-CGREEN=$FG[142]
+CRED=$FG[009]
+CDARKRED=$FG[001]
+CBLUE=$FG[117]
+CDARKBLUE=$FG[004]
+CBLUEGREEN=$FG[014]
+CPURPLE=$FG[013]
+CDARKYELLOW=$FG[003]
+CYELLOW=$FG[011]
+CORANGE=$FG[208]
+CGREEN=$FG[010]
 CMAGENTA=$FG[175]
 CWHITE=$FG[231]
 CITALIC=$FX[italic]
@@ -26,6 +31,15 @@ function theme_precmd {
 TRAPWINCH ()
 {
     theme_precmd
+}
+
+function git_prompt_info() {
+  local ref
+  if [[ "$(command git config --get oh-my-zsh.hide-status 2>/dev/null)" != "1" ]]; then
+    ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
+    ref=$(command git rev-parse --short HEAD 2> /dev/null) || return 0
+    echo "$ZSH_THEME_GIT_PROMPT_PREFIX$CYELLOW${ref#refs/heads/}$(parse_git_dirty)$ZSH_THEME_GIT_PROMPT_SUFFIX"
+  fi
 }
 
 
@@ -56,8 +70,8 @@ setprompt () { ###
 
     ###
     # Modify Git prompt
-    ZSH_THEME_GIT_PROMPT_PREFIX="$CITALIC$CWHITE on $CGREEN"
-    ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+    ZSH_THEME_GIT_PROMPT_PREFIX="$CRESET$CWHITE $CBOLD"
+    ZSH_THEME_GIT_PROMPT_SUFFIX="$CRESET"
     ZSH_THEME_GIT_PROMPT_DIRTY=""
     ZSH_THEME_GIT_PROMPT_CLEAN=""
 
@@ -76,6 +90,7 @@ setprompt () { ###
 	PR_SET_CHARSET=""
 	PR_SHIFT_IN=""
 	PR_SHIFT_OUT=""
+    PR_ARROW=""
 	PR_HBAR="─"
         PR_ULCORNER="┌"
         PR_LLCORNER="└"
@@ -126,11 +141,12 @@ setprompt () { ###
 
     return_code="%(?..%{$fg[red]%}%? ↵ %{$reset_color%})"
 
+    NAME_COLOR=$CBLUE
     PROMPT='$PR_SET_CHARSET$PR_STITLE${(e)PR_TITLEBAR}\
-$CRED$PR_ULCORNER\
-$CITALIC$CBLUE%(!.%SROOT%s.%n)$CWHITE@$CBLUE%m:$CGREEN%$PR_PWDLEN<...<%~%<< $return_code\
+$CBOLD$NAME_COLOR%(!.%SROOT%s.%n)$CWHITE@$NAME_COLOR%m \
+$CRESET$CORANGE$CITALIC%$PR_PWDLEN<...<%~%<< `git_prompt_info` $return_code\
 
-$CRED$PR_LLCORNER$CRED`git_prompt_info`$CRED>$PR_NO_COLOUR '
+$CBOLD$CGREEN$PR_ARROW$PR_NO_COLOUR '
 
     # display exitcode on the right when >0
     RPROMPT=''

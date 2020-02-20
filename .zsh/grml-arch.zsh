@@ -3062,19 +3062,6 @@ deswap() {
     print 'Finished, running "swapoff -a; swapon -a" may also be useful.'
 }
 
-# a wrapper for vim, that deals with title setting
-#   VIM_OPTIONS
-#       set this array to a set of options to vim you always want
-#       to have set when calling vim (in .zshrc.local), like:
-#           VIM_OPTIONS=( -p )
-#       This will cause vim to send every file given on the
-#       commandline to be send to it's own tab (needs vim7).
-if check_com vim; then
-    vim() {
-        VIM_PLEASE_SET_TITLE='yes' command vim ${VIM_OPTIONS} "$@"
-    }
-fi
-
 ssl_hashes=( sha512 sha256 sha1 md5 )
 
 for sh in ${ssl_hashes}; do
