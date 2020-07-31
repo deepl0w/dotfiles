@@ -6,6 +6,7 @@ omz_lib_path="~/.zplug/repos/robbyrussell/oh-my-zsh/lib"
 [[ -d ~/.zplug/repos/robbyrussell/oh-my-zsh/lib ]] && for f in ~/.zplug/repos/robbyrussell/oh-my-zsh/lib/*; do source $f; done
 
 export PYTHONPATH=$PYTHONPATH:$HOME/extra/python_modules
+source $HOME/.profile
 
 # zplug plugins
 [[ -f ~/.zplug/init.zsh ]] && source ~/.zplug/init.zsh
