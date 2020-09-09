@@ -38,18 +38,32 @@ Plug 'xolox/vim-misc'                                           " auto-load vim 
 Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
 Plug 'godlygeek/csapprox'                                       " make gvim only coloschemes work transparently in terminal vim
 Plug 'sheerun/vim-polyglot'                                     " enhanced syntax highlights
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'PotatoesMaster/i3-vim-syntax'                             " i3 syntax highlights
 Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
 Plug 'amiorin/vim-project'                                      " define projects
 Plug 'scrooloose/nerdtree'                                      " file explorer
 Plug 'neomake/neomake'                                          " async make
-Plug 'puremourning/vimspector'                                  " debugger
 Plug 'voldikss/vim-floaterm'                                    " floating terminal
+Plug 'tpope/vim-surround'                                       " surround commands foor different brackets
+
+Plug 'hsanson/vim-android'                                      " android development
+Plug 'georgewfraser/java-language-server'                       " java language server
 
 Plug 'arcticicestudio/nord-vim'                                 " nord color scheme
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
 Plug 'ryanoasis/vim-devicons'                                   " devicons for files
+
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-yank', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-pairs', {'do': 'yarn install --frozen-lockfile'}
+Plug 'fannheyward/coc-markdownlint', {'do': 'yarn install --frozen-lockfile'}
+Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile'}
+Plug 'iamcco/coc-diagnostic', {'do': 'yarn install --frozen-lockfile'}
 
 call plug#end()
 
@@ -73,16 +87,6 @@ let g:floaterm_winblend = 0
 " NeoMake
 """"""""""""""""""""""""""""""
 let g:neomake_open_list = 2
-
-""""""""""""""""""""""""""""""
-" Vimspector
-""""""""""""""""""""""""""""""
-let g:vimspector_enable_mappings = 'HUMAN'
-
-""""""""""""""""""""""""""""""
-" coc completion
-""""""""""""""""""""""""""""""
-let g:coc_global_extensions = ['coc-json', 'coc-python', 'coc-highlight', 'coc-lists', 'coc-yank', 'coc-vimlsp', 'coc-tabnine', 'coc-markdownlint', 'coc-diagnostic']
 
 " CtrlP replacement
 nnoremap <C-p> :CocList files<cr>
@@ -296,7 +300,6 @@ set laststatus=2
 set ruler
 set showcmd
 set nonumber
-set scrolloff=8
 set report=0
 set shortmess+=I
 set wildmenu
@@ -419,7 +422,7 @@ map <A-c> :ToggleColorColumn<CR>
 
 " Cursor always in the center
 """"""""""""""""""""""""""""""
-set so=999
+set scrolloff=999
 
 " Navigation shortcuts
 """"""""""""""""""""""""""""""
@@ -458,7 +461,7 @@ if has ('nvim')
     tnoremap <C-j> <C-\><C-n>gT
     tnoremap <C-k> <C-\><C-n>gt
 
-    autocmd BufEnter * if &buftype == "terminal" | startinsert | setlocal nonu | endif
+    autocmd BufEnter * if &buftype == "terminal" | startinsert | setlocal nonu | setlocal so=0 | else | setlocal so=8 | endif
 endif
 
 " ignore compiled files and executables
@@ -483,10 +486,6 @@ set matchtime=2
 set backspace=eol,start,indent
 autocmd BufNewFile,BufRead * setlocal textwidth=0
 autocmd BufNewFile,BufRead * setlocal formatoptions=tcrqnj
-
-" ignore scrolloff in interminal
-au TermEnter * setlocal scrolloff=0
-au TermLeave * setlocal scrolloff=8
 
 " Language specific
 """"""""""""""""""""""""""""""
