@@ -1,5 +1,5 @@
 # Source all settings from the peda dir.
-#source ~/.peda/peda.py
+source /usr/share/pwndbg/gdbinit.py
 
 # When inspecting large portions of code the scrollbar works better than 'less'.
 set pagination off
