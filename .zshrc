@@ -5,9 +5,10 @@ prompt off
 omz_lib_path="~/.zplug/repos/robbyrussell/oh-my-zsh/lib"
 [[ -d ~/.zplug/repos/robbyrussell/oh-my-zsh/lib ]] && for f in ~/.zplug/repos/robbyrussell/oh-my-zsh/lib/*; do source $f; done
 
+export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"
 export PYTHONPATH=$HOME/.local/lib/python2.7/site-packages:$HOME/.local/lib/python3.8/site-packages:$HOME/extra/python_modules
 export ANDROID_HOME=$HOME/Android/Sdk
-source $HOME/.profile
+[[ -f ~/.profile ]] && source ~/.profile
 
 # zplug plugins
 [[ -f ~/.zplug/init.zsh ]] && source ~/.zplug/init.zsh
@@ -88,7 +89,8 @@ XXX
 # Nvim as terminal multiplexer
 if [ "$TERM_PROGRAM" != "vscode" ]; then
     if command -v nvim > /dev/null && \
-            [[ -z $NVIM_LISTEN_ADDRESS ]]; then
+            [[ -z $NVIM_INSIDE_ZSH ]]; then
+                export NVIM_INSIDE_ZSH=1
                 nvim -c "terminal"
     fi
 fi
