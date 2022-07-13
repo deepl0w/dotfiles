@@ -91,6 +91,7 @@ if [ "$TERM_PROGRAM" != "vscode" ]; then
     if command -v nvim > /dev/null && \
             [[ -z $NVIM_INSIDE_ZSH ]]; then
                 export NVIM_INSIDE_ZSH=1
+                export NVIM_LISTEN_ADDRESS=/tmp/nvimsocket
                 nvim -c "terminal"
     fi
 fi
