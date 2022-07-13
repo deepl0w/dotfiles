@@ -55,6 +55,7 @@ Plug 'morhetz/gruvbox'                                          " gruvbox color 
 Plug 'ryanoasis/vim-devicons'                                   " devicons for files
 
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'weirongxu/coc-kotlin', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
@@ -243,43 +244,24 @@ set cursorline
 
 set fillchars+=vert:│
 autocmd ColorScheme * highlight VertSplit cterm=NONE ctermbg=NONE
+autocmd ColorScheme * highlight CursorLine ctermbg=236
 
-if (colorscheme == "nord")
-    let g:nord_italic=1
-    let g:nord_italic_comments=1
-    let g:nord_underline = 1
+set background=dark
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_bold=1
+let g:gruvbox_italic=1
+let g:gruvbox_underline=1
+let g:gruvbox_italicize_strings=1
+let g:gruvbox_inverse=0
+let g:gruvbox_invert_selection=0
+let g:gruvbox_invert_indent_guides=1
+let g:gruvbox_invert_tabline=1
 
-    colorscheme nord
+colorscheme gruvbox
 
-    hi String cterm=italic
-    hi link Comment SpecialKey
-    hi link CocHighlightText MsgSeparator
-
-    hi CocErrorSign  ctermfg=Red
-    hi CocWarningSign  ctermfg=Yellow
-
-    "hi Comment ctermfg=14
-elseif (colorscheme == "gruvbox")
-    autocmd ColorScheme * highlight CursorLine ctermbg=236
-
-    set background=dark
-    let g:gruvbox_contrast_dark = 'medium'
-    let g:gruvbox_bold=1
-    let g:gruvbox_italic=1
-    let g:gruvbox_underline=1
-    let g:gruvbox_italicize_strings=1
-    let g:gruvbox_inverse=0
-    let g:gruvbox_invert_selection=0
-    let g:gruvbox_invert_indent_guides=1
-    let g:gruvbox_invert_tabline=1
-
-    colorscheme gruvbox
-
-    hi CocHighlightText guibg=238 ctermbg=238
-    hi link CocErrorSign GruvboxRed
-    hi link CocWarningSign GruvboxYellow
-
-endif
+hi CocHighlightText guibg=238 ctermbg=238
+hi link CocErrorSign GruvboxRed
+hi link CocWarningSign GruvboxYellow
 
 hi default CocErrorHighlight   cterm=underline gui=underline
 hi default CocWarningHighlight cterm=underline gui=underline
@@ -548,6 +530,7 @@ endfunction
 " Set clipboard to system clipboard
 """"""""""""""""""""""""""""
 set clipboard=unnamedplus
+
 
 " Delete trailing whitespaces at write
 autocmd BufWritePre * %s/\s\+$//e
