@@ -117,3 +117,5 @@ if command -v nvr > /dev/null; then
 fi
 
 alias chfont="gconftool-2 --set /apps/gnome-terminal/profiles/Default/font --type string"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

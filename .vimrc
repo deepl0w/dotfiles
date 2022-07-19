@@ -38,6 +38,7 @@ Plug 'xolox/vim-misc'                                           " auto-load vim 
 Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
 Plug 'godlygeek/csapprox'                                       " make gvim only coloschemes work transparently in terminal vim
 Plug 'sheerun/vim-polyglot'                                     " enhanced syntax highlights
+Plug 'bfrg/vim-cpp-modern'                                      " bettert c and cpp highlights
 Plug 'PotatoesMaster/i3-vim-syntax'                             " i3 syntax highlights
 Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
@@ -46,9 +47,6 @@ Plug 'scrooloose/nerdtree'                                      " file explorer
 Plug 'neomake/neomake'                                          " async make
 Plug 'voldikss/vim-floaterm'                                    " floating terminal
 Plug 'tpope/vim-surround'                                       " surround commands foor different brackets
-
-Plug 'hsanson/vim-android'                                      " android development
-Plug 'georgewfraser/java-language-server'                       " java language server
 
 Plug 'arcticicestudio/nord-vim'                                 " nord color scheme
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
@@ -59,9 +57,7 @@ Plug 'weirongxu/coc-kotlin', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-yank', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-pairs', {'do': 'yarn install --frozen-lockfile'}
 Plug 'fannheyward/coc-markdownlint', {'do': 'yarn install --frozen-lockfile'}
 Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile'}
 Plug 'iamcco/coc-diagnostic', {'do': 'yarn install --frozen-lockfile'}
