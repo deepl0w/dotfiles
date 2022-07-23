@@ -6,7 +6,6 @@ omz_lib_path="~/.zplug/repos/robbyrussell/oh-my-zsh/lib"
 [[ -d ~/.zplug/repos/robbyrussell/oh-my-zsh/lib ]] && for f in ~/.zplug/repos/robbyrussell/oh-my-zsh/lib/*; do source $f; done
 
 export PATH="$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH"
-export PYTHONPATH=$HOME/.local/lib/python2.7/site-packages:$HOME/.local/lib/python3.8/site-packages:$HOME/extra/python_modules
 export ANDROID_HOME=$HOME/Android/Sdk
 [[ -f ~/.profile ]] && source ~/.profile
 
@@ -119,3 +118,17 @@ fi
 alias chfont="gconftool-2 --set /apps/gnome-terminal/profiles/Default/font --type string"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/anaconda/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/anaconda/etc/profile.d/conda.sh" ]; then
+        . "/opt/anaconda/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/anaconda/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
