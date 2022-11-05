@@ -13,12 +13,12 @@ local PKGS = {
 }
 
 -- Install packages package manager if not installed
-vim.cmd "packadd paq-nvim"
 require("bootstrap").bootstrap(PKGS)
 
+vim.cmd "packadd paq-nvim"
 require("paq")(PKGS)
 
-local vimp = require('vimp')
+--local vimp = require('vimp')
 
 ------------------------------
 -- DAP
