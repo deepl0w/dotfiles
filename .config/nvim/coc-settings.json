@@ -8,26 +8,64 @@
         }
     },
 
-    "suggest.floatEnable": true,
-    "suggest.enablePreview": true,
+    "workspace.rootPatterns": [ ".git", ".svn", "compile_commands.json", ".hg", ".projections.json" ],
+
+    "suggest.virtualText": true,
     "suggest.snippetIndicator": "",
 
     "diagnostic.warningSign": "",
     "diagnostic.errorSign": "",
-
-    "coc.preferences.colorSupport": true,
-    "coc.preferences.timeout": 100,
 
     "list.source.grep.args": [
         "--ignore-file",
         "~/.ignore"
     ],
 
+    "list.source.mru.excludePatterns": [
+        "**/.git/*",
+        "**/.svn/*",
+        "**/bin/*",
+        "**/build/*",
+        "/tmp/*"
+    ],
+
+    "diagnostic-languageserver.linters": {
+        "cppcheck": {
+            "command": "cppcheck",
+            "sourceName": "cppcheck",
+            "isStdout": false,
+            "isStderr": true,
+            "debounce": 100,
+            "offsetLine": 0,
+            "offsetColumn": 0,
+            "rootPatterns": [".ccls", "compile_commands.json"],
+            "args": ["--project=compile_commands.json", "--enable=warning,performance,portability,missingInclude,information"],
+            "ignore": [".git", "bin", "build"],
+            "formatPattern": [
+                "^([^:]+):(\\d+):(\\d+):\\s([^:]+):\\s+(.+)$",
+                {
+                    "sourceName": 1,
+                    "sourceNameFilter": true,
+                    "line": 2,
+                    "column": 3,
+                    "security": 4,
+                    "message": 5
+                }
+            ],
+            "securities": {
+                "information": "info",
+                "error": "error",
+                "performance": "warning",
+                "style": "warning"
+            }
+        }
+    },
+
     "diagnostic-languageserver.filetypes": {
-        "c": "cppcheck --enable=all",
-        "cpp": "cppcheck --enable=all",
-        "h": "cppcheck --enable=all",
-        "hpp": "cppcheck --enable=all",
-        "txx": "cppcheck --enable=all"
+        "c": "cppcheck",
+        "cpp": "cppcheck",
+        "h": "cppcheck",
+        "hpp": "cppcheck",
+        "txx": "cppcheck"
     }
 }

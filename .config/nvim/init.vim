@@ -61,7 +61,7 @@ call plug#end()
 
 filetype plugin indent on
 
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-python', 'coc-lists', 'coc-highlight', 'coc-markdownlint', 'coc-vimlsp', 'coc-diagnostic']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-python', 'coc-lists', 'coc-highlight', 'coc-markdownlint', 'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb']
 
 """"""""""""""""""""""""""""""
 " Local config
@@ -161,6 +161,9 @@ nmap <leader>rn <Plug>(coc-rename)
 
 xmap <leader><leader>f  <Plug>(coc-format-selected)
 nmap <leader><leader>f  <Plug>(coc-format-selected)
+
+xmap <leader>x <Plug>(coc-codeaction-cursor)
+nmap <leader>x <Plug>(coc-codeaction-cursor)
 
 nmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <TAB> <Plug>(coc-range-select)
