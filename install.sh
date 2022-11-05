@@ -38,6 +38,7 @@ create_links() {
 
     mkdir -p ~/.config/nvim
     ln -fs ~/.vimrc ~/.config/nvim/init.vim
+    ln -fs `realpath ./nvim/lua` ~/.config/nvim/lua
 }
 
 nvim_python() {

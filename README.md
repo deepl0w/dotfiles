@@ -48,6 +48,7 @@ Create symbolic links to the files (or alternatively you could move the files in
 
     mkdir -p ~/.config/nvim
     ln -fs ~/.vimrc ~/.config/nvim/init.vim
+    ln -fs `realpath ./nvim/lua` ~/.config/nvim/lua
 
 You might need to install some `python` and `pip` if you don't have them:
 
