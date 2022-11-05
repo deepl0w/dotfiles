@@ -9,6 +9,8 @@
 !fonts/*
 !nvim/
 !nvim/*
+!nvim/lua/
+!nvim/lua/*
 
 !install.sh
 
