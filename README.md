@@ -38,17 +38,17 @@ Create symbolic links to the files (or alternatively you could move the files in
 
     ln -fs `realpath ./.zsh` ~
     ln -fs `realpath ./.zshrc` ~
-    ln -fs `realpath ./.vimrc` ~
-    ln -fs `realpath ./.vim` ~
-    ln -fs `realpath ./.peda` ~
     ln -fs `realpath ./.gdbinit` ~
 
     mkdir -p ~/.scripts
     ln -fs `realpath ./.scripts/nvim` ~/.scripts/
 
-    mkdir -p ~/.config/nvim
-    ln -fs ~/.vimrc ~/.config/nvim/init.vim
-    ln -fs `realpath ./nvim/lua` ~/.config/nvim/lua
+    ln -fs `realpath ./.config/nvim` ~/.config
+    ln -fs `realpath ./.config/alacritty` ~/.config/
+    ln -fs `realpath ./.config/nitrogen` ~/.config/
+    ln -fs `realpath ./.config/polybar` ~/.config/
+
+    ln -fs ~/.config/nvim/init.vim ~/.vimrc
 
 You might need to install some `python` and `pip` if you don't have them:
 

@@ -30,15 +30,19 @@ create_links() {
 
     ln -fs `realpath ./.zsh` ~
     ln -fs `realpath ./.zshrc` ~
-    ln -fs `realpath ./.vimrc` ~
+    ln -fs `realpath ./.gdbinit` ~
 
     mkdir -p ~/.scripts
     rm -rf ~/.scripts/nvim &>/dev/null
     ln -fs `realpath ./.scripts/nvim` ~/.scripts/
 
-    mkdir -p ~/.config/nvim
-    ln -fs ~/.vimrc ~/.config/nvim/init.vim
-    ln -fs `realpath ./nvim/lua` ~/.config/nvim/lua
+    ln -fs `realpath ./.config/nvim` ~/.config
+    ln -fs `realpath ./.config/alacritty` ~/.config/
+    ln -fs `realpath ./.config/nitrogen` ~/.config/
+    ln -fs `realpath ./.config/polybar` ~/.config/
+
+    ln -fs ~/.config/nvim/init.vim ~/.vimrc
+
 }
 
 nvim_python() {
@@ -55,6 +59,13 @@ install_fonts() {
     cd ..
 }
 
+install_pwndbg() {
+    git clone https://github.com/pwndbg/pwndbg
+    cd pwndbg
+    ./setup.sh
+    rm -rf pwndbg
+}
+
 
 # update packages
 update_packages
@@ -66,6 +77,9 @@ install_nvim
 nvim_python
 /bin/echo -e "\e[32mNeovim python packages............\e[32mDONE!\e[39m"
 # install zsh and set as default shell
+install_zsh
+/bin/echo -e "\e[32mZsh install.......................\e[32mDONE!\e[39m"
+# install pwndbg
 install_zsh
 /bin/echo -e "\e[32mZsh install.......................\e[32mDONE!\e[39m"
 # create links from the repo directory to the required paths
