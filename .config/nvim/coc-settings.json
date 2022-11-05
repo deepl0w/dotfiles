@@ -1,0 +1,33 @@
+{
+    "languageserver": {
+        "clangd": {
+            "command": "clangd",
+            "filetypes": ["c", "cpp", "objc", "objcpp"],
+            "args": ["-log=verbose", "-index"],
+            "rootPatterns": [".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/", ".svn/"]
+        }
+    },
+
+    "suggest.floatEnable": true,
+    "suggest.enablePreview": true,
+    "suggest.snippetIndicator": "",
+
+    "diagnostic.warningSign": "",
+    "diagnostic.errorSign": "",
+
+    "coc.preferences.colorSupport": true,
+    "coc.preferences.timeout": 100,
+
+    "list.source.grep.args": [
+        "--ignore-file",
+        "~/.ignore"
+    ],
+
+    "diagnostic-languageserver.filetypes": {
+        "c": "cppcheck --enable=all",
+        "cpp": "cppcheck --enable=all",
+        "h": "cppcheck --enable=all",
+        "hpp": "cppcheck --enable=all",
+        "txx": "cppcheck --enable=all"
+    }
+}
