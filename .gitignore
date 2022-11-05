@@ -7,6 +7,8 @@
 !themes/*
 !fonts/
 !fonts/*
+!nvim/
+!nvim/*
 
 !install.sh
 
