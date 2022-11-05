@@ -12,6 +12,8 @@ execute "set t_8b=\e[48;2;%lu;%lu;%lum"
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python2_host_prog = '/usr/bin/python2.7'
 
+let g:vimsyn_embed = 'l'
+
 packadd termdebug
 
 set rtp^=~/.vim
@@ -26,6 +28,13 @@ set nobackup
 filetype off
 
 set rtp+=~/.vim/bundle/vim-plug
+
+# install vim-plug if it doesn't exist
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 
 call plug#begin('~/.vim_runtime/bundle')
 
@@ -530,3 +539,4 @@ set clipboard=unnamedplus
 
 " Delete trailing whitespaces at write
 autocmd BufWritePre * %s/\s\+$//e
+
