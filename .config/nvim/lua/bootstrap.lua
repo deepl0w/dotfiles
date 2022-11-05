@@ -1,10 +1,3 @@
--- required packages
-local PKGS = {
-    "savq/paq-nvim";
-    "nvim-lua/plenary.nvim";
-    "svermeulen/vimpeccable";
-}
-
 local function bootstrap_paq(pkgs)
     local path = vim.fn.stdpath('data') .. '/site/pack/paqs/start/paq-nvim'
     if vim.fn.empty(vim.fn.glob(path)) > 0 then
