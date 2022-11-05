@@ -29,7 +29,7 @@ filetype off
 
 set rtp+=~/.vim/bundle/vim-plug
 
-# install vim-plug if it doesn't exist
+" install vim-plug if it doesn't exist
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
   silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -56,6 +56,11 @@ Plug 'scrooloose/nerdtree'                                      " file explorer
 Plug 'neomake/neomake'                                          " async make
 Plug 'voldikss/vim-floaterm'                                    " floating terminal
 Plug 'tpope/vim-surround'                                       " surround commands foor different brackets
+
+Plug 'mfussenegger/nvim-dap'                                    " Debug Adapter Protocol
+Plug 'rcarriga/nvim-dap-ui'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'theHamsta/nvim-dap-virtual-text'
 
 Plug 'arcticicestudio/nord-vim'                                 " nord color scheme
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
@@ -539,4 +544,31 @@ set clipboard=unnamedplus
 
 " Delete trailing whitespaces at write
 autocmd BufWritePre * %s/\s\+$//e
+
+""""""""""""""""""""""""""""""
+" DAP
+""""""""""""""""""""""""""""""
+
+"nnoremap <silent> <F5> <Cmd>lua require'dap'.continue()<CR>
+"nnoremap <silent> <F10> <Cmd>lua require'dap'.step_over()<CR>
+"nnoremap <silent> <F11> <Cmd>lua require'dap'.step_into()<CR>
+"nnoremap <silent> <F12> <Cmd>lua require'dap'.step_out()<CR>
+"nnoremap <silent> <Leader>b <Cmd>lua require'dap'.toggle_breakpoint()<CR>
+"nnoremap <silent> <Leader>B <Cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
+"nnoremap <silent> <Leader>lp <Cmd>lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>
+"nnoremap <silent> <Leader>dr <Cmd>lua require'dap'.repl.open()<CR>
+"nnoremap <silent> <Leader>dl <Cmd>lua require'dap'.run_last()<CR>
+
+nnoremap <silent> <F6> <Cmd>lua require'dap.ext.vscode'.load_launchjs()<CR>
+
+"lua <<EOF
+"require("dapui").setup()
+"require("dap").adapters.cppdbg = {
+	"type = "executable",
+	"command = "/usr/bin/lldb",
+	"name = "lldb"
+"}
+"require('dap.ext.vscode').load_launchjs(nil, { cppdbg = {'c', 'cpp'} })
+"require("nvim-dap-virtual-text").setup()
+"EOF
 
