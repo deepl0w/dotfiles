@@ -3,12 +3,6 @@ let mapleader = ','
 " clear autocmd
 au!
 
-packadd termdebug
-
-" enable true colors
-execute "set t_8f=\e[38;2;%lu;%lu;%lum"
-execute "set t_8b=\e[48;2;%lu;%lu;%lum"
-
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python2_host_prog = '/usr/bin/python2.7'
 
@@ -57,11 +51,6 @@ Plug 'neomake/neomake'                                          " async make
 Plug 'voldikss/vim-floaterm'                                    " floating terminal
 Plug 'tpope/vim-surround'                                       " surround commands foor different brackets
 
-Plug 'mfussenegger/nvim-dap'                                    " Debug Adapter Protocol
-Plug 'rcarriga/nvim-dap-ui'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'theHamsta/nvim-dap-virtual-text'
-
 Plug 'arcticicestudio/nord-vim'                                 " nord color scheme
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
 Plug 'ryanoasis/vim-devicons'                                   " devicons for files
@@ -103,10 +92,6 @@ inoremap <C-s> <esc>:CocList symbols<cr>
 nnoremap <C-g> :CocList grep<cr>
 
 " Use tab for trigger completion with characters ahead and navigate.
-" NOTE: There's always complete item selected by default, you may want to enable
-" no select by `"suggest.noselect": true` in your configuration file.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
@@ -133,9 +118,10 @@ endif
 let g:coc_snippet_next = '<TAB>'
 let g:coc_snippet_prev = '<S-TAB>'
 
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 nmap gt <Plug>(coc-definition)
 nmap Gt :tab split <bar> <Plug>(coc-definition)<cr>
@@ -553,30 +539,5 @@ set clipboard=unnamedplus
 " Delete trailing whitespaces at write
 autocmd BufWritePre * %s/\s\+$//e
 
-""""""""""""""""""""""""""""""
-" DAP
-""""""""""""""""""""""""""""""
-
-"nnoremap <silent> <F5> <Cmd>lua require'dap'.continue()<CR>
-"nnoremap <silent> <F10> <Cmd>lua require'dap'.step_over()<CR>
-"nnoremap <silent> <F11> <Cmd>lua require'dap'.step_into()<CR>
-"nnoremap <silent> <F12> <Cmd>lua require'dap'.step_out()<CR>
-"nnoremap <silent> <Leader>b <Cmd>lua require'dap'.toggle_breakpoint()<CR>
-"nnoremap <silent> <Leader>B <Cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
-"nnoremap <silent> <Leader>lp <Cmd>lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>
-"nnoremap <silent> <Leader>dr <Cmd>lua require'dap'.repl.open()<CR>
-"nnoremap <silent> <Leader>dl <Cmd>lua require'dap'.run_last()<CR>
-
-nnoremap <silent> <F6> <Cmd>lua require'dap.ext.vscode'.load_launchjs()<CR>
-
-"lua <<EOF
-"require("dapui").setup()
-"require("dap").adapters.cppdbg = {
-	"type = "executable",
-	"command = "/usr/bin/lldb",
-	"name = "lldb"
-"}
-"require('dap.ext.vscode').load_launchjs(nil, { cppdbg = {'c', 'cpp'} })
-"require("nvim-dap-virtual-text").setup()
-"EOF
-
+" Load lua config
+lua require("init")
