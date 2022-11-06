@@ -33,7 +33,6 @@ endif
 call plug#begin('~/.vim_runtime/bundle')
 
 Plug 'rbong/vim-crystalline'                                    " faster airline
-Plug 'majutsushi/tagbar'                                        " tagbar
 Plug 'tpope/vim-fugitive'                                       " git wrapper
 Plug 'easymotion/vim-easymotion'                                " easy movement
 Plug 'sickill/vim-pasta'                                        " pasting in vim with indentation adjusted
@@ -46,7 +45,7 @@ Plug 'PotatoesMaster/i3-vim-syntax'                             " i3 syntax high
 Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
 Plug 'amiorin/vim-project'                                      " define projects
-Plug 'scrooloose/nerdtree'                                      " file explorer
+Plug 'cdelledonne/vim-cmake'                                    " cmake project
 Plug 'neomake/neomake'                                          " async make
 Plug 'voldikss/vim-floaterm'                                    " floating terminal
 Plug 'tpope/vim-surround'                                       " surround commands foor different brackets
@@ -61,7 +60,7 @@ call plug#end()
 
 filetype plugin indent on
 
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-python', 'coc-lists', 'coc-highlight', 'coc-markdownlint', 'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-python', 'coc-lists', 'coc-highlight', 'coc-markdownlint', 'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake']
 
 """"""""""""""""""""""""""""""
 " Local config
@@ -73,7 +72,7 @@ endif
 """"""""""""""""""""""""""""""
 " Float Term
 """"""""""""""""""""""""""""""
-let g:floaterm_keymap_toggle = '<A-`>'
+let g:floaterm_keymap_toggle = '<F11>'
 let g:floaterm_position = 'center'
 let g:floaterm_winblend = 0
 
@@ -82,12 +81,8 @@ let g:floaterm_winblend = 0
 """"""""""""""""""""""""""""""
 let g:neomake_open_list = 2
 
-" CtrlP replacement
-nnoremap <C-p> :CocList files<cr>
-inoremap <C-p> <esc>:CocList files<cr>
-
-nnoremap <C-s> :CocList symbols<cr>
-inoremap <C-s> <esc>:CocList symbols<cr>
+"nnoremap <C-s> :CocList symbols<cr>
+"inoremap <C-s> <esc>:CocList symbols<cr>
 
 nnoremap <C-g> :CocList grep<cr>
 
@@ -148,7 +143,7 @@ nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
 " Find symbol of current document
 nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
 " Search workspace symbols
-nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+"nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
 nnoremap <silent> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
@@ -185,12 +180,20 @@ xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
 nnoremap <leader>gd :Gvdiffsplit<CR>
 
 """"""""""""""""""""""""""""""
-" IDE UI
+" NeoMake
 """"""""""""""""""""""""""""""
-let NERDTreeShowHidden=0
-map <leader><leader>n :NERDTreeToggle<cr>
-nnoremap <leader><leader>t :TagbarToggle<CR>
 nnoremap <leader><leader>m :execute "NeomakeSh " . &makeprg<CR>
+
+""""""""""""""""""""""""""""""
+" CMake
+""""""""""""""""""""""""""""""
+nnoremap <leader><leader>cg <Plug>(CMakeGenerate)
+nnoremap <leader><leader>cb <Plug>(CMakeBuild)
+nnoremap <leader><leader>cc <Plug><CMakeConsole)
+
+let g:cmake_build_dir_location = 'bin'
+let g:cmake_root_markers = ['.git', '.svn', 'CMakeLists.txt', '.vscode']
+let g:cmake_link_compile_commands = 1
 
 """"""""""""""""""""""""""""""
 " Easy Motion

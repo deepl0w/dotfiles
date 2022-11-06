@@ -10,6 +10,9 @@ local PKGS = {
     "rcarriga/nvim-dap-ui";
     "nvim-treesitter/nvim-treesitter";
     "theHamsta/nvim-dap-virtual-text";
+
+    "nvim-telescope/telescope.nvim"; -- Fuzzy finder with nice ui
+    "fannheyward/telescope-coc.nvim"; -- Integrate coc outputs in telescope
 }
 
 -- Install packages package manager if not installed
@@ -19,6 +22,36 @@ vim.cmd "packadd paq-nvim"
 require("paq")(PKGS)
 
 --local vimp = require('vimp')
+
+------------------------------
+-- Telescope
+------------------------------
+require('telescope').setup{
+  defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+  },
+  pickers = {
+    -- Default configuration for builtin pickers goes here:
+    -- picker_name = {
+    --   picker_config_key = value,
+    --   ...
+    -- }
+    -- Now the picker_config_key will be applied every time you call this
+    -- builtin picker
+  },
+  extensions = {
+    coc = {
+        prefer_location = true
+    }
+  }
+}
+require('telescope').load_extension('coc')
+
+local telescope = require('telescope')
+local telescope_builtin = require('telescope.builtin')
+vim.keymap.set('n', '<C-p>', telescope_builtin.find_files, {})
+--vim.keymap.set('n', '<C-s>', telescope.extensions.coc.workspace_symbols , {})
 
 ------------------------------
 -- DAP
