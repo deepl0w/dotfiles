@@ -192,7 +192,7 @@ nnoremap <leader><leader>cb <Plug>(CMakeBuild)
 nnoremap <leader><leader>cc <Plug><CMakeConsole)
 
 let g:cmake_build_dir_location = 'bin'
-let g:cmake_root_markers = ['.git', '.svn', 'CMakeLists.txt', '.vscode']
+let g:cmake_root_markers = ['.git', '.svn', '.vscode', '.proj_root']
 let g:cmake_link_compile_commands = 1
 
 """"""""""""""""""""""""""""""
