@@ -45,8 +45,6 @@ Plug 'PotatoesMaster/i3-vim-syntax'                             " i3 syntax high
 Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
 Plug 'amiorin/vim-project'                                      " define projects
-Plug 'cdelledonne/vim-cmake'                                    " cmake project
-Plug 'neomake/neomake'                                          " async make
 Plug 'voldikss/vim-floaterm'                                    " floating terminal
 Plug 'tpope/vim-surround'                                       " surround commands foor different brackets
 
@@ -72,17 +70,9 @@ endif
 """"""""""""""""""""""""""""""
 " Float Term
 """"""""""""""""""""""""""""""
-let g:floaterm_keymap_toggle = '<F11>'
+let g:floaterm_keymap_toggle = '<leader><leader>t'
 let g:floaterm_position = 'center'
 let g:floaterm_winblend = 0
-
-""""""""""""""""""""""""""""""
-" NeoMake
-""""""""""""""""""""""""""""""
-let g:neomake_open_list = 2
-
-"nnoremap <C-s> :CocList symbols<cr>
-"inoremap <C-s> <esc>:CocList symbols<cr>
 
 nnoremap <C-g> :CocList grep<cr>
 
@@ -164,6 +154,9 @@ nmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
 
+"nnoremap <C-s> :CocList symbols<cr>
+"inoremap <C-s> <esc>:CocList symbols<cr>
+
 "augroup mygroup
     "autocmd!
     "" Setup formatexpr specified filetype(s).
@@ -178,22 +171,6 @@ xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
 " Git Fugitive
 """"""""""""""""""""""""""""""
 nnoremap <leader>gd :Gvdiffsplit<CR>
-
-""""""""""""""""""""""""""""""
-" NeoMake
-""""""""""""""""""""""""""""""
-nnoremap <leader><leader>m :execute "NeomakeSh " . &makeprg<CR>
-
-""""""""""""""""""""""""""""""
-" CMake
-""""""""""""""""""""""""""""""
-nnoremap <leader><leader>cg <Plug>(CMakeGenerate)
-nnoremap <leader><leader>cb <Plug>(CMakeBuild)
-nnoremap <leader><leader>cc <Plug><CMakeConsole)
-
-let g:cmake_build_dir_location = 'bin'
-let g:cmake_root_markers = ['.git', '.svn', '.vscode', '.proj_root']
-let g:cmake_link_compile_commands = 1
 
 """"""""""""""""""""""""""""""
 " Easy Motion
