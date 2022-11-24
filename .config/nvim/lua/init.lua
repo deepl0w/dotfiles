@@ -7,6 +7,7 @@ local PKGS = {
     "svermeulen/vimpeccable";   -- Lua API map keys
 
     "mfussenegger/nvim-dap";    -- Debug Adapter Protocol
+    "rcarriga/nvim-dap-python";
     "rcarriga/nvim-dap-ui";
     "nvim-treesitter/nvim-treesitter";
     "theHamsta/nvim-dap-virtual-text";
@@ -60,12 +61,27 @@ vim.keymap.set('n', '<C-p>', telescope_builtin.find_files, {})
 local dap = require("dap")
 local dapui = require("dapui")
 require("dapui").setup()
+require("nvim-dap-virtual-text").setup()
+require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
 
 dap.adapters.cppdbg = {
     id = 'cppdbg',
     type = "executable",
     command = tostring(Path:new(Path.path.home, '.vscode/extensions/ms-vscode.cpptools-1.12.4-linux-x64/debugAdapters/bin/OpenDebugAD7'))
 }
+
+dap.configurations.python = {
+    {
+        type = 'python',
+        request = 'launch',
+        name = 'Launch file',
+        program = '${file}',
+        pythonPath = function()
+            return '/usr/bin/python'
+        end
+    }
+}
+
 dap.configurations.cpp = {
   {
     name = "Launch file",
@@ -99,9 +115,17 @@ dap.configurations.cpp = {
   },
 }
 
-require("nvim-dap-virtual-text").setup()
+vim.fn.sign_define('DapBreakpoint', {text='🛑', texthl='', linehl='', numhl=''})
 
-vim.keymap.set("n", "<F5>",       dap.continue)
+-- wrapper to load launch.json if it exists when starting debug
+local function dap_continue_with_launchjs()
+    if not dap.session() then
+        require('dap.ext.vscode').load_launchjs(nil, { cppdbg = {'c', 'cpp'} })
+    end
+    dap.continue()
+end
+
+vim.keymap.set("n", "<F5>",       dap_continue_with_launchjs)
 vim.keymap.set("n", "<F10>",      dap.step_over)
 vim.keymap.set("n", "<F11>",      dap.step_into)
 vim.keymap.set("n", "<F12>",      dap.step_out)
@@ -110,14 +134,15 @@ vim.keymap.set("n", "<leader>dr", dap.repl.toggle)
 vim.keymap.set("n", "<leader>dl", dap.run_last)
 vim.keymap.set("n", "<leader>du", dapui.toggle)
 
+
 dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.open()
+    dapui.open()
 end
 dap.listeners.before.event_terminated["dapui_config"] = function()
-  dapui.close()
+    dapui.close()
 end
 dap.listeners.before.event_exited["dapui_config"] = function()
-  dapui.close()
+    dapui.close()
 end
 
 ------------------------------
