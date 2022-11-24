@@ -379,8 +379,8 @@ endtry
 
 " paste mode
 """"""""""""""""""""""""""""""
-command! Ev tabedit $MYVIMRC
-command! Sv source $MYVIMRC
+command! Ev tabedit $MYVIMRC | vsplit $HOME/.config/nvim/lua/init.lua
+command! Sv source $MYVIMRC | luafile $HOME/.config/nvim/lua/init.lua
 
 command! ToggleColorColumn if &colorcolumn == "" | setlocal colorcolumn=81 | else | setlocal colorcolumn= | endif
 map <A-c> :ToggleColorColumn<CR>
