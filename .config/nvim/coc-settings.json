@@ -8,7 +8,7 @@
         }
     },
 
-    "workspace.rootPatterns": [ ".git", ".svn", "compile_commands.json", ".hg", ".projections.json" ],
+    "python.condaPath": "/opt/anaconda2/bin/conda",
 
     "suggest.virtualText": true,
     "suggest.snippetIndicator": "",
