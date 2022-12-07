@@ -154,8 +154,8 @@ nmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
 
-"nnoremap <C-s> :CocList symbols<cr>
-"inoremap <C-s> <esc>:CocList symbols<cr>
+nnoremap <C-s> :CocList symbols<cr>
+inoremap <C-s> <esc>:CocList symbols<cr>
 
 "augroup mygroup
     "autocmd!

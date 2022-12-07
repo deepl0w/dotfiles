@@ -4,11 +4,12 @@
             "command": "clangd",
             "filetypes": ["c", "cpp", "objc", "objcpp"],
             "args": ["-log=verbose", "-index"],
-            "rootPatterns": [".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/", ".svn/"]
+            "rootPatterns": [".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/", ".svn/", ".vscode/"]
         }
     },
 
     "python.condaPath": "/opt/anaconda2/bin/conda",
+    "workspace.rootPatterns": [ ".git", ".svn", ".vscode", "compile_commands.json", ".hg", ".projections.json" ],
 
     "suggest.virtualText": true,
     "suggest.snippetIndicator": "",
@@ -38,7 +39,7 @@
             "debounce": 100,
             "offsetLine": 0,
             "offsetColumn": 0,
-            "rootPatterns": [".ccls", "compile_commands.json"],
+            "rootPatterns": [".ccls", "compile_commands.json", ".vscode"],
             "args": ["--project=compile_commands.json", "--enable=warning,performance,portability,missingInclude,information"],
             "ignore": [".git", "bin", "build"],
             "formatPattern": [
