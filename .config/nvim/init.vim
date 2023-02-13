@@ -52,7 +52,7 @@ Plug 'arcticicestudio/nord-vim'                                 " nord color sch
 Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
 Plug 'ryanoasis/vim-devicons'                                   " devicons for files
 
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
 
