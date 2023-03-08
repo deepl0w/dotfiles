@@ -44,7 +44,6 @@ Plug 'bfrg/vim-cpp-modern'                                      " bettert c and 
 Plug 'PotatoesMaster/i3-vim-syntax'                             " i3 syntax highlights
 Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
-Plug 'amiorin/vim-project'                                      " define projects
 Plug 'voldikss/vim-floaterm'                                    " floating terminal
 Plug 'tpope/vim-surround'                                       " surround commands foor different brackets
 
@@ -74,7 +73,7 @@ let g:floaterm_keymap_toggle = '<leader><leader>t'
 let g:floaterm_position = 'center'
 let g:floaterm_winblend = 0
 
-nnoremap <C-g> :CocList grep<cr>
+"nnoremap <C-g> :CocList grep<cr>
 
 " Use tab for trigger completion with characters ahead and navigate.
 inoremap <silent><expr> <TAB>
@@ -108,9 +107,8 @@ let g:coc_snippet_prev = '<S-TAB>'
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-nmap gt <Plug>(coc-definition)
-nmap Gt :tab split <bar> <Plug>(coc-definition)<cr>
-nmap gr <Plug>(coc-references)
+nmap gt <cmd>Telescope coc definitions<cr>
+nmap gr <cmd>Telescope coc references<cr>
 
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -125,11 +123,11 @@ endfunction
 
 " Using CocList
 " Show all diagnostics
-nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+nnoremap <silent> <space>a  :<C-u>Telescope coc diagnostics<cr>
 " Manage extensions
 nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
 " Show commands
-nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+nnoremap <silent> <space>c  :<C-u>Telescope coc commands<cr>
 " Find symbol of current document
 nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
 " Search workspace symbols
@@ -154,8 +152,9 @@ nmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <TAB> <Plug>(coc-range-select)
 xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
 
-nnoremap <C-s> :CocList symbols<cr>
-inoremap <C-s> <esc>:CocList symbols<cr>
+nnoremap <C-s> :Telescope coc workspace_symbols<cr>
+nnoremap <C-s> :Telescope coc workspace_symbols<cr>
+inoremap <C-s> <esc>:Telescope coc workspace_symbols<cr>
 
 "augroup mygroup
     "autocmd!
@@ -235,6 +234,7 @@ autocmd ColorScheme * highlight CursorLine ctermbg=236
 
 set background=dark
 let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_contrast_light = 'soft'
 let g:gruvbox_bold=1
 let g:gruvbox_italic=1
 let g:gruvbox_underline=1
@@ -514,10 +514,34 @@ function! Wipeout()
   endtry
 endfunction
 
+function! IsWSL()
+  if has("unix")
+    let lines = readfile("/proc/version")
+    if lines[0] =~ "Microsoft"
+      return 1
+    endif
+  endif
+  return 0
+endfunction
+
 " Set clipboard to system clipboard
 """"""""""""""""""""""""""""
-set clipboard=unnamedplus
 
+set clipboard=unnamedplus
+if IsWSL()
+    let g:clipboard = {
+              \   'name': 'win32yank-wsl',
+              \   'copy': {
+              \      '+': 'win32yank.exe -i --crlf',
+              \      '*': 'win32yank.exe -i --crlf',
+              \    },
+              \   'paste': {
+              \      '+': 'win32yank.exe -o --lf',
+              \      '*': 'win32yank.exe -o --lf',
+              \   },
+              \   'cache_enabled': 0,
+              \ }
+endif
 
 " Delete trailing whitespaces at write
 autocmd BufWritePre * %s/\s\+$//e

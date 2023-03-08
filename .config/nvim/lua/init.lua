@@ -15,6 +15,7 @@ local PKGS = {
     "nvim-telescope/telescope.nvim";  -- Fuzzy finder with nice ui
     "fannheyward/telescope-coc.nvim"; -- Integrate coc outputs in telescope
     "Shatur/neovim-tasks";            -- Build/Run tasks
+    "ahmedkhalf/project.nvim";        -- Projects
 }
 
 -- Install packages package manager if not installed
@@ -24,10 +25,11 @@ vim.cmd "packadd paq-nvim"
 require("paq")(PKGS)
 
 local Path = require('plenary.path')
+local Scan = require('plenary.scandir')
 
 ------------------------------
 -- Telescope
-------------------------------
+-----------------------------path-
 require('telescope').setup{
   defaults = {
     -- Default configuration for telescope goes here:
@@ -49,11 +51,26 @@ require('telescope').setup{
   }
 }
 require('telescope').load_extension('coc')
+require('telescope').load_extension('projects')
 
 local telescope = require('telescope')
 local telescope_builtin = require('telescope.builtin')
 vim.keymap.set('n', '<C-p>', telescope_builtin.find_files, {})
---vim.keymap.set('n', '<C-s>', telescope.extensions.coc.workspace_symbols , {})
+vim.keymap.set('n', '<C-g>', telescope_builtin.live_grep, {})
+vim.keymap.set('n', '<C-w>', require('telescope').extensions.projects.projects , {})
+vim.keymap.set('i', '<C-w>', require('telescope').extensions.projects.projects , {})
+vim.keymap.set('t', '<C-w>', require('telescope').extensions.projects.projects , {})
+--vim.keymap.set('n', '<C-s>', require('telescope').extensions.coc.workspace_symbols , {})
+
+vim.keymap.set('n', '<A-h>', '<C-w>h')
+vim.keymap.set('n', '<A-j>', '<C-w>j')
+vim.keymap.set('n', '<A-k>', '<C-w>k')
+vim.keymap.set('n', '<A-l>', '<C-w>l')
+
+vim.keymap.set('t', '<A-h>', '<C-\\><C-n><C-w>h')
+vim.keymap.set('t', '<A-j>', '<C-\\><C-n><C-w>j')
+vim.keymap.set('t', '<A-k>', '<C-\\><C-n><C-w>k')
+vim.keymap.set('t', '<A-l>', '<C-\\><C-n><C-w>l')
 
 ------------------------------
 -- DAP
@@ -64,10 +81,21 @@ require("dapui").setup()
 require("nvim-dap-virtual-text").setup()
 require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
 
+local function vscode_debugger_path()
+    p = Path:new(Path.path.home)
+    vscode_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = "%.vscode"})
+    p = Path:new(vscode_dir[1], 'extensions')
+
+    cpptools_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = 'ms%-vscode%.cpptools'})
+    p = Path:new(cpptools_dir[1], 'debugAdapters', 'bin', 'OpenDebugAD7')
+
+    return p
+end
+
 dap.adapters.cppdbg = {
     id = 'cppdbg',
     type = "executable",
-    command = tostring(Path:new(Path.path.home, '.vscode/extensions/ms-vscode.cpptools-1.12.4-linux-x64/debugAdapters/bin/OpenDebugAD7'))
+    command = tostring(vscode_debugger_path())
 }
 
 dap.configurations.python = {
@@ -167,4 +195,8 @@ require('tasks').setup({
     height = 12, -- Default height.
   },
   dap_open_command = function() return require('dap').repl.open() end,
+})
+
+require("project_nvim").setup({
+    scope_chdir = 'tab'
 })
