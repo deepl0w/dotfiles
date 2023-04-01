@@ -8,13 +8,13 @@ local function bootstrap_paq(pkgs)
             'https://github.com/savq/paq-nvim.git',
             path
         }
-
-        vim.cmd('packadd paq-nvim')
-        local paq = require('paq')
-
-        paq(pkgs)
-        paq.install()
     end
+    vim.cmd('packadd paq-nvim')
+    paq = require('paq')(pkgs)
+    paq.install()
+    paq.clean()
+
+    return paq
 end
 
 return { bootstrap = bootstrap_paq }

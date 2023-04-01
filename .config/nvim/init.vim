@@ -46,8 +46,6 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
 
-filetype plugin indent on
-
 let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-python', 'coc-lists', 'coc-highlight', 'coc-markdownlint', 'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-lua']
 
 """"""""""""""""""""""""""""""
@@ -163,24 +161,7 @@ inoremap <C-s> <esc>:Telescope coc workspace_symbols<cr>
 
 " Run a shell command in background
 function! RunInBackground(cmd)
-
-python << EEOOFF
-
-try:
-    import vim
-    import tempfile
-    import subprocess
-    import os
-
-    subprocess.Popen(
-            vim.eval('a:cmd'),
-            shell = True,
-            universal_newlines = True,
-            stdout=open(os.devnull, 'w'), stderr=subprocess.STDOUT)
-
-except:
-    pass
-EEOOFF
+    :silent ! a:cmd
 endfunction
 
 autocmd CursorHold,CursorHoldI,BufWritePost *.tex
@@ -188,15 +169,6 @@ autocmd CursorHold,CursorHoldI,BufWritePost *.tex
             \ exec 'lcd ' . pth |
             \ call RunInBackground('make') |
             \ lcd -
-
-" persistent undo
-""""""""""""""""""""""""""""""
-try
-    silent !mkdir -p ~/.vim/temp_dirs/undodir >/dev/null 2>&1
-    set undodir=~/.vim/temp_dirs/undodir
-    set undofile
-catch
-endtry
 
 " edit and source configs
 """"""""""""""""""""""""""""""

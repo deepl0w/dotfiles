@@ -33,11 +33,15 @@ local PKGS = {
     "rebelot/kanagawa.nvim";          -- kanagawa colorscheme
 }
 
--- Install packages package manager if not installed
-require("bootstrap").bootstrap(PKGS)
+-- Install packages and package manager if not installed
+local paq = require("bootstrap").bootstrap(PKGS)
 
 local Path = require('plenary.path')
 local Scan = require('plenary.scandir')
+
+local utils = require('utils')
+
+utils.persistent_undo()
 
 require("nvim-surround").setup()
 
