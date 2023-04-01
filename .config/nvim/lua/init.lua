@@ -20,6 +20,15 @@ local PKGS = {
     "folke/noice.nvim";               -- floating windows Ufolke/noice.nvim
     "MunifTanjim/nui.nvim";           --  UI component lib
     "rcarriga/nvim-notify";           -- fancy notification manager
+    "kylechui/nvim-surround";         -- surround fommand for different brackets
+
+    "nvim-lualine/lualine.nvim";      -- status line
+    "akinsho/bufferline.nvim";        -- buffer line
+    "nvim-tree/nvim-web-devicons";    -- dev icons
+    "lewis6991/gitsigns.nvim";        -- giot signs
+
+    "ellisonleao/gruvbox.nvim";       -- gruvbox color scheme
+    "rebelot/kanagawa.nvim";          -- kanagawa colorscheme
 }
 
 -- Install packages package manager if not installed
@@ -30,6 +39,8 @@ require("paq")(PKGS)
 
 local Path = require('plenary.path')
 local Scan = require('plenary.scandir')
+
+require("nvim-surround").setup()
 
 ------------------------------
 -- Telescope
@@ -258,3 +269,33 @@ require("noice").setup({
     lsp_doc_border = false, -- add a border to hover docs and signature help
   },
 })
+
+------------------------------
+-- UI
+------------------------------
+require'nvim-web-devicons'.setup()
+require('gitsigns').setup()
+
+require("gruvbox").setup {
+    contrast = "medium"
+}
+require('kanagawa').setup {
+    compile = true,
+    dimInactive = true
+}
+vim.o.background = "dark" -- or "light" for light mode
+vim.cmd("colorscheme kanagawa")
+
+vim.o.cursorline = true
+vim.opt.fillchars = vim.opt.fillchars + { vert = '|' }
+
+require('lualine').setup {
+}
+require('bufferline').setup {
+    options = {
+        mode = "tabs",
+        separator_style = "slope"
+    }
+}
+
+

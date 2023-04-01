@@ -32,23 +32,15 @@ endif
 
 call plug#begin('~/.vim_runtime/bundle')
 
-Plug 'rbong/vim-crystalline'                                    " faster airline
 Plug 'tpope/vim-fugitive'                                       " git wrapper
-Plug 'sickill/vim-pasta'                                        " pasting in vim with indentation adjusted
 Plug 'xolox/vim-misc'                                           " auto-load vim scripts
 Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
-Plug 'godlygeek/csapprox'                                       " make gvim only coloschemes work transparently in terminal vim
 Plug 'sheerun/vim-polyglot'                                     " enhanced syntax highlights
 Plug 'bfrg/vim-cpp-modern'                                      " bettert c and cpp highlights
 Plug 'PotatoesMaster/i3-vim-syntax'                             " i3 syntax highlights
 Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
 Plug 'voldikss/vim-floaterm'                                    " floating terminal
-Plug 'tpope/vim-surround'                                       " surround commands foor different brackets
-
-Plug 'arcticicestudio/nord-vim'                                 " nord color scheme
-Plug 'morhetz/gruvbox'                                          " gruvbox color scheme
-Plug 'ryanoasis/vim-devicons'                                   " devicons for files
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -79,7 +71,7 @@ inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-hx>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice.
@@ -207,41 +199,7 @@ autocmd CursorHold,CursorHoldI,BufWritePost *.tex
 " UI
 """"""""""""""""""""""""""""""
 syntax on
-set cursorline
-
-set fillchars+=vert:│
-autocmd ColorScheme * highlight VertSplit cterm=NONE ctermbg=NONE
-autocmd ColorScheme * highlight CursorLine ctermbg=236
-
-set background=dark
-let g:gruvbox_contrast_dark = 'medium'
-let g:gruvbox_contrast_light = 'soft'
-let g:gruvbox_bold=1
-let g:gruvbox_italic=1
-let g:gruvbox_underline=1
-let g:gruvbox_italicize_strings=1
-let g:gruvbox_inverse=0
-let g:gruvbox_invert_selection=0
-let g:gruvbox_invert_indent_guides=1
-let g:gruvbox_invert_tabline=1
-
-colorscheme gruvbox
-
-hi CocHighlightText guibg=238 ctermbg=238
-hi link CocErrorSign GruvboxRed
-hi link CocWarningSign GruvboxYellow
-
-hi default CocErrorHighlight   cterm=underline gui=underline
-hi default CocWarningHighlight cterm=underline gui=underline
-
-hi default link CocErrorFloat CocErrorSign
-hi default link CocWarningFloat CocWarningSign
-
-command! Colight set background=light
-command! Codark set background=dark
-
-command! Transp hi Normal ctermbg=None | set nocursorline
-command! Solid set background=dark cursorline
+"set cursorline
 
 set showtabline=2
 set guioptions-=e
@@ -254,61 +212,7 @@ set report=0
 set shortmess+=I
 set wildmenu
 set wildmode=list:longest
-
-let g:webdevicons_enable_nerdtree = 1
-
-""""""""""""""""""""""""""""""
-" Vim-Crystalline
-""""""""""""""""""""""""""""""
-function! MyFiletype() abort
-  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
-endfunction
-
-function! MyFileformat() abort
-  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
-endfunction
-
-function! StatusLine(current, width) abort
-  let l:s = ''
-
-  if a:current
-    let l:s .= crystalline#mode() . crystalline#right_mode_sep('')
-  else
-    let l:s .= '%#CrystallineInactive#'
-  endif
-  let l:s .= ' %f%h%w%m%r '
-  if a:current
-    let l:s .= crystalline#right_sep('', 'Fill') . ' %{FugitiveHead()}'
-  endif
-
-  let l:s .= '%='
-  if a:current
-    "let l:s .= '%{coc#status()}'
-    let l:s .= crystalline#left_sep('', 'Fill') . ' %{&paste ?"PASTE ":""}%{&spell?"SPELL ":""}'
-    let l:s .= crystalline#left_mode_sep('')
-  endif
-  if a:width > 80
-    let l:s .= MyFiletype() . '[%{&fenc!=#""?&fenc:&enc}][' . MyFileformat() . '] %l/%L %c%V %P '
-  else
-    let l:s .= ' '
-  endif
-
-  return l:s
-endfunction
-
-function! TabLabel(buf, max_width) abort
-    let [l:left, l:name, l:short_name, l:right] = crystalline#default_tablabel_parts(a:buf, a:max_width)
-    return l:left . l:short_name . ' ' . WebDevIconsGetFileTypeSymbol(l:name) . (l:right ==# ' ' ? '' : ' ') . l:right
-endfunction
-
-function! TabLine() abort
-    return crystalline#bufferline(0, 0, 1, 1, 'TabLabel', crystalline#default_tabwidth() + 3)
-endfunction
-
-let g:crystalline_enable_sep = 1
-let g:crystalline_statusline_fn = 'StatusLine'
-let g:crystalline_tabline_fn = 'TabLine'
-let g:crystalline_theme = 'gruvbox'
+set termguicolors
 
 """"""""""""""""""""""""""""""
 " Miscellaneous
@@ -440,26 +344,6 @@ autocmd BufNewFile,BufRead * setlocal formatoptions=tcrqnj
 """"""""""""""""""""""""""""""
 autocmd BufNewFile,BufRead *.txx setlocal filetype=cpp
 autocmd BufNewFile,BufRead *.ver setlocal filetype=cpp
-
-" Sudo save
-""""""""""""""""""""""""""""""
-command! Sw w !sudo tee % > /dev/null
-
-" Duplicate current tab
-""""""""""""""""""""""""""""""
-command! -bar Dupt
-      \ let s:sessionoptions = &sessionoptions |
-      \ try |
-      \   let &sessionoptions = 'blank,help,folds,winsize,localoptions' |
-      \   let s:file = tempname() |
-      \   execute 'mksession ' . s:file |
-      \   tabnew |
-      \   execute 'source ' . s:file |
-      \ finally |
-      \   silent call delete(s:file) |
-      \   let &sessionoptions = s:sessionoptions |
-      \   unlet! s:file s:sessionoptions |
-      \ endtry
 
 function! Wipeout()
   " list of *all* buffer numbers
