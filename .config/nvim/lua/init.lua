@@ -16,6 +16,7 @@ local PKGS = {
     "fannheyward/telescope-coc.nvim"; -- Integrate coc outputs in telescope
     "Shatur/neovim-tasks";            -- Build/Run tasks
     "ahmedkhalf/project.nvim";        -- Projects
+    "phaazon/hop.nvim";               -- better easymotion
 }
 
 -- Install packages package manager if not installed
@@ -71,6 +72,37 @@ vim.keymap.set('t', '<A-h>', '<C-\\><C-n><C-w>h')
 vim.keymap.set('t', '<A-j>', '<C-\\><C-n><C-w>j')
 vim.keymap.set('t', '<A-k>', '<C-\\><C-n><C-w>k')
 vim.keymap.set('t', '<A-l>', '<C-\\><C-n><C-w>l')
+
+
+------------------------------
+-- HOP
+------------------------------
+local hop = require('hop')
+local directions = require('hop.hint').HintDirection
+
+vim.keymap.set('', '<leader>w', function()
+  hop.hint_words({ direction = directions.AFTER_CURSOR })
+end, { remap = true })
+
+vim.keymap.set('', '<leader>b', function()
+  hop.hint_words({ direction = directions.BEFORE_CURSOR })
+end, { remap = true })
+
+vim.keymap.set('', '<leader>j', function()
+  hop.hint_lines({ direction = directions.AFTER_CURSOR })
+end, { remap = true })
+
+vim.keymap.set('', '<leader>k', function()
+  hop.hint_lines({ direction = directions.BEFORE_CURSOR })
+end, { remap = true })
+
+vim.keymap.set('', '<leader>/', function()
+  hop.hint_patterns()
+end, { remap = true })
+
+hop.setup {
+    keys = 'asdfjklghvncmxturiewo'
+}
 
 ------------------------------
 -- DAP

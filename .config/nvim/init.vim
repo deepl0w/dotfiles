@@ -34,7 +34,6 @@ call plug#begin('~/.vim_runtime/bundle')
 
 Plug 'rbong/vim-crystalline'                                    " faster airline
 Plug 'tpope/vim-fugitive'                                       " git wrapper
-Plug 'easymotion/vim-easymotion'                                " easy movement
 Plug 'sickill/vim-pasta'                                        " pasting in vim with indentation adjusted
 Plug 'xolox/vim-misc'                                           " auto-load vim scripts
 Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
@@ -170,24 +169,6 @@ inoremap <C-s> <esc>:Telescope coc workspace_symbols<cr>
 " Git Fugitive
 """"""""""""""""""""""""""""""
 nnoremap <leader>gd :Gvdiffsplit<CR>
-
-""""""""""""""""""""""""""""""
-" Easy Motion
-""""""""""""""""""""""""""""""
-map <Leader> <Plug>(easymotion-prefix)
-map s <Plug>(easymotion-s2)
-
-"map / <Plug>(easymotion-sn)
-"omap / <Plug>(easymotion-tn)
-
-"map n <Plug>(easymotion-next)
-"map N <Plug>(easymotion-prev)
-
-map <Leader>l <Plug>(easymotion-lineforward)
-map <Leader>h <Plug>(easymotion-linebackward)
-
-let g:EasyMotion_keys = 'asdfjklghvncmxturiewo'
-let g:EasyMotion_smartcase = 1
 
 """"""""""""""""""""""""""""""
 " Vim Latex Live Previewer
