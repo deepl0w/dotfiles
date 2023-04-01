@@ -6,12 +6,12 @@ local PKGS = {
 
     "svermeulen/vimpeccable";   -- Lua API map keys
 
-    "kdheepak/lazygit.nvim";    -- git integration
+    "kdheepak/lazygit.nvim";            -- git integration
+    "nvim-treesitter/nvim-treesitter";  -- parser
 
     "mfussenegger/nvim-dap";    -- Debug Adapter Protocol
     "rcarriga/nvim-dap-python";
     "rcarriga/nvim-dap-ui";
-    "nvim-treesitter/nvim-treesitter";
     "theHamsta/nvim-dap-virtual-text";
 
     "nvim-telescope/telescope.nvim";  -- Fuzzy finder with nice ui
@@ -36,14 +36,25 @@ local PKGS = {
 -- Install packages package manager if not installed
 require("bootstrap").bootstrap(PKGS)
 
-vim.cmd "packadd paq-nvim"
-require("paq")(PKGS)
-
 local Path = require('plenary.path')
 local Scan = require('plenary.scandir')
 
 require("nvim-surround").setup()
 
+------------------------------
+-- Treesitter
+------------------------------
+
+require('nvim-treesitter.configs').setup {
+    ensure_installed = { 'c', 'cpp', 'lua', 'vim', 'bash', 'python', 'rust', 'regex', 'markdown', 'markdown_inline' },
+    sync_install = false,
+    auto_install = true,
+
+    highlight = {
+        enable = true
+    },
+    additional_vim_regex_highlighting = true
+}
 ------------------------------
 -- Telescope
 ------------------------------
@@ -69,15 +80,40 @@ require('telescope').setup {
 }
 require('telescope').load_extension('coc')
 require('telescope').load_extension('projects')
+require('telescope').load_extension('lazygit')
 
 local telescope = require('telescope')
 local telescope_builtin = require('telescope.builtin')
 vim.keymap.set('n', '<C-p>', telescope_builtin.find_files, {})
 vim.keymap.set('n', '<C-g>', telescope_builtin.live_grep, {})
+vim.keymap.set('n', '<C-c>', telescope_builtin.colorscheme, {})
 vim.keymap.set('n', '<C-w>', require('telescope').extensions.projects.projects , {})
 vim.keymap.set('i', '<C-w>', require('telescope').extensions.projects.projects , {})
 vim.keymap.set('t', '<C-w>', require('telescope').extensions.projects.projects , {})
---vim.keymap.set('n', '<C-s>', require('telescope').extensions.coc.workspace_symbols , {})
+vim.keymap.set('n', '<C-s>', require('telescope').extensions.coc.workspace_symbols , {})
+
+------------------------------
+-- Utils
+------------------------------
+
+------------------------------
+-- General maps
+------------------------------
+
+-- toggle color column
+vim.keymap.set('', '<A-c>', function()
+    if (vim.wo.colorcolumn ~= '0') then
+        vim.wo.colorcolumn = '0'
+    else
+        vim.wo.colorcolumn = '120'
+    end
+end)
+
+-- treat long lines as multiple lines
+vim.keymap.set('', 'j', 'gj')
+vim.keymap.set('', 'k', 'gk')
+
+vim.keymap.set('n', ';', ':')
 
 vim.keymap.set('n', '<A-h>', '<C-w>h')
 vim.keymap.set('n', '<A-j>', '<C-w>j')
@@ -89,7 +125,21 @@ vim.keymap.set('t', '<A-j>', '<C-\\><C-n><C-w>j')
 vim.keymap.set('t', '<A-k>', '<C-\\><C-n><C-w>k')
 vim.keymap.set('t', '<A-l>', '<C-\\><C-n><C-w>l')
 
+vim.keymap.set('n', '<C-j>', 'gT')
+vim.keymap.set('n', '<C-k>', 'gt')
 
+vim.keymap.set('n', '<A-i>', function()
+    vim.cmd("execute 'silent! tabmove ' . (tabpagenr() - 2)")
+end)
+
+vim.keymap.set('n', '<A-o>', function()
+    vim.cmd("execute 'silent! tabmove ' . (tabpagenr() + 1)")
+end)
+
+
+vim.keymap.set('n', '<space>', 'za')
+
+vim.keymap.set('n', '<leader>gg', function () vim.cmd('LazyGit') end)
 ------------------------------
 -- HOP
 ------------------------------
@@ -264,11 +314,10 @@ require("noice").setup({
   },
   -- you can enable a preset for easier configuration
   presets = {
-    bottom_search = true, -- use a classic bottom cmdline for search
-    command_palette = true, -- position the cmdline and popupmenu together
-    long_message_to_split = true, -- long messages will be sent to a split
-    inc_rename = false, -- enables an input dialog for inc-rename.nvim
-    lsp_doc_border = false, -- add a border to hover docs and signature help
+    command_palette = true,         -- position the cmdline and popupmenu together
+    long_message_to_split = true,   -- long messages will be sent to a split
+    inc_rename = false,             -- enables an input dialog for inc-rename.nvim
+    lsp_doc_border = false,         -- add a border to hover docs and signature help
   },
 })
 
@@ -287,21 +336,19 @@ require('kanagawa').setup {
     compile = true,
     dimInactive = true
 }
-vim.o.background = "dark" -- or "light" for light mode
 vim.cmd("colorscheme kanagawa")
 
 vim.o.cursorline = true
 vim.o.report = 1
 vim.o.number = false
 
-vim.o.wildmenu = true
-vim.opt.wildmode = { list = "longest" }
+vim.opt.wildmenu = true
+vim.opt.wildmode = "list:longest,full"
 
 vim.opt.fillchars = vim.opt.fillchars + { vert = '|' }
 vim.opt.shortmess = vim.opt.shortmess + 'I'
 
-require('lualine').setup {
-}
+require('lualine').setup()
 require('bufferline').setup {
     options = {
         mode = "tabs",
@@ -322,4 +369,27 @@ vim.o.splitright = true
 vim.o.exrc = true
 vim.o.secure = true
 
+-- folds and tabs
+vim.opt.foldcolumn = '0'
+vim.o.foldlevelstart = 99
+vim.o.foldmethod = 'indent'
+vim.o.cindent = true
+vim.o.shiftwidth = 4
+vim.o.smarttab = true
+vim.o.tabstop = 4
+vim.o.softtabstop = 4
+vim.o.expandtab = true
+vim.o.list = true
+vim.opt.listchars['tab'] = '»'
 
+-- text editing and searching
+vim.o.smartcase = true
+vim.o.ignorecase = true
+vim.o.incsearch = true
+vim.o.icm = 'nosplit'
+vim.o.showmatch = true
+vim.o.matchtime = 2
+vim.o.backspace = [[eol,start,indent]]
+
+-- cursor always in the center
+vim.o.scrolloff = 999

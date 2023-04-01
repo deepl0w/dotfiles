@@ -34,8 +34,9 @@ call plug#begin('~/.vim_runtime/bundle')
 
 Plug 'xolox/vim-misc'                                           " auto-load vim scripts
 Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
-Plug 'sheerun/vim-polyglot'                                     " enhanced syntax highlights
-Plug 'bfrg/vim-cpp-modern'                                      " bettert c and cpp highlights
+Plug 'sickill/vim-pasta'                                        " pasting in vim with indentation adjusted
+"Plug 'sheerun/vim-polyglot'                                     " enhanced syntax highlights
+"Plug 'bfrg/vim-cpp-modern'                                      " bettert c and cpp highlights
 Plug 'PotatoesMaster/i3-vim-syntax'                             " i3 syntax highlights
 Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
@@ -47,7 +48,7 @@ call plug#end()
 
 filetype plugin indent on
 
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-python', 'coc-lists', 'coc-highlight', 'coc-markdownlint', 'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-python', 'coc-lists', 'coc-highlight', 'coc-markdownlint', 'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-lua']
 
 """"""""""""""""""""""""""""""
 " Local config
@@ -56,7 +57,7 @@ if !empty(glob("$HOME/.$USER.vimrc"))
     source $HOME/.$USER.vimrc
 endif
 
-""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""
 " Float Term
 """"""""""""""""""""""""""""""
 let g:floaterm_keymap_toggle = '<leader><leader>t'
@@ -70,7 +71,7 @@ inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-hx>"
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice.
@@ -157,11 +158,6 @@ inoremap <C-s> <esc>:Telescope coc workspace_symbols<cr>
 "augroup end
 
 """"""""""""""""""""""""""""""
-" Git Fugitive
-""""""""""""""""""""""""""""""
-nnoremap <leader>gd :Gvdiffsplit<CR>
-
-""""""""""""""""""""""""""""""
 " Vim Latex Live Previewer
 """"""""""""""""""""""""""""""
 
@@ -193,21 +189,6 @@ autocmd CursorHold,CursorHoldI,BufWritePost *.tex
             \ call RunInBackground('make') |
             \ lcd -
 
-" Indent and tab
-""""""""""""""""""""""""""""""
-set foldcolumn=0
-set foldlevelstart=99
-set foldmethod=indent
-set cindent
-set shiftwidth=4
-set smarttab
-set tabstop=4
-set softtabstop=4
-set expandtab
-set list
-set listchars=tab:»\ ,
-filetype plugin indent on
-
 " persistent undo
 """"""""""""""""""""""""""""""
 try
@@ -217,45 +198,10 @@ try
 catch
 endtry
 
-" paste mode
+" edit and source configs
 """"""""""""""""""""""""""""""
 command! Ev tabedit $MYVIMRC | vsplit $HOME/.config/nvim/lua/init.lua
 command! Sv source $MYVIMRC | luafile $HOME/.config/nvim/lua/init.lua
-
-command! ToggleColorColumn if &colorcolumn == "" | setlocal colorcolumn=81 | else | setlocal colorcolumn= | endif
-map <A-c> :ToggleColorColumn<CR>
-
-" Toggle folding
-""""""""""""""""""""""""""""""
-"nnoremap <space> za
-
-" Cursor always in the center
-""""""""""""""""""""""""""""""
-set scrolloff=999
-
-" Navigation shortcuts
-""""""""""""""""""""""""""""""
-" treat long lines as multiple lines
-map j gj
-map k gk
-
-nnoremap ; :
-
-nnoremap <A-h> <C-w>h
-nnoremap <A-j> <C-w>j
-nnoremap <A-k> <C-w>k
-nnoremap <A-l> <C-w>l
-
-" Switch between tabs
-nnoremap <C-j> gT
-nnoremap <C-k> gt
-
-" Move tabs
-nnoremap <silent> <A-i> :execute 'silent! tabmove ' . (tabpagenr() - 2)<CR>
-nnoremap <silent> <A-o> :execute 'silent! tabmove ' . (tabpagenr() + 1)<CR>
-
-" Escape
-nnoremap <ESC> a
 
 if has ('nvim')
     tnoremap <ESC> <C-\><C-n>
@@ -285,14 +231,6 @@ endif
 
 " Text editing and searching behavior
 """""""""""""""""""""""""""""""""""""
-setglobal modeline
-set smartcase
-set ignorecase
-set incsearch
-set icm=nosplit
-set showmatch
-set matchtime=2
-set backspace=eol,start,indent
 autocmd BufNewFile,BufRead * setlocal textwidth=0
 autocmd BufNewFile,BufRead * setlocal formatoptions=tcrqnj
 
