@@ -331,7 +331,6 @@ set splitright
 set exrc
 set secure
 "set ttyfast
-set lazyredraw
 let loaded_matchparen = 1
 
 " Indent and tab

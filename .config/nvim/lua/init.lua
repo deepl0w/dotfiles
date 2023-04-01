@@ -17,6 +17,9 @@ local PKGS = {
     "Shatur/neovim-tasks";            -- Build/Run tasks
     "ahmedkhalf/project.nvim";        -- Projects
     "phaazon/hop.nvim";               -- better easymotion
+    "folke/noice.nvim";               -- floating windows Ufolke/noice.nvim
+    "MunifTanjim/nui.nvim";           --  UI component lib
+    "rcarriga/nvim-notify";           -- fancy notification manager
 }
 
 -- Install packages package manager if not installed
@@ -30,8 +33,8 @@ local Scan = require('plenary.scandir')
 
 ------------------------------
 -- Telescope
------------------------------path-
-require('telescope').setup{
+------------------------------
+require('telescope').setup {
   defaults = {
     -- Default configuration for telescope goes here:
     -- config_key = value,
@@ -231,4 +234,27 @@ require('tasks').setup({
 
 require("project_nvim").setup({
     scope_chdir = 'tab'
+})
+
+------------------------------
+-- noice
+------------------------------
+
+require("noice").setup({
+  lsp = {
+    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+    override = {
+      ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+      ["vim.lsp.util.stylize_markdown"] = true,
+      ["cmp.entry.get_documentation"] = true,
+    },
+  },
+  -- you can enable a preset for easier configuration
+  presets = {
+    bottom_search = true, -- use a classic bottom cmdline for search
+    command_palette = true, -- position the cmdline and popupmenu together
+    long_message_to_split = true, -- long messages will be sent to a split
+    inc_rename = false, -- enables an input dialog for inc-rename.nvim
+    lsp_doc_border = false, -- add a border to hover docs and signature help
+  },
 })
