@@ -6,6 +6,8 @@ local PKGS = {
 
     "svermeulen/vimpeccable";   -- Lua API map keys
 
+    "kdheepak/lazygit.nvim";    -- git integration
+
     "mfussenegger/nvim-dap";    -- Debug Adapter Protocol
     "rcarriga/nvim-dap-python";
     "rcarriga/nvim-dap-ui";
@@ -273,6 +275,8 @@ require("noice").setup({
 ------------------------------
 -- UI
 ------------------------------
+vim.o.termguicolors = true
+
 require'nvim-web-devicons'.setup()
 require('gitsigns').setup()
 
@@ -287,7 +291,14 @@ vim.o.background = "dark" -- or "light" for light mode
 vim.cmd("colorscheme kanagawa")
 
 vim.o.cursorline = true
+vim.o.report = 1
+vim.o.number = false
+
+vim.o.wildmenu = true
+vim.opt.wildmode = { list = "longest" }
+
 vim.opt.fillchars = vim.opt.fillchars + { vert = '|' }
+vim.opt.shortmess = vim.opt.shortmess + 'I'
 
 require('lualine').setup {
 }
@@ -297,5 +308,18 @@ require('bufferline').setup {
         separator_style = "slope"
     }
 }
+
+------------------------------
+-- General
+------------------------------
+vim.o.history = 1000
+vim.o.mouse = 'a'
+vim.o.ttimeoutlen = 0
+vim.o.timeoutlen = 500
+vim.o.updatetime = 300
+vim.o.splitbelow = true
+vim.o.splitright = true
+vim.o.exrc = true
+vim.o.secure = true
 
 

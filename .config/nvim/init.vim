@@ -32,7 +32,6 @@ endif
 
 call plug#begin('~/.vim_runtime/bundle')
 
-Plug 'tpope/vim-fugitive'                                       " git wrapper
 Plug 'xolox/vim-misc'                                           " auto-load vim scripts
 Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
 Plug 'sheerun/vim-polyglot'                                     " enhanced syntax highlights
@@ -193,49 +192,6 @@ autocmd CursorHold,CursorHoldI,BufWritePost *.tex
             \ exec 'lcd ' . pth |
             \ call RunInBackground('make') |
             \ lcd -
-
-
-""""""""""""""""""""""""""""""
-" UI
-""""""""""""""""""""""""""""""
-syntax on
-"set cursorline
-
-set showtabline=2
-set guioptions-=e
-set laststatus=2
-
-set ruler
-set showcmd
-set nonumber
-set report=0
-set shortmess+=I
-set wildmenu
-set wildmode=list:longest
-set termguicolors
-
-""""""""""""""""""""""""""""""
-" Miscellaneous
-""""""""""""""""""""""""""""""
-
-" General
-""""""""""""""""""""""""""""""
-set history=1000
-set mouse=a
-set hidden
-set noshowmode
-set noerrorbells
-set novisualbell
-set ttimeout
-set ttimeoutlen=0
-set timeoutlen=500
-set updatetime=300
-set splitbelow
-set splitright
-set exrc
-set secure
-"set ttyfast
-let loaded_matchparen = 1
 
 " Indent and tab
 """"""""""""""""""""""""""""""
