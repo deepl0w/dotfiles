@@ -374,10 +374,11 @@ vim.o.exrc = true
 vim.o.secure = true
 
 -- folds and tabs
-vim.opt.foldcolumn = '0'
-vim.o.foldlevelstart = 99
-vim.o.foldmethod = 'indent'
-vim.o.cindent = true
+vim.o.foldlevelstart = 9
+vim.o.foldmethod = 'expr'
+vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.o.foldenable = false
+
 vim.o.shiftwidth = 4
 vim.o.smarttab = true
 vim.o.tabstop = 4
