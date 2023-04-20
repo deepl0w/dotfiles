@@ -65,14 +65,8 @@ install_fonts() {
 
 install_pwndbg() {
     if ! command -v gdb &>/dev/null; then
-        sudo pacman -S gdb
+        sudo pacman -S gdb pwndbg
     fi
-
-    git clone https://github.com/pwndbg/pwndbg
-    pushd pwndbg
-    ./setup.sh
-    popd
-    rm -rf pwndbg
 }
 
 
