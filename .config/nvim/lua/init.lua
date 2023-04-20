@@ -356,7 +356,8 @@ require('lualine').setup()
 require('bufferline').setup {
     options = {
         mode = "tabs",
-        separator_style = "slope"
+        separator_style = "slope",
+        tab_size = 20,
     }
 }
 
