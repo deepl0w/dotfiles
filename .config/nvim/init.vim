@@ -35,8 +35,6 @@ call plug#begin('~/.vim_runtime/bundle')
 Plug 'xolox/vim-misc'                                           " auto-load vim scripts
 Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
 Plug 'sickill/vim-pasta'                                        " pasting in vim with indentation adjusted
-"Plug 'sheerun/vim-polyglot'                                     " enhanced syntax highlights
-"Plug 'bfrg/vim-cpp-modern'                                      " bettert c and cpp highlights
 Plug 'PotatoesMaster/i3-vim-syntax'                             " i3 syntax highlights
 Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
