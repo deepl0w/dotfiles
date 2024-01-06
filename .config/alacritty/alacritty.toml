@@ -1,8 +1,4 @@
-dynamic_title = true
-enable_experimental_conpty_backend = false
 live_config_reload = true
-tabspaces = 4
-theme = "Kanagawa"
 
 [bell]
 animation = "EaseOutExpo"
@@ -86,17 +82,7 @@ hide_when_typing = false
 action = "PasteSelection"
 mouse = "Middle"
 
-[mouse.double_click]
-threshold = 300
-
-[mouse.hints]
-modifiers = "None"
-
-[mouse.triple_click]
-threshold = 300
-
 [scrolling]
-faux_multiplier = 3
 history = 10000
 multiplier = 3
 
@@ -105,6 +91,7 @@ save_to_clipboard = false
 semantic_escape_chars = ",│`|:\"' ()[]{}<>"
 
 [window]
+dynamic_title = true
 decorations = "full"
 dynamic_padding = false
 opacity = 1.0
