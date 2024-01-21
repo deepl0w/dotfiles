@@ -10,11 +10,7 @@ local function bootstrap_paq(pkgs)
         }
     end
     vim.cmd('packadd paq-nvim')
-    paq = require('paq')(pkgs)
-    paq.install()
-    paq.clean()
-
-    return paq
+    return require('paq')(pkgs)
 end
 
 return { bootstrap = bootstrap_paq }

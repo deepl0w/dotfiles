@@ -111,10 +111,23 @@ vim.keymap.set('n', '<C-w>', telescope.extensions.projects.projects , {})
 vim.keymap.set('i', '<C-w>', telescope.extensions.projects.projects , {})
 vim.keymap.set('t', '<C-w>', telescope.extensions.projects.projects , {})
 vim.keymap.set('n', '<C-s>', function () vim.cmd('Telescope coc workspace_symbols') end , {})
+vim.keymap.set('n', 'gt', function () vim.cmd('Telescope coc definitions') end , {})
+vim.keymap.set('n', 'gr', function () vim.cmd('Telescope coc references') end , {})
+vim.keymap.set('n', '<space>a', function () vim.cmd('Telescope coc diagnostics') end, { silent = true })
+vim.keymap.set('n', '<space>c', function () vim.cmd('Telescope coc commands') end, { silent = true })
 
 ------------------------------
--- Utils
+-- Coc
 ------------------------------
+
+vim.keymap.set('n', '<leader>rn', '<plug>(coc-rename)', {})
+vim.keymap.set('n', '<leader><leader>f', '<plug>(coc-format-selected)', {})
+vim.keymap.set('x', '<leader><leader>f', '<plug>(coc-format-selected)', {})
+vim.keymap.set('n', '<leader>x', '<plug>(coc-codeaction-cursor)', {})
+vim.keymap.set('x', '<leader>x', '<plug>(coc-codeaction-cursor)', {})
+vim.keymap.set('n', '<tab>', '<plug>(coc-range-select)', { silent = true })
+vim.keymap.set('x', '<tab>', '<plug>(coc-range-select)', { silent = true })
+vim.keymap.set('x', '<s-tab>', '<plug>(coc-range-select-backword)', { silent = true })
 
 ------------------------------
 -- General maps
@@ -140,6 +153,7 @@ vim.keymap.set('n', '<A-j>', '<C-w>j')
 vim.keymap.set('n', '<A-k>', '<C-w>k')
 vim.keymap.set('n', '<A-l>', '<C-w>l')
 
+vim.keymap.set("t", "<esc>", "<C-\\><C-n>")
 vim.keymap.set('t', '<A-h>', '<C-\\><C-n><C-w>h')
 vim.keymap.set('t', '<A-j>', '<C-\\><C-n><C-w>j')
 vim.keymap.set('t', '<A-k>', '<C-\\><C-n><C-w>k')
@@ -147,6 +161,9 @@ vim.keymap.set('t', '<A-l>', '<C-\\><C-n><C-w>l')
 
 vim.keymap.set('n', '<C-j>', 'gT')
 vim.keymap.set('n', '<C-k>', 'gt')
+
+vim.keymap.set('t', '<C-j>', '<C-\\><C-n>gT')
+vim.keymap.set('t', '<C-k>', '<C-\\><C-n>gt')
 
 vim.keymap.set('n', '<A-i>', function()
     vim.cmd("execute 'silent! tabmove ' . (tabpagenr() - 2)")
@@ -156,10 +173,11 @@ vim.keymap.set('n', '<A-o>', function()
     vim.cmd("execute 'silent! tabmove ' . (tabpagenr() + 1)")
 end)
 
-
 vim.keymap.set('n', '<space>', 'za')
 
 vim.keymap.set('n', '<leader>gg', function () vim.cmd('LazyGit') end)
+
+vim.keymap.set('n', 'K', utils.show_documentation)
 ------------------------------
 -- HOP
 ------------------------------
@@ -442,3 +460,61 @@ vim.o.backspace = [[eol,start,indent]]
 -- cursor always in the center
 vim.o.scrolloff = 999
 
+vim.api.nvim_create_user_command('Wipeout', function() utils.wipeout() end, { nargs = 0 })
+
+-- Set clipboard to system clipboard
+vim.opt.clipboard='unnamedplus'
+if utils.is_wsl() then
+    vim.g.clipboard = {
+        name ='win32yank-wsl',
+        copy = {
+            ['+'] = 'win32yank.exe -i --crlf',
+            ['*'] = 'win32yank.exe -i --crlf',
+        },
+        paste = {
+            ['+'] = 'win32yank.exe -o --lf',
+            ['*'] = 'win32yank.exe -o --lf',
+        },
+        cache_enabled = 0,
+    }
+end
+
+------------------------------
+-- Autocmd
+------------------------------
+
+-- Text editing and searching behavior
+vim.api.nvim_create_autocmd({'BufNewFile','BufRead'}, {
+        pattern = '*',
+        callback = function()
+            vim.opt_local.textwidth = 0
+            vim.opt_local.formatoptions = 'tcrqnj'
+        end
+})
+
+-- Language specific
+vim.api.nvim_create_autocmd({'BufNewFile','BufRead'}, {
+        pattern = {'*.txx', '*.ver'},
+        callback = function()
+            vim.opt_local.filetype = 'cpp'
+        end
+})
+
+-- Delete trailing whitespaces at write
+vim.api.nvim_create_autocmd({'BufWritePre'}, {
+        pattern = '*',
+        command = '%s/\\s\\+$//e'
+})
+
+vim.api.nvim_create_autocmd({'BufEnter'}, {
+        pattern = '*',
+        callback = function()
+            if vim.bo.buftype == "terminal" then
+                vim.cmd.startinsert()
+                vim.opt_local.number = false
+                vim.opt_local.scrolloff = 0
+            else
+                vim.opt_local.scrolloff = 8
+            end
+        end
+})
