@@ -15,8 +15,11 @@ local PKGS = {
     "theHamsta/nvim-dap-virtual-text";
 
     "nvim-telescope/telescope.nvim";  -- Fuzzy finder with nice ui
+    "axkirillov/easypick.nvim";        -- Easy telescope pickers
     "fannheyward/telescope-coc.nvim"; -- Integrate coc outputs in telescope
     "Shatur/neovim-tasks";            -- Build/Run tasks
+    "Civitasv/cmake-tools.nvim";      -- CMake integration
+    "stevearc/overseer.nvim";
     "ahmedkhalf/project.nvim";        -- Projects
     "phaazon/hop.nvim";               -- better easymotion
     "folke/noice.nvim";               -- floating windows Ufolke/noice.nvim
@@ -34,7 +37,7 @@ local PKGS = {
 }
 
 -- Install packages and package manager if not installed
-local paq = require("bootstrap").bootstrap(PKGS)
+require("bootstrap").bootstrap(PKGS)
 
 local Path = require('plenary.path')
 local Scan = require('plenary.scandir')
@@ -85,16 +88,29 @@ require('telescope').setup {
 require('telescope').load_extension('coc')
 require('telescope').load_extension('projects')
 require('telescope').load_extension('lazygit')
+require('telescope').load_extension('cmake_tools')
+
+local easypick = require("easypick")
+easypick.setup({
+    pickers = {
+        {
+            name = "ls",
+            command = "ls",
+            previewer = easypick.previewers.default(),
+            action = easypick.actions.nvim_commandf("~/.config/nvim/cmake_build.py %s")
+        },
+    }
+})
 
 local telescope = require('telescope')
 local telescope_builtin = require('telescope.builtin')
 vim.keymap.set('n', '<C-p>', telescope_builtin.find_files, {})
 vim.keymap.set('n', '<C-g>', telescope_builtin.live_grep, {})
 vim.keymap.set('n', '<C-c>', telescope_builtin.colorscheme, {})
-vim.keymap.set('n', '<C-w>', require('telescope').extensions.projects.projects , {})
-vim.keymap.set('i', '<C-w>', require('telescope').extensions.projects.projects , {})
-vim.keymap.set('t', '<C-w>', require('telescope').extensions.projects.projects , {})
-vim.keymap.set('n', '<C-s>', require('telescope').extensions.coc.workspace_symbols , {})
+vim.keymap.set('n', '<C-w>', telescope.extensions.projects.projects , {})
+vim.keymap.set('i', '<C-w>', telescope.extensions.projects.projects , {})
+vim.keymap.set('t', '<C-w>', telescope.extensions.projects.projects , {})
+vim.keymap.set('n', '<C-s>', function () vim.cmd('Telescope coc workspace_symbols') end , {})
 
 ------------------------------
 -- Utils
@@ -184,18 +200,18 @@ require("nvim-dap-virtual-text").setup()
 require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
 
 local function vscode_debugger_path()
-    p = Path:new(Path.path.home)
-    vscode_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = "%.vscode"})
-    p = Path:new(vscode_dir[1], 'extensions')
+    local p = Path:new(Path.path.home)
+    local vscode_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = "%.vscode"})
+    p = Path:new(vscode_dir[#vscode_dir], 'extensions')
 
-    cpptools_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = 'ms%-vscode%.cpptools'})
+    local cpptools_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = 'ms%-vscode%.cpptools'})
     p = Path:new(cpptools_dir[1], 'debugAdapters', 'bin', 'OpenDebugAD7')
 
     return p
 end
 
 dap.adapters.cppdbg = {
-    id = 'cppdbg',
+    id = "cppdbg",
     type = "executable",
     command = tostring(vscode_debugger_path())
 }
@@ -218,7 +234,7 @@ dap.configurations.cpp = {
     type = "cppdbg",
     request = "launch",
     program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+      return vim.fn.input({'Path to executable: ', vim.fn.getcwd() .. '/', 'file'})
     end,
     cwd = '${workspaceFolder}',
     stopAtEntry = true,
@@ -240,7 +256,7 @@ dap.configurations.cpp = {
     miDebuggerPath = '/usr/bin/gdb',
     cwd = '${workspaceFolder}',
     program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+      return vim.fn.input({'Path to executable: ', vim.fn.getcwd() .. '/', 'file'})
     end,
   },
 }
@@ -274,6 +290,19 @@ end
 dap.listeners.before.event_exited["dapui_config"] = function()
     dapui.close()
 end
+
+------------------------------
+-- CMake Tools
+------------------------------
+require('overseer').setup()
+require("cmake-tools").setup {
+    cmake_build_directory = "bin/${variant:engine}_${variant:buildType}_${variant:arch}",
+    cmake_build_options = {"-j20"},
+    cmake_variants_message = {
+        short = { show = true },
+        long = { show = false },
+    },
+}
 
 ------------------------------
 -- Tasks
@@ -352,7 +381,20 @@ vim.opt.wildmode = "list:longest,full"
 vim.opt.fillchars = vim.opt.fillchars + { vert = '|' }
 vim.opt.shortmess = vim.opt.shortmess + 'I'
 
-require('lualine').setup()
+local function lualine_macro()
+    local reg = vim.fn.reg_recording()
+    if (reg ~= '') then
+        return '@' .. reg
+    else
+        return ''
+    end
+end
+
+require('lualine').setup {
+    sections = {
+        lualine_x = {lualine_macro, 'encoding', 'fileformat', 'filetype'}
+    }
+}
 require('bufferline').setup {
     options = {
         mode = "tabs",
@@ -399,3 +441,4 @@ vim.o.backspace = [[eol,start,indent]]
 
 -- cursor always in the center
 vim.o.scrolloff = 999
+

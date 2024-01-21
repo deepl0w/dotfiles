@@ -44,7 +44,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
 
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-python', 'coc-lists', 'coc-highlight', 'coc-markdownlint', 'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-lua']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-pyright', 'coc-lists', 'coc-highlight', 'coc-markdownlint', 'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-sumneko-lua']
 
 """"""""""""""""""""""""""""""
 " Local config

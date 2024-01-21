@@ -8,7 +8,6 @@
         }
     },
 
-    "python.condaPath": "/opt/anaconda2/bin/conda",
     "workspace.rootPatterns": [ ".git", ".svn", ".vscode", "compile_commands.json", ".hg", ".projections.json" ],
 
     "suggest.floatConfig": {
@@ -16,6 +15,7 @@
         "borderhighlight": "FloatBoarder"
     },
 
+    "sumneko-lua.enableNvimLuaDev": true,
     "suggest.virtualText": true,
     "codeLens.enable": true,
     "suggest.snippetIndicator": "",
