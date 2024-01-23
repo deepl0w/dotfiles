@@ -3,9 +3,6 @@ let mapleader = ','
 " clear autocmd
 au!
 
-let g:python3_host_prog = '/usr/bin/python3'
-let g:python2_host_prog = '/usr/bin/python2.7'
-
 let g:vimsyn_embed = 'l'
 
 packadd termdebug
@@ -33,10 +30,6 @@ endif
 call plug#begin('~/.vim_runtime/bundle')
 
 Plug 'xolox/vim-misc'                                           " auto-load vim scripts
-Plug 'scrooloose/nerdcommenter'                                 " intensely orgasmic commenting
-Plug 'sickill/vim-pasta'                                        " pasting in vim with indentation adjusted
-Plug 'PotatoesMaster/i3-vim-syntax'                             " i3 syntax highlights
-Plug 'xolox/vim-notes'                                          " note taking
 Plug 'ncm2/float-preview.nvim'                                  " preview in floating window
 Plug 'voldikss/vim-floaterm'                                    " floating terminal
 
@@ -52,8 +45,6 @@ let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-kotlin', 'coc-pyright
 let g:floaterm_keymap_toggle = '<leader><leader>t'
 let g:floaterm_position = 'center'
 let g:floaterm_winblend = 0
-
-"nnoremap <C-g> :CocList grep<cr>
 
 " Use tab for trigger completion with characters ahead and navigate.
 inoremap <silent><expr> <TAB>
@@ -106,15 +97,6 @@ autocmd CursorHold,CursorHoldI,BufWritePost *.tex
 """"""""""""""""""""""""""""""
 command! Ev tabedit $MYVIMRC | vsplit $HOME/.config/nvim/lua/init.lua
 command! Sv source $MYVIMRC | luafile $HOME/.config/nvim/lua/init.lua
-
-" ignore compiled files and executables
-"""""""""""""""""""""""""""""""""""""""
-set wildignore=*.obj,*.o,*~,*.pyc,*.out,*.exe
-if has("win16") || has("win32")
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-else
-    set wildignore+=.git\*,.hg\*,.svn\*
-endif
 
 " Load lua config
 lua require("init")

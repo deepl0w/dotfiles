@@ -1,39 +1,42 @@
 local PKGS = {
-    "savq/paq-nvim";            -- Let Paq Manage itself
+    "savq/paq-nvim",            -- Let Paq Manage itself
 
-    "nvim-lua/plenary.nvim";    -- Utility functions
-    "nvim-lua/popup.nvim";      -- Popup API from vim to nvim
+    "nvim-lua/plenary.nvim",    -- Utility functions
+    "nvim-lua/popup.nvim",      -- Popup API from vim to nvim
 
-    "svermeulen/vimpeccable";   -- Lua API map keys
+    "svermeulen/vimpeccable",   -- Lua API map keys
 
-    "kdheepak/lazygit.nvim";            -- git integration
-    "nvim-treesitter/nvim-treesitter";  -- parser
+    "kdheepak/lazygit.nvim",            -- git integration
+    "nvim-treesitter/nvim-treesitter",  -- parser
 
-    "mfussenegger/nvim-dap";    -- Debug Adapter Protocol
-    "rcarriga/nvim-dap-python";
-    "rcarriga/nvim-dap-ui";
-    "theHamsta/nvim-dap-virtual-text";
+    "mfussenegger/nvim-dap",    -- Debug Adapter Protocol
+    "rcarriga/nvim-dap-python",
+    "rcarriga/nvim-dap-ui",
+    "theHamsta/nvim-dap-virtual-text",
 
-    "nvim-telescope/telescope.nvim";  -- Fuzzy finder with nice ui
-    "axkirillov/easypick.nvim";        -- Easy telescope pickers
-    "fannheyward/telescope-coc.nvim"; -- Integrate coc outputs in telescope
-    "Shatur/neovim-tasks";            -- Build/Run tasks
-    "Civitasv/cmake-tools.nvim";      -- CMake integration
-    "stevearc/overseer.nvim";
-    "ahmedkhalf/project.nvim";        -- Projects
-    "phaazon/hop.nvim";               -- better easymotion
-    "folke/noice.nvim";               -- floating windows Ufolke/noice.nvim
-    "MunifTanjim/nui.nvim";           --  UI component lib
-    "rcarriga/nvim-notify";           -- fancy notification manager
-    "kylechui/nvim-surround";         -- surround fommand for different brackets
+    "nvim-telescope/telescope.nvim",  -- Fuzzy finder with nice ui
+    "axkirillov/easypick.nvim",        -- Easy telescope pickers
+    "fannheyward/telescope-coc.nvim", -- Integrate coc outputs in telescope
+    "Shatur/neovim-tasks",            -- Build/Run tasks
+    "Civitasv/cmake-tools.nvim",      -- CMake integration
+    "stevearc/overseer.nvim",
+    "ahmedkhalf/project.nvim",        -- Projects
+    "phaazon/hop.nvim",               -- better easymotion
+    "folke/noice.nvim",               -- floating windows Ufolke/noice.nvim
+    "MunifTanjim/nui.nvim",           --  UI component lib
+    "rcarriga/nvim-notify",           -- fancy notification manager
+    "kylechui/nvim-surround",         -- surround fommand for different brackets
 
-    "nvim-lualine/lualine.nvim";      -- status line
-    "akinsho/bufferline.nvim";        -- buffer line
-    "nvim-tree/nvim-web-devicons";    -- dev icons
-    "lewis6991/gitsigns.nvim";        -- giot signs
+    "nvim-lualine/lualine.nvim",      -- status line
+    "akinsho/bufferline.nvim",        -- buffer line
+    "nvim-tree/nvim-web-devicons",    -- dev icons
+    "lewis6991/gitsigns.nvim",        -- giot signs
 
-    "ellisonleao/gruvbox.nvim";       -- gruvbox color scheme
-    "rebelot/kanagawa.nvim";          -- kanagawa colorscheme
+    "ellisonleao/gruvbox.nvim",       -- gruvbox color scheme
+    "rebelot/kanagawa.nvim",          -- kanagawa colorscheme
+
+    "hrsh7th/nvim-pasta",             -- pasting in vim with identation adjusted
+    "numToStr/Comment.nvim",          -- commenting plugin
 }
 
 -- Install packages and package manager if not installed
@@ -47,6 +50,25 @@ local utils = require('utils')
 utils.persistent_undo()
 
 require("nvim-surround").setup()
+
+------------------------------
+-- Comment
+------------------------------
+
+require('Comment').setup {
+    toggler = {
+        line = nil,
+        block = '<leader>cc'
+    },
+    opleader = {
+        line = nil,
+        block = '<leader>c'
+    },
+    mappings = {
+        basic = true,
+        extra = true
+    }
+}
 
 ------------------------------
 -- Treesitter
@@ -178,6 +200,9 @@ vim.keymap.set('n', '<space>', 'za')
 vim.keymap.set('n', '<leader>gg', function () vim.cmd('LazyGit') end)
 
 vim.keymap.set('n', 'K', utils.show_documentation)
+
+vim.keymap.set({ 'n', 'x' }, 'p', require('pasta.mapping').p)
+vim.keymap.set({ 'n', 'x' }, 'P', require('pasta.mapping').P)
 ------------------------------
 -- HOP
 ------------------------------
@@ -396,6 +421,19 @@ vim.o.number = false
 vim.opt.wildmenu = true
 vim.opt.wildmode = "list:longest,full"
 
+-- ignore compiled files and executables
+vim.opt.wildignore = {"*.obj", "*.o", "*~", "*.pyc", "*.out", "*.exe"}
+if vim.fn.has("win16") or vim.fn.has("win32") then
+    table.insert(vim.opt.wildignore, ".git\\*")
+    table.insert(vim.opt.wildignore, ",.hg\\*")
+    table.insert(vim.opt.wildignore, ".svn\\*")
+else
+    table.insert(vim.opt.wildignore, "*/.git/*")
+    table.insert(vim.opt.wildignore, "*/.hg/*")
+    table.insert(vim.opt.wildignore, "*/.svn/*")
+    table.insert(vim.opt.wildignore, "*/.DS_Store")
+end
+
 vim.opt.fillchars = vim.opt.fillchars + { vert = '|' }
 vim.opt.shortmess = vim.opt.shortmess + 'I'
 
@@ -436,8 +474,10 @@ vim.o.secure = true
 
 -- folds and tabs
 vim.o.foldlevelstart = 9
-vim.o.foldmethod = 'expr'
-vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
+--vim.o.foldmethod = 'expr'
+--vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.o.foldmethod = 'manual'
+vim.o.foldexpr = '0'
 vim.o.foldenable = false
 
 vim.o.shiftwidth = 4
