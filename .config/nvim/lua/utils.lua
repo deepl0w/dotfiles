@@ -1,4 +1,3 @@
-
 local utils = {}
 local Path = require('plenary.path')
 
@@ -64,6 +63,11 @@ function utils.show_documentation()
     else
         vim.cmd("call CocAction('doHover')")
     end
+end
+
+function utils.check_backspace()
+    local col = vim.fn.col('.') - 1
+    return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
 end
 
 return utils

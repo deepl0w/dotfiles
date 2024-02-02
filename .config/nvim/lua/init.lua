@@ -1,9 +1,6 @@
 local PKGS = {
-    "savq/paq-nvim",            -- Let Paq Manage itself
-
     "nvim-lua/plenary.nvim",    -- Utility functions
     "nvim-lua/popup.nvim",      -- Popup API from vim to nvim
-
     "svermeulen/vimpeccable",   -- Lua API map keys
 
     "kdheepak/lazygit.nvim",            -- git integration
@@ -35,8 +32,33 @@ local PKGS = {
     "ellisonleao/gruvbox.nvim",       -- gruvbox color scheme
     "rebelot/kanagawa.nvim",          -- kanagawa colorscheme
 
-    "hrsh7th/nvim-pasta",             -- pasting in vim with identation adjusted
     "numToStr/Comment.nvim",          -- commenting plugin
+
+    "xolox/vim-misc",                 -- auto-load vim scripts
+    "ncm2/float-preview.nvim",        -- preview in floating window
+    {
+        "voldikss/vim-floaterm",          -- floating terminal
+        lazy = true,
+        keys = {
+          { "<leader><leader>t", "<cmd>FloatermToggle<cr>", desc = "Floaterm Toggle" },
+        },
+        config = function()
+            vim.g.floaterm_position = 'center'
+            vim.g.floaterm_winblend = 0
+        end,
+    },
+    "ku1ik/vim-pasta",
+
+    {
+        "neoclide/coc.nvim",
+        branch = 'release',
+        init = function()
+            vim.g.coc_global_extensions = {
+                'coc-json', 'coc-git', 'coc-kotlin', 'coc-pyright', 'coc-lists', 'coc-highlight', 'coc-markdownlint',
+                'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-sumneko-lua', 'coc-spell-checker'
+            }
+        end,
+    }
 }
 
 -- Install packages and package manager if not installed
@@ -57,12 +79,12 @@ require("nvim-surround").setup()
 
 require('Comment').setup {
     toggler = {
-        line = nil,
-        block = '<leader>cc'
+        line = '<leader>cc',
+        block = nil
     },
     opleader = {
-        line = nil,
-        block = '<leader>c'
+        line = '<leader>c',
+        block = nil
     },
     mappings = {
         basic = true,
@@ -200,9 +222,6 @@ vim.keymap.set('n', '<space>', 'za')
 vim.keymap.set('n', '<leader>gg', function () vim.cmd('LazyGit') end)
 
 vim.keymap.set('n', 'K', utils.show_documentation)
-
-vim.keymap.set({ 'n', 'x' }, 'p', require('pasta.mapping').p)
-vim.keymap.set({ 'n', 'x' }, 'P', require('pasta.mapping').P)
 ------------------------------
 -- HOP
 ------------------------------
@@ -372,7 +391,8 @@ require('tasks').setup({
 })
 
 require("project_nvim").setup({
-    scope_chdir = 'tab'
+    scope_chdir = 'tab',
+    patterns = { "compile_commands.json", ".git", ".hg", ".bzr", ".svn", "package.json" },
 })
 
 ------------------------------
