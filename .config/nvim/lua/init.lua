@@ -2,8 +2,6 @@ local PKGS = {
     "nvim-lua/plenary.nvim",    -- Utility functions
     "nvim-lua/popup.nvim",      -- Popup API from vim to nvim
     "svermeulen/vimpeccable",   -- Lua API map keys
-
-    "kdheepak/lazygit.nvim",            -- git integration
     "nvim-treesitter/nvim-treesitter",  -- parser
 
     "mfussenegger/nvim-dap",    -- Debug Adapter Protocol
@@ -12,7 +10,7 @@ local PKGS = {
     "theHamsta/nvim-dap-virtual-text",
 
     "nvim-telescope/telescope.nvim",  -- Fuzzy finder with nice ui
-    "axkirillov/easypick.nvim",        -- Easy telescope pickers
+    "axkirillov/easypick.nvim",       -- Easy telescope pickers
     "fannheyward/telescope-coc.nvim", -- Integrate coc outputs in telescope
     "Shatur/neovim-tasks",            -- Build/Run tasks
     "Civitasv/cmake-tools.nvim",      -- CMake integration
@@ -20,22 +18,45 @@ local PKGS = {
     "ahmedkhalf/project.nvim",        -- Projects
     "phaazon/hop.nvim",               -- better easymotion
     "folke/noice.nvim",               -- floating windows Ufolke/noice.nvim
-    "MunifTanjim/nui.nvim",           --  UI component lib
+    "MunifTanjim/nui.nvim",           -- UI component lib
     "rcarriga/nvim-notify",           -- fancy notification manager
     "kylechui/nvim-surround",         -- surround fommand for different brackets
 
     "nvim-lualine/lualine.nvim",      -- status line
     "akinsho/bufferline.nvim",        -- buffer line
     "nvim-tree/nvim-web-devicons",    -- dev icons
-    "lewis6991/gitsigns.nvim",        -- giot signs
+    "lewis6991/gitsigns.nvim",        -- git signs
 
     "ellisonleao/gruvbox.nvim",       -- gruvbox color scheme
     "rebelot/kanagawa.nvim",          -- kanagawa colorscheme
 
-    "numToStr/Comment.nvim",          -- commenting plugin
-
     "xolox/vim-misc",                 -- auto-load vim scripts
     "ncm2/float-preview.nvim",        -- preview in floating window
+    "sindrets/diffview.nvim",         -- Diff integration
+
+    {
+        "numToStr/Comment.nvim",          -- commenting plugin
+        opts = {
+            toggler = {
+                line = '<leader>cc',
+                block = nil
+            },
+            opleader = {
+                line = '<leader>c',
+                block = nil
+            },
+            mappings = {
+                basic = true,
+                extra = true
+            }
+        },
+        lazy = false,
+    },
+    {
+        "tpope/vim-fugitive",
+        lazy = true,
+        cmd = {"Git", "Gdiffsplit"}
+    },
     {
         "voldikss/vim-floaterm",          -- floating terminal
         lazy = true,
@@ -72,25 +93,6 @@ local utils = require('utils')
 utils.persistent_undo()
 
 require("nvim-surround").setup()
-
-------------------------------
--- Comment
-------------------------------
-
-require('Comment').setup {
-    toggler = {
-        line = '<leader>cc',
-        block = nil
-    },
-    opleader = {
-        line = '<leader>c',
-        block = nil
-    },
-    mappings = {
-        basic = true,
-        extra = true
-    }
-}
 
 ------------------------------
 -- Treesitter
@@ -131,7 +133,6 @@ require('telescope').setup {
 }
 require('telescope').load_extension('coc')
 require('telescope').load_extension('projects')
-require('telescope').load_extension('lazygit')
 require('telescope').load_extension('cmake_tools')
 
 local easypick = require("easypick")
