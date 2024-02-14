@@ -28,8 +28,6 @@ if !empty(glob("$HOME/.$USER.vimrc"))
     source $HOME/.$USER.vimrc
 endif
 
- nnoremap <C-g> :CocList grep<cr>
-
 " Use tab for trigger completion with characters ahead and navigate.
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
