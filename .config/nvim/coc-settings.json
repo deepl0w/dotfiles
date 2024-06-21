@@ -1,10 +1,8 @@
 {
     "languageserver": {
-        "clangd": {
-            "command": "clangd",
-            "filetypes": ["c", "cpp", "objc", "objcpp"],
-            "args": ["-log=verbose", "-index"],
-            "rootPatterns": [".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/", ".svn/", ".vscode/"]
+        "coc-clangd": {
+            "compilationDatabaseCandidates": ["compile_commands.json", "${workspaceFolder}/bin/compile_commands.json", "${workspaceFolder}/bin_qnn/compile_commands.json", "${workspaceFolder}/bin_qnx/compile_commands.json" ],
+            "arguments": ["-log=verbose", "-index"]
         }
     },
 
@@ -22,6 +20,8 @@
 
     "diagnostic.warningSign": "",
     "diagnostic.errorSign": "",
+    "diagnostic.virtualtext": true,
+    "diagnostic.virtualTextCurrentLineOnly": true,
 
     "list.source.grep.args": [
         "--ignore-file",
@@ -69,10 +69,5 @@
     },
 
     "diagnostic-languageserver.filetypes": {
-        "c": "cppcheck",
-        "cpp": "cppcheck",
-        "h": "cppcheck",
-        "hpp": "cppcheck",
-        "txx": "cppcheck"
     }
 }

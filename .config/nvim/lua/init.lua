@@ -6,26 +6,47 @@ local PKGS = {
 
     "mfussenegger/nvim-dap",    -- Debug Adapter Protocol
     "rcarriga/nvim-dap-python",
-    "rcarriga/nvim-dap-ui",
+    {
+        "rcarriga/nvim-dap-ui",
+        dependencies = {
+            "nvim-neotest/nvim-nio"
+        }
+
+    },
     "theHamsta/nvim-dap-virtual-text",
 
     "nvim-telescope/telescope.nvim",  -- Fuzzy finder with nice ui
+    "nvim-telescope/telescope-ui-select.nvim",
     "axkirillov/easypick.nvim",       -- Easy telescope pickers
     "fannheyward/telescope-coc.nvim", -- Integrate coc outputs in telescope
+    "nvim-telescope/telescope-dap.nvim", -- Integrate coc outputs in telescope
     "Shatur/neovim-tasks",            -- Build/Run tasks
-    "Civitasv/cmake-tools.nvim",      -- CMake integration
+    {
+        "Civitasv/cmake-tools.nvim",      -- CMake integration
+        commit = "643e46b"
+    },
     "stevearc/overseer.nvim",
     "ahmedkhalf/project.nvim",        -- Projects
-    "phaazon/hop.nvim",               -- better easymotion
+    "smoka7/hop.nvim",                -- better easymotion
+    { 'chaoren/vim-wordmotion', event = 'VeryLazy' },
     "folke/noice.nvim",               -- floating windows Ufolke/noice.nvim
     "MunifTanjim/nui.nvim",           -- UI component lib
     "rcarriga/nvim-notify",           -- fancy notification manager
     "kylechui/nvim-surround",         -- surround fommand for different brackets
 
-    "nvim-lualine/lualine.nvim",      -- status line
     "akinsho/bufferline.nvim",        -- buffer line
     "nvim-tree/nvim-web-devicons",    -- dev icons
     "lewis6991/gitsigns.nvim",        -- git signs
+    {
+        "aaronhallaert/advanced-git-search.nvim",
+        config = function()
+            require("telescope").load_extension("advanced_git_search")
+        end,
+        dependencies = {
+            "tpope/vim-fugitive",
+            "tpope/vim-rhubarb",
+        },
+    },
 
     "ellisonleao/gruvbox.nvim",       -- gruvbox color scheme
     "rebelot/kanagawa.nvim",          -- kanagawa colorscheme
@@ -33,7 +54,7 @@ local PKGS = {
     "xolox/vim-misc",                 -- auto-load vim scripts
     "ncm2/float-preview.nvim",        -- preview in floating window
     "sindrets/diffview.nvim",         -- Diff integration
-
+    "ku1ik/vim-pasta",
     {
         "numToStr/Comment.nvim",          -- commenting plugin
         opts = {
@@ -58,28 +79,22 @@ local PKGS = {
         cmd = {"Git", "Gdiffsplit"}
     },
     {
-        "voldikss/vim-floaterm",          -- floating terminal
-        lazy = true,
-        keys = {
-          { "<leader><leader>t", "<cmd>FloatermToggle<cr>", desc = "Floaterm Toggle" },
-        },
-        config = function()
-            vim.g.floaterm_position = 'center'
-            vim.g.floaterm_winblend = 0
-        end,
+        "akinsho/toggleterm.nvim",
+        version = '*',
+        opts = { open_mapping = [[<c-\>]], direction = 'float' },
+        keys = [[<c-\>]],
     },
-    "ku1ik/vim-pasta",
-
     {
         "neoclide/coc.nvim",
         branch = 'release',
         init = function()
             vim.g.coc_global_extensions = {
                 'coc-json', 'coc-git', 'coc-kotlin', 'coc-pyright', 'coc-lists', 'coc-highlight', 'coc-markdownlint',
-                'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-sumneko-lua', 'coc-spell-checker'
+                'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-sumneko-lua', 'coc-clangd'
             }
         end,
-    }
+    },
+    "nvim-lualine/lualine.nvim",      -- status line
 }
 
 -- Install packages and package manager if not installed
@@ -89,10 +104,40 @@ local Path = require('plenary.path')
 local Scan = require('plenary.scandir')
 
 local utils = require('utils')
+local icons = require("icons")
+local llcfg = require('lualine_cfg')
 
 utils.persistent_undo()
 
 require("nvim-surround").setup()
+
+------------------------------
+-- Lualine
+------------------------------
+
+require('lualine').setup {
+    options = {
+        globalstatus = true,
+    },
+    sections = {
+        lualine_c = {
+            'filename',
+            llcfg.cmake_preset,
+            llcfg.cmake_type,
+            llcfg.cmake_kit,
+            llcfg.cmake_build,
+            llcfg.cmake_build_preset,
+            llcfg.cmake_build_target,
+            llcfg.cmake_debug
+        },
+        lualine_x = {
+            llcfg.macro,
+            'encoding',
+            'fileformat',
+            'filetype'
+        },
+    }
+}
 
 ------------------------------
 -- Treesitter
@@ -131,9 +176,12 @@ require('telescope').setup {
     }
   }
 }
+
 require('telescope').load_extension('coc')
+require('telescope').load_extension('dap')
 require('telescope').load_extension('projects')
 require('telescope').load_extension('cmake_tools')
+require('telescope').load_extension('ui-select')
 
 local easypick = require("easypick")
 easypick.setup({
@@ -156,9 +204,12 @@ vim.keymap.set('n', '<C-w>', telescope.extensions.projects.projects , {})
 vim.keymap.set('i', '<C-w>', telescope.extensions.projects.projects , {})
 vim.keymap.set('t', '<C-w>', telescope.extensions.projects.projects , {})
 vim.keymap.set('n', '<C-s>', function () vim.cmd('Telescope coc workspace_symbols') end , {})
+vim.keymap.set('n', '<C-t>', function () vim.cmd('Telescope coc document_symbols') end , {})
 vim.keymap.set('n', 'gt', function () vim.cmd('Telescope coc definitions') end , {})
+vim.keymap.set('n', 'gi', function () vim.cmd('Telescope coc implementations') end , {})
 vim.keymap.set('n', 'gr', function () vim.cmd('Telescope coc references') end , {})
 vim.keymap.set('n', '<space>a', function () vim.cmd('Telescope coc diagnostics') end, { silent = true })
+vim.keymap.set('n', '<space>A', function () vim.cmd('Telescope coc workspace_diagnostics') end, { silent = true })
 vim.keymap.set('n', '<space>c', function () vim.cmd('Telescope coc commands') end, { silent = true })
 
 ------------------------------
@@ -173,6 +224,7 @@ vim.keymap.set('x', '<leader>x', '<plug>(coc-codeaction-cursor)', {})
 vim.keymap.set('n', '<tab>', '<plug>(coc-range-select)', { silent = true })
 vim.keymap.set('x', '<tab>', '<plug>(coc-range-select)', { silent = true })
 vim.keymap.set('x', '<s-tab>', '<plug>(coc-range-select-backword)', { silent = true })
+vim.keymap.set('n', '<leader>ih', function () vim.cmd('CocCommand document.toggleInlayHint') end, { silent = true })
 
 ------------------------------
 -- General maps
@@ -192,6 +244,10 @@ vim.keymap.set('', 'j', 'gj')
 vim.keymap.set('', 'k', 'gk')
 
 vim.keymap.set('n', ';', ':')
+
+vim.keymap.set('n', '<leader>d', '"_d')
+vim.keymap.set('v', '<leader>d', '"_d')
+vim.keymap.set('v', '<leader>p', '"_dP')
 
 vim.keymap.set('n', '<A-h>', '<C-w>h')
 vim.keymap.set('n', '<A-j>', '<C-w>j')
@@ -245,7 +301,11 @@ vim.keymap.set('', '<leader>k', function()
   hop.hint_lines({ direction = directions.BEFORE_CURSOR })
 end, { remap = true })
 
-vim.keymap.set('', '<leader>/', function()
+vim.keymap.set('', '<leader>f', function()
+  hop.hint_char1()
+end, { remap = true })
+
+vim.keymap.set('', '<leader>t', function()
   hop.hint_patterns()
 end, { remap = true })
 
@@ -303,28 +363,16 @@ dap.configurations.cpp = {
     stopAtEntry = true,
 
     setupCommands = {
-      {
-         text = '-enable-pretty-printing',
-         description =  'enable pretty printing',
-         ignoreFailures = false
-      },
+        {
+            text = '-enable-pretty-printing',
+            description =  'enable pretty printing',
+            ignoreFailures = false
+        },
     },
-  },
-  {
-    name = 'Attach to gdbserver :1234',
-    type = 'cppdbg',
-    request = 'launch',
-    MIMode = 'gdb',
-    miDebuggerServerAddress = 'localhost:1234',
-    miDebuggerPath = '/usr/bin/gdb',
-    cwd = '${workspaceFolder}',
-    program = function()
-      return vim.fn.input({'Path to executable: ', vim.fn.getcwd() .. '/', 'file'})
-    end,
   },
 }
 
-vim.fn.sign_define('DapBreakpoint', {text='🛑', texthl='', linehl='', numhl=''})
+vim.fn.sign_define('DapBreakpoint', {text=icons.ui.BigCircle, texthl='', linehl='', numhl=''})
 
 -- wrapper to load launch.json if it exists when starting debug
 local function dap_continue_with_launchjs()
@@ -342,6 +390,8 @@ vim.keymap.set("n", "<F8>",       dap.toggle_breakpoint)
 vim.keymap.set("n", "<leader>dr", dap.repl.toggle)
 vim.keymap.set("n", "<leader>dl", dap.run_last)
 vim.keymap.set("n", "<leader>du", dapui.toggle)
+vim.keymap.set("n", "<space>k",   dapui.eval)
+vim.keymap.set("v", "<space>k",   dapui.eval)
 
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
@@ -358,14 +408,40 @@ end
 -- CMake Tools
 ------------------------------
 require('overseer').setup()
-require("cmake-tools").setup {
-    cmake_build_directory = "bin/${variant:engine}_${variant:buildType}_${variant:arch}",
-    cmake_build_options = {"-j20"},
+local cmake = require("cmake-tools")
+local cmake_cfg = {
+    cmake_build_directory = "bin/${variant:target}/${variant:buildType}",
+    cmake_build_options = {"-j16"},
     cmake_variants_message = {
         short = { show = true },
         long = { show = false },
     },
+    cmake_dap_configuration = { -- debug settings for cmake
+        name = "cpp",
+        type = "cppdbg",
+        request = "launch",
+        stopOnEntry = false,
+        setupCommands = {
+            {
+                text = '-enable-pretty-printing',
+                description =  'enable pretty printing',
+                ignoreFailures = false
+            },
+        },
+    },
+    cmake_executor = {
+        name = "quickfix",
+        default_opts = {
+            show = "only_on_error"
+        },
+    },
+    cmake_runner = {
+        name = "quickfix",
+    },
 }
+cmake.setup(cmake_cfg)
+
+vim.keymap.set("n", "<F7>", function() vim.cmd("CMakeBuild") end, {})
 
 ------------------------------
 -- Tasks
@@ -393,7 +469,7 @@ require('tasks').setup({
 
 require("project_nvim").setup({
     scope_chdir = 'tab',
-    patterns = { "compile_commands.json", ".git", ".hg", ".bzr", ".svn", "package.json" },
+    patterns = { ".project_root", ">work_git", ">git", "package.json" },
 })
 
 ------------------------------
@@ -458,20 +534,6 @@ end
 vim.opt.fillchars = vim.opt.fillchars + { vert = '|' }
 vim.opt.shortmess = vim.opt.shortmess + 'I'
 
-local function lualine_macro()
-    local reg = vim.fn.reg_recording()
-    if (reg ~= '') then
-        return '@' .. reg
-    else
-        return ''
-    end
-end
-
-require('lualine').setup {
-    sections = {
-        lualine_x = {lualine_macro, 'encoding', 'fileformat', 'filetype'}
-    }
-}
 require('bufferline').setup {
     options = {
         mode = "tabs",
@@ -558,6 +620,13 @@ vim.api.nvim_create_autocmd({'BufNewFile','BufRead'}, {
         pattern = {'*.txx', '*.ver'},
         callback = function()
             vim.opt_local.filetype = 'cpp'
+        end
+})
+
+vim.api.nvim_create_autocmd({'BufWinEnter'}, {
+        pattern = {'*.cpp', '*.txx', '*.c', '*.h', '*.hpp'},
+        callback = function()
+            cmake.setup(cmake_cfg)
         end
 })
 
