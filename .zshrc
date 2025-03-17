@@ -139,4 +139,4 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-. ~/.venv/main/bin/activate
+conda activate base
