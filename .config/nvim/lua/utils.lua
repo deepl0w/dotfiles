@@ -35,14 +35,24 @@ function utils.is_wsl()
 end
 
 function utils.wipeout()
-    --  list of *all* buffer numbers
+    -- Get a list of all buffer numbers
     local buffers = vim.api.nvim_list_bufs()
-    local next = next
 
-    for i = 1, #buffers do
-        local wins = vim.fn.win_findbuf(buffers[i])
-        if not next(wins) then
-            vim.cmd.bdelete(buffers[i])
+    -- Get a list of all windows
+    local windows = vim.api.nvim_list_wins()
+
+    -- Create a set of buffers that are open in windows or floating windows
+    local open_buffers = {}
+    for _, win in ipairs(windows) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        open_buffers[buf] = true
+    end
+
+    for _, buf in ipairs(buffers) do
+        -- Check if the buffer is loaded and not open in any window or floating window
+        if vim.api.nvim_buf_is_loaded(buf) and not open_buffers[buf] then
+            -- Delete the buffer
+            vim.api.nvim_buf_delete(buf, { force = true })
         end
     end
 end

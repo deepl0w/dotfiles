@@ -7,6 +7,13 @@ local PKGS = {
     "mfussenegger/nvim-dap",    -- Debug Adapter Protocol
     "rcarriga/nvim-dap-python",
     {
+        "nvim-neotest/neotest",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "alfaix/neotest-gtest"
+        }
+    },
+    {
         "rcarriga/nvim-dap-ui",
         dependencies = {
             "nvim-neotest/nvim-nio"
@@ -46,6 +53,27 @@ local PKGS = {
             "tpope/vim-fugitive",
             "tpope/vim-rhubarb",
         },
+    },
+    {
+        'tanvirtin/vgit.nvim', branch = 'v1.0.x',
+        -- or               , tag = 'v1.0.2',
+        dependencies = { 'nvim-lua/plenary.nvim', 'nvim-tree/nvim-web-devicons' },
+        -- Lazy loading on 'VimEnter' event is necessary.
+        event = 'VimEnter',
+        config = function() require("vgit").setup({
+                keymaps = {
+                    ['n <leader>gs'] = function() require('vgit').buffer_hunk_stage() end,
+                    ['n <leader>gr'] = function() require('vgit').buffer_hunk_reset() end,
+                    ['n <leader>gp'] = function() require('vgit').buffer_hunk_preview() end,
+                    ['n <leader>gb'] = function() require('vgit').buffer_blame_preview() end,
+                    ['n <leader>gf'] = function() require('vgit').buffer_diff_preview() end,
+                    ['n <leader>gh'] = function() require('vgit').buffer_history_preview() end,
+                    ['n <leader>gu'] = function() require('vgit').buffer_reset() end,
+                    ['n <leader>gd'] = function() require('vgit').project_diff_preview() end,
+                    ['n <leader>gx'] = function() require('vgit').toggle_diff_preference() end,
+                },
+        }
+        ) end,
     },
 
     "ellisonleao/gruvbox.nvim",       -- gruvbox color scheme
@@ -90,11 +118,68 @@ local PKGS = {
         init = function()
             vim.g.coc_global_extensions = {
                 'coc-json', 'coc-git', 'coc-kotlin', 'coc-pyright', 'coc-lists', 'coc-highlight', 'coc-markdownlint',
-                'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-sumneko-lua', 'coc-clangd'
+                'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-sumneko-lua', 'coc-clangd', "@hexuhua/coc-copilot"
             }
         end,
     },
     "nvim-lualine/lualine.nvim",      -- status line
+    {
+        'fei6409/log-highlight.nvim',  -- log highlights
+        config = function()
+            require('log-highlight').setup {
+                extension = 'log',
+                filename = {
+                    'mesasges',
+                },
+                pattern = {
+                    '/var/log/.*',
+                    'messages%..*',
+                    '.*Log.txt',
+                },
+            }
+        end,
+    },
+    {
+      'stevearc/oil.nvim',
+      ---@module 'oil'
+      ---@type oil.SetupOpts
+      opts = {},
+      dependencies = { "nvim-tree/nvim-web-devicons" },
+    },
+    {
+        "Funk66/jira.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        config = function()
+          require("jira").setup()
+        end,
+        cond = function()
+          return vim.env.JIRA_API_TOKEN ~= nil
+        end,
+        keys = {
+          { "<leader><leader>jv", ":JiraView<cr>", desc = "View Jira issue", silent = true },
+          { "<leader><leader>jo", ":JiraOpen<cr>", desc = "Open Jira issue in browser", silent = true },
+        }
+    },
+    {
+      "zbirenbaum/copilot.lua",
+      cmd = "Copilot",
+      event = "InsertEnter",
+      config = function()
+        require("copilot").setup({})
+      end,
+    },
+    {
+    "CopilotC-Nvim/CopilotChat.nvim",
+        dependencies = {
+          { "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
+          { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
+        },
+        build = "make tiktoken", -- Only on MacOS or Linux
+        opts = {
+            chat_autocomplete = false
+        },
+        -- See Commands section for default commands if you want to lazy load on them
+    },
 }
 
 -- Install packages and package manager if not installed
@@ -140,6 +225,11 @@ require('lualine').setup {
 }
 
 ------------------------------
+-- Oil
+------------------------------
+require("oil").setup()
+
+------------------------------
 -- Treesitter
 ------------------------------
 
@@ -151,8 +241,31 @@ require('nvim-treesitter.configs').setup {
     highlight = {
         enable = true
     },
-    additional_vim_regex_highlighting = true
+    additional_vim_regex_highlighting = false
 }
+
+------------------------------
+--  Neotest
+------------------------------
+
+local neotest = require("neotest")
+neotest.setup({
+  adapters = {
+    require("neotest-gtest").setup({
+        debug_adapter = "cppdbg",
+
+        is_test_file = function(file)
+            local p = Path:new(file)
+            local test_path = file:match('/utest/') or file:match('/itest/') or file:match('/apitest/')
+            local is_cpp = file:match('.cpp$')
+
+            return is_cpp and test_path
+        end
+    })
+  }
+})
+vim.keymap.set('n', ',nt', neotest.summary.toggle, {})
+
 ------------------------------
 -- Telescope
 ------------------------------
@@ -160,6 +273,14 @@ require('telescope').setup {
   defaults = {
     -- Default configuration for telescope goes here:
     -- config_key = value,
+    mappings = {
+        n = {
+            ['<c-d>'] = require('telescope.actions').delete_buffer
+        },
+        i = {
+            ['<c-d>'] = require('telescope.actions').delete_buffer
+        },
+    },
   },
   pickers = {
     -- Default configuration for builtin pickers goes here:
@@ -203,14 +324,15 @@ vim.keymap.set('n', '<C-c>', telescope_builtin.colorscheme, {})
 vim.keymap.set('n', '<C-w>', telescope.extensions.projects.projects , {})
 vim.keymap.set('i', '<C-w>', telescope.extensions.projects.projects , {})
 vim.keymap.set('t', '<C-w>', telescope.extensions.projects.projects , {})
-vim.keymap.set('n', '<C-s>', function () vim.cmd('Telescope coc workspace_symbols') end , {})
-vim.keymap.set('n', '<C-t>', function () vim.cmd('Telescope coc document_symbols') end , {})
-vim.keymap.set('n', 'gt', function () vim.cmd('Telescope coc definitions') end , {})
-vim.keymap.set('n', 'gi', function () vim.cmd('Telescope coc implementations') end , {})
-vim.keymap.set('n', 'gr', function () vim.cmd('Telescope coc references') end , {})
-vim.keymap.set('n', '<space>a', function () vim.cmd('Telescope coc diagnostics') end, { silent = true })
-vim.keymap.set('n', '<space>A', function () vim.cmd('Telescope coc workspace_diagnostics') end, { silent = true })
-vim.keymap.set('n', '<space>c', function () vim.cmd('Telescope coc commands') end, { silent = true })
+vim.keymap.set('n', '<C-s>', function () vim.api.nvim_command('Telescope coc workspace_symbols') end , {})
+vim.keymap.set('n', '<C-t>', function () vim.api.nvim_command('Telescope coc document_symbols') end , {})
+vim.keymap.set('n', 'gt', function () vim.api.nvim_command('Telescope coc definitions') end , {})
+vim.keymap.set('n', 'gi', function () vim.api.nvim_command('Telescope coc implementations') end , {})
+vim.keymap.set('n', 'gr', function () vim.api.nvim_command('Telescope coc references') end , {})
+vim.keymap.set('n', '<space>a', function () vim.api.nvim_command('Telescope coc diagnostics') end, { silent = true })
+vim.keymap.set('n', '<space>A', function () vim.api.nvim_command('Telescope coc workspace_diagnostics') end, { silent = true })
+vim.keymap.set('n', '<space>c', function () vim.api.nvim_command('Telescope coc commands') end, { silent = true })
+vim.keymap.set('n', '<space>b', function () vim.api.nvim_command('Telescope buffers') end, { silent = true })
 
 ------------------------------
 -- Coc
@@ -224,7 +346,14 @@ vim.keymap.set('x', '<leader>x', '<plug>(coc-codeaction-cursor)', {})
 vim.keymap.set('n', '<tab>', '<plug>(coc-range-select)', { silent = true })
 vim.keymap.set('x', '<tab>', '<plug>(coc-range-select)', { silent = true })
 vim.keymap.set('x', '<s-tab>', '<plug>(coc-range-select-backword)', { silent = true })
-vim.keymap.set('n', '<leader>ih', function () vim.cmd('CocCommand document.toggleInlayHint') end, { silent = true })
+vim.keymap.set('n', '<leader>ih', function () vim.api.nvim_command('CocCommand document.toggleInlayHint') end, { silent = true, expr = true })
+vim.keymap.set('i', '<c-l>', function () vim.fn["coc#refresh"]() end, { silent = true })
+
+------------------------------
+-- Coc
+------------------------------
+vim.keymap.set('n', '<leader>dv', function() vim.api.nvim_command('DiffviewOpen') end, {})
+vim.keymap.set('n', '<leader>df', function() vim.api.nvim_command('DiffviewFileHistory % --no-merges') end, {})
 
 ------------------------------
 -- General maps
@@ -247,7 +376,7 @@ vim.keymap.set('n', ';', ':')
 
 vim.keymap.set('n', '<leader>d', '"_d')
 vim.keymap.set('v', '<leader>d', '"_d')
-vim.keymap.set('v', '<leader>p', '"_dP')
+vim.keymap.set('v', 'p', '"_dP')
 
 vim.keymap.set('n', '<A-h>', '<C-w>h')
 vim.keymap.set('n', '<A-j>', '<C-w>j')
@@ -267,19 +396,23 @@ vim.keymap.set('t', '<C-j>', '<C-\\><C-n>gT')
 vim.keymap.set('t', '<C-k>', '<C-\\><C-n>gt')
 
 vim.keymap.set('n', '<A-i>', function()
-    vim.cmd("execute 'silent! tabmove ' . (tabpagenr() - 2)")
+    vim.api.nvim_command("execute 'silent! tabmove ' . (tabpagenr() - 2)")
 end)
 
 vim.keymap.set('n', '<A-o>', function()
-    vim.cmd("execute 'silent! tabmove ' . (tabpagenr() + 1)")
+    vim.api.nvim_command("execute 'silent! tabmove ' . (tabpagenr() + 1)")
 end)
 
 vim.keymap.set('n', '<space>', 'za')
 
-vim.keymap.set('n', '<leader>gg', function () vim.cmd('LazyGit') end)
-
 vim.keymap.set('n', 'K', utils.show_documentation)
-------------------------------
+
+-- Resize
+vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { silent = true, desc = "Increase window height" })
+vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { silent = true, desc = "Decrease window height" })
+vim.keymap.set("n", "<C-Left>", ":vertical :resize -2<CR>", { silent = true, desc = "Decrease window width" })
+vim.keymap.set("n", "<C-Right>", ":vertical :resize +2<CR>", { silent = true, desc = "Increase window width" })
+
 -- HOP
 ------------------------------
 local hop = require('hop')
@@ -441,7 +574,7 @@ local cmake_cfg = {
 }
 cmake.setup(cmake_cfg)
 
-vim.keymap.set("n", "<F7>", function() vim.cmd("CMakeBuild") end, {})
+vim.keymap.set("n", "<F7>", function() vim.api.nvim_command("CMakeBuild") end, {})
 
 ------------------------------
 -- Tasks
@@ -509,7 +642,7 @@ require('kanagawa').setup {
     compile = true,
     dimInactive = true
 }
-vim.cmd("colorscheme kanagawa")
+vim.api.nvim_command("colorscheme kanagawa")
 
 vim.o.cursorline = true
 vim.o.report = 1
@@ -646,5 +779,23 @@ vim.api.nvim_create_autocmd({'BufEnter'}, {
             else
                 vim.opt_local.scrolloff = 8
             end
+        end
+})
+
+------------------------------
+-- Log highlight
+------------------------------
+-- nvim.api.nvim_command("au Syntax log syn keyword logLvError Error")
+-- nvim.api.nvim_command("au Syntax log syn keyword logLvInfo Info")
+
+vim.api.nvim_create_autocmd({'BufNewFile','BufRead'}, {
+        pattern = '*Log.txt',
+        callback = function()
+            vim.api.nvim_command("syn keyword logLvError Error")
+            vim.api.nvim_command("syn keyword logLvWarning Warning")
+            vim.api.nvim_command("syn keyword logLvInfo Info")
+            vim.api.nvim_command("syn keyword logLvDebug Debug")
+            vim.api.nvim_command("syn keyword logLvTrace Verbose")
+            vim.api.nvim_command("syn keyword logLvFatal Fatal")
         end
 })

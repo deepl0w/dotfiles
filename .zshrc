@@ -11,6 +11,7 @@ export ANDROID_HOME=$HOME/Android/Sdk
 
 # zplug plugins
 [[ -f ~/.zplug/init.zsh ]] && source ~/.zplug/init.zsh
+zplug "loiccoyle/zsh-github-copilot"
 zplug "plugins/fzf", from:oh-my-zsh
 zplug "plugins/wd", from:oh-my-zsh
 zplug "plugins/z", from:oh-my-zsh
@@ -94,7 +95,7 @@ if [ "$TERM_PROGRAM" != "vscode" ]; then
 fi
 
 # Nvim host control
-export PATH="$PATH:$HOME/.scripts/nvim"
+export PATH="$PATH:$HOME/.scripts/nvim:$HOME/tools"
 if command -v nvr > /dev/null; then
     e() {
         nvr "$@"
@@ -113,20 +114,29 @@ if command -v nvr > /dev/null; then
     }
 fi
 
+bindkey '^[|' zsh_gh_copilot_explain  # bind Alt+shift+\ to explain
+bindkey '^[\' zsh_gh_copilot_suggest  # bind Alt+\ to suggest
+
 alias chfont="gconftool-2 --set /apps/gnome-terminal/profiles/Default/font --type string"
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export QNX_HOST=/home/deeplow/qnx/qnx710/host/linux/x86_64
+export QNX_TARGET=/home/deeplow/qnx/qnx710/target/qnx7
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:${QNX_HOST}/usr/bin:$PATH"
+export CRYPTOGRAPHY_OPENSSL_NO_LEGACY=1
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/anaconda/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/opt/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/opt/anaconda/etc/profile.d/conda.sh" ]; then
-        . "/opt/anaconda/etc/profile.d/conda.sh"
+    if [ -f "/opt/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/opt/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/opt/anaconda/bin:$PATH"
+        export PATH="/opt/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
+. ~/.venv/main/bin/activate
