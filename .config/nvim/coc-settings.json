@@ -67,7 +67,4 @@
             }
         }
     },
-
-    "diagnostic-languageserver.filetypes": {
-    }
 }

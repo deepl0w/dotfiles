@@ -42,6 +42,7 @@ local PKGS = {
     "kylechui/nvim-surround",         -- surround fommand for different brackets
 
     "akinsho/bufferline.nvim",        -- buffer line
+
     "nvim-tree/nvim-web-devicons",    -- dev icons
     "lewis6991/gitsigns.nvim",        -- git signs
     {
@@ -78,6 +79,7 @@ local PKGS = {
 
     "ellisonleao/gruvbox.nvim",       -- gruvbox color scheme
     "rebelot/kanagawa.nvim",          -- kanagawa colorscheme
+    "xiyaowong/transparent.nvim",
 
     "xolox/vim-misc",                 -- auto-load vim scripts
     "ncm2/float-preview.nvim",        -- preview in floating window
@@ -118,7 +120,7 @@ local PKGS = {
         init = function()
             vim.g.coc_global_extensions = {
                 'coc-json', 'coc-git', 'coc-kotlin', 'coc-pyright', 'coc-lists', 'coc-highlight', 'coc-markdownlint',
-                'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-sumneko-lua', 'coc-clangd', "@hexuhua/coc-copilot"
+                'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-sumneko-lua', 'coc-clangd'
             }
         end,
     },
@@ -161,22 +163,147 @@ local PKGS = {
         }
     },
     {
-      "zbirenbaum/copilot.lua",
-      cmd = "Copilot",
-      event = "InsertEnter",
-      config = function()
-        require("copilot").setup({})
-      end,
+        "copilotlsp-nvim/copilot-lsp",
+        init = function()
+            vim.g.copilot_nes_debounce = 500
+            vim.lsp.enable("copilot_ls")
+            vim.keymap.set("n", "<tab>", function()
+                local bufnr = vim.api.nvim_get_current_buf()
+                local state = vim.b[bufnr].nes_state
+                if state then
+                    -- Try to jump to the start of the suggestion edit.
+                    -- If already at the start, then apply the pending suggestion and jump to the end of the edit.
+                    local _ = require("copilot-lsp.nes").walk_cursor_start_edit()
+                        or (
+                            require("copilot-lsp.nes").apply_pending_nes()
+                            and require("copilot-lsp.nes").walk_cursor_end_edit()
+                        )
+                    return nil
+                else
+                    -- Resolving the terminal's inability to distinguish between `TAB` and `<C-i>` in normal mode
+                    return "<C-i>"
+                end
+            end, { desc = "Accept Copilot NES suggestion", expr = true })
+        end,
     },
     {
-    "CopilotC-Nvim/CopilotChat.nvim",
+        "zbirenbaum/copilot.lua",
+        requires = {
+            "copilotlsp-nvim/copilot-lsp",
+        },
+        cmd = "Copilot",
+        event = "InsertEnter",
+        config = function()
+            require("copilot").setup({
+                suggestion = {
+                    auto_trigger = true
+                },
+                nes = {
+                    enabled = false,
+                    keymap = {
+                        accept_and_goto = "<M-p>",
+                        accept = false,
+                        next = "<M-}>",
+                        prev = "<M-{>",
+                        dismiss = "<Esc>",
+                    }
+                }
+            })
+        end,
+    },
+    -- {
+    --     "olimorris/codecompanion.nvim",
+    --     config = true,
+    --     dependencies = {
+    --         "nvim-lua/plenary.nvim",
+    --         "nvim-treesitter/nvim-treesitter",
+    --         "j-hui/fidget.nvim",
+    --         "echasnovski/mini.diff"
+    --     },
+    --     opts = {
+    --         strategies = {
+    --             chat = {
+    --                 adapter = "copilot"
+    --             },
+    --             inline = {
+    --                 adapter = "copilot",
+    --                 keymaps = {
+    --                   accept_change = {
+    --                     modes = { n = "<leader>ca" },
+    --                     description = "Accept the suggested change",
+    --                   },
+    --                   reject_change = {
+    --                     modes = { n = "<leader>cr" },
+    --                     description = "Reject the suggested change",
+    --                   },
+    --                 }
+    --             }
+    --         },
+    --     },
+    --     init = function()
+    --       require("plugins.codecompanion.fidget-spinner"):init()
+    --     end,
+    -- },
+    -- {
+    --   "yetone/avante.nvim",
+    --   event = "VeryLazy",
+    --   version = "v0.0.21", -- Never set this value to "*"! Never!
+    --   opts = {
+    --       provider = "copilot",
+    --       auto_suggestions_provider = "copilot",
+    --       copilot = {
+    --           max_tokens = nil
+    --       },
+    --   },
+    --   build = "make",
+    --   dependencies = {
+    --     "stevearc/dressing.nvim",
+    --     "MunifTanjim/nui.nvim",
+    --     --- The below dependencies are optional,
+    --     "echasnovski/mini.pick", -- for file_selector provider mini.pick
+    --     "ibhagwan/fzf-lua", -- for file_selector provider fzf
+    --     "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+    --     "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+    --     {
+    --       -- support for image pasting
+    --       "HakonHarnes/img-clip.nvim",
+    --       event = "VeryLazy",
+    --       opts = {
+    --         -- recommended settings
+    --         default = {
+    --           embed_image_as_base64 = false,
+    --           prompt_for_file_name = false,
+    --           drag_and_drop = {
+    --             insert_mode = true,
+    --           },
+    --           -- required for Windows users
+    --           use_absolute_path = true,
+    --         },
+    --       },
+    --     },
+    --   },
+    -- },
+    {
+      -- Make sure to set this up properly if you have lazy=true
+      'MeanderingProgrammer/render-markdown.nvim',
+      opts = {
+        file_types = { "markdown", "Avante", "codecompanion" },
+      },
+      ft = { "markdown", "Avante", "codecompanion" },
+    },
+    {
+        "CopilotC-Nvim/CopilotChat.nvim",
         dependencies = {
-          { "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
+          { "zbirenbaum/copilot.lua" }, -- or zbirenbaum/copilot.lua
           { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
         },
         build = "make tiktoken", -- Only on MacOS or Linux
         opts = {
-            chat_autocomplete = false
+            chat_autocomplete = true,
+            sticky = {
+                '#filenames:`**/*.cpp`',
+                '#filenames:`**/*.h`'
+            }
         },
         -- See Commands section for default commands if you want to lazy load on them
     },
@@ -639,9 +766,11 @@ require("gruvbox").setup {
     contrast = "medium"
 }
 require('kanagawa').setup {
-    compile = true,
-    dimInactive = true
+    dimInactive = true,
+    transparent = false,
+    theme = "wave"
 }
+
 vim.api.nvim_command("colorscheme kanagawa")
 
 vim.o.cursorline = true
