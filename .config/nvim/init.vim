@@ -30,7 +30,7 @@ endif
 
 " edit and source configs
 """"""""""""""""""""""""""""""
-command! Ev tabedit $MYVIMRC | vsplit $HOME/.config/nvim/lua/init.lua
+command! Ev tabedit $HOME/.config/nvim/lua/init.lua
 command! Sv source $MYVIMRC | luafile $HOME/.config/nvim/lua/init.lua
 
 " Load lua config

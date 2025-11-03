@@ -40,6 +40,18 @@ return {
                         luasnip.lsp_expand(args.body)
                     end,
                 },
+                performance = {
+                    debounce = 60,              -- Delay before showing completion (ms)
+                    throttle = 30,              -- Delay between completion updates (ms)
+                    fetching_timeout = 200,     -- Timeout for fetching completions
+                    max_view_entries = 50,      -- Limit completion items shown
+                },
+                completion = {
+                    autocomplete = { 
+                        require('cmp.types').cmp.TriggerEvent.TextChanged,
+                    },
+                    completeopt = 'menu,menuone,noinsert',
+                },
                 mapping = cmp.mapping.preset.insert({
                     ["<C-Space>"] = cmp.mapping.complete(),
                     ["<CR>"] = cmp.mapping(function(fallback)
@@ -53,11 +65,11 @@ return {
                     ["<S-Tab>"] = cmp.mapping.select_prev_item(),
                 }),
                 sources = cmp.config.sources({
-                    { name = "copilot" },  -- Copilot integration
-                    { name = "nvim_lsp" },
-                    { name = "luasnip" },
-                    { name = "buffer" },
-                    { name = "path" },
+                    { name = "copilot", max_item_count = 3 },  -- Limit Copilot suggestions
+                    { name = "nvim_lsp", max_item_count = 20 },
+                    { name = "luasnip", max_item_count = 5 },
+                    { name = "buffer", max_item_count = 5 },
+                    { name = "path", max_item_count = 5 },
                 }),
                 formatting = {
                     format = function(entry, vim_item)
@@ -78,16 +90,33 @@ return {
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
             vim.lsp.config("clangd", {
-                cmd = { "clangd" },
+                cmd = { 
+                    "clangd",
+                    "--background-index",           -- Index in background for better perf
+                    "--clang-tidy=false",           -- Disable clang-tidy for performance (enable manually if needed)
+                    "--completion-style=detailed",
+                    "--header-insertion=iwyu",
+                    "--pch-storage=memory",         -- Store PCH in memory for speed
+                    "--log=error",                  -- Reduce logging overhead
+                    "--j=4",                        -- Use 4 threads for background work
+                    "--limit-results=20",           -- Limit completion results
+                },
                 filetypes = { "c", "cpp", "objc", "objcpp" },
                 root_dir = vim.fs.dirname(vim.fs.find({ ".git", "compile_commands.json" }, { upward = true })[1] or vim.loop.cwd()),
                 capabilities = capabilities,
+                -- Add debouncing to reduce frequent updates
+                flags = {
+                    debounce_text_changes = 200,  -- Increased debounce for smoother typing
+                },
             })
 
             vim.lsp.config("pyright", {
                 cmd = { "pyright-langserver", "--stdio" },
                 filetypes = { "python" },
                 capabilities = capabilities,
+                flags = {
+                    debounce_text_changes = 200,  -- Increased debounce for smoother typing
+                },
             })
             vim.lsp.config("vimls", {
                 cmd = { "vim-language-server", "--stdio" },
@@ -159,7 +188,7 @@ return {
                 virtual_text = false,
                 signs = true,
                 underline = true,
-                update_in_insert = false,
+                update_in_insert = false,  -- Don't update diagnostics while typing
                 severity_sort = true,
                 float = {
                     border = "rounded",

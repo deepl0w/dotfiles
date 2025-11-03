@@ -205,9 +205,17 @@ require('nvim-treesitter.configs').setup {
     auto_install = true,
 
     highlight = {
-        enable = true
+        enable = true,
+        -- Disable for very large files to prevent slowdowns
+        disable = function(lang, buf)
+            local max_filesize = 100 * 1024 -- 100 KB
+            local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+            if ok and stats and stats.size > max_filesize then
+                return true
+            end
+        end,
     },
-    additional_vim_regex_highlighting = false
+    additional_vim_regex_highlighting = false,
 }
 
 ------------------------------
@@ -549,7 +557,9 @@ require('bufferline').setup {
         mode = "tabs",
         separator_style = "slope",
         tab_size = 20,
-    }
+        show_buffer_close_icons = false,
+        show_close_icon = false,
+    },
 }
 
 ------------------------------
@@ -559,11 +569,17 @@ vim.o.history = 1000
 vim.o.mouse = 'a'
 vim.o.ttimeoutlen = 0
 vim.o.timeoutlen = 500
-vim.o.updatetime = 300
+vim.o.updatetime = 1000  -- Increased from 300ms to reduce frequent CursorHold triggers
 vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.exrc = true
 vim.o.secure = true
+
+-- Performance optimizations
+vim.o.lazyredraw = true      -- Don't redraw during macros
+vim.o.ttyfast = true         -- Faster terminal connection
+vim.o.synmaxcol = 240        -- Don't syntax highlight long lines (perf)
+vim.o.regexpengine = 1       -- Use old regex engine (faster for some patterns)
 
 -- folds and tabs
 vim.o.foldlevelstart = 9
@@ -594,6 +610,35 @@ vim.o.backspace = [[eol,start,indent]]
 vim.o.scrolloff = 999
 
 vim.api.nvim_create_user_command('Wipeout', function() utils.wipeout() end, { nargs = 0 })
+
+-- Manual performance cleanup command
+vim.api.nvim_create_user_command('CleanupPerf', function()
+    -- Close hidden, unmodified buffers
+    local closed_count = 0
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) and
+           not vim.api.nvim_buf_get_option(buf, 'modified') and
+           #vim.fn.win_findbuf(buf) == 0 then
+            pcall(vim.api.nvim_buf_delete, buf, { force = false })
+            closed_count = closed_count + 1
+        end
+    end
+
+    -- Request Lua garbage collection
+    collectgarbage('collect')
+
+    -- Restart LSP clients to free memory (but keep Copilot running)
+    local clients_restarted = 0
+    for _, client in ipairs(vim.lsp.get_clients()) do
+        -- Don't stop copilot or copilot-related clients
+        if not client.name:match("copilot") then
+            vim.lsp.stop_client(client.id)
+            clients_restarted = clients_restarted + 1
+        end
+    end
+
+    vim.notify(string.format('Cleanup complete: %d buffers closed, %d LSP clients restarted, GC run', closed_count, clients_restarted), vim.log.levels.INFO)
+end, { nargs = 0, desc = 'Clean up memory and restart LSP (keeps Copilot)' })
 
 -- Set clipboard to system clipboard
 vim.opt.clipboard='unnamedplus'
@@ -644,6 +689,38 @@ vim.api.nvim_create_autocmd({'BufWinEnter'}, {
 vim.api.nvim_create_autocmd({'BufWritePre'}, {
         pattern = '*',
         command = '%s/\\s\\+$//e'
+})
+
+-- Periodic cleanup for long-running sessions (every 30 mins)
+vim.api.nvim_create_autocmd({'CursorHold'}, {
+    group = vim.api.nvim_create_augroup('PeriodicCleanup', { clear = true }),
+    callback = function()
+        -- Track last cleanup time
+        if not vim.g.last_cleanup_time then
+            vim.g.last_cleanup_time = os.time()
+        end
+
+        local now = os.time()
+        local elapsed = now - vim.g.last_cleanup_time
+
+        -- Clean up every 30 minutes
+        if elapsed > 1800 then
+            -- Close hidden, unmodified buffers to free memory
+            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                if vim.api.nvim_buf_is_loaded(buf) and
+                   not vim.api.nvim_buf_get_option(buf, 'modified') and
+                   #vim.fn.win_findbuf(buf) == 0 then
+                    vim.api.nvim_buf_delete(buf, { force = false })
+                end
+            end
+
+            -- Request garbage collection
+            collectgarbage('collect')
+
+            vim.g.last_cleanup_time = now
+            vim.notify('Performed periodic cleanup', vim.log.levels.INFO)
+        end
+    end,
 })
 
 vim.api.nvim_create_autocmd({'BufEnter'}, {

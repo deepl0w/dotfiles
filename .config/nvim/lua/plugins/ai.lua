@@ -11,8 +11,7 @@ return {
             require("copilot").setup({
                 suggestion = {
                     auto_trigger = true
-                },
-                nes = {
+                }, nes = {
                     enabled = false,
                     keymap = {
                         accept_and_goto = "<leader>l",
@@ -63,5 +62,26 @@ return {
             }
         },
         -- See Commands section for default commands if you want to lazy load on them
+    },
+    {
+        "olimorris/codecompanion.nvim",
+        dependencies = { "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter", },
+        opts = {
+            strategies = {
+                chat = {
+                    adapter = "copilot",
+                    model = "claude-sonnet-4.5",
+                },
+            }
+        },
+        init = function()
+            require("plugins.codecompanion.fidget-spinner").init()
+        end,
+    },
+    {
+        "j-hui/fidget.nvim",
+        opts = {
+            -- options
+        },
     },
 }
