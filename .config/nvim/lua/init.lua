@@ -22,11 +22,6 @@ local PKGS = {
     },
     "theHamsta/nvim-dap-virtual-text",
 
-    "nvim-telescope/telescope.nvim",  -- Fuzzy finder with nice ui
-    "nvim-telescope/telescope-ui-select.nvim",
-    "axkirillov/easypick.nvim",       -- Easy telescope pickers
-    "fannheyward/telescope-coc.nvim", -- Integrate coc outputs in telescope
-    "nvim-telescope/telescope-dap.nvim", -- Integrate coc outputs in telescope
     "Shatur/neovim-tasks",            -- Build/Run tasks
     {
         "Civitasv/cmake-tools.nvim",      -- CMake integration
@@ -45,16 +40,6 @@ local PKGS = {
 
     "nvim-tree/nvim-web-devicons",    -- dev icons
     "lewis6991/gitsigns.nvim",        -- git signs
-    {
-        "aaronhallaert/advanced-git-search.nvim",
-        config = function()
-            require("telescope").load_extension("advanced_git_search")
-        end,
-        dependencies = {
-            "tpope/vim-fugitive",
-            "tpope/vim-rhubarb",
-        },
-    },
     {
         'tanvirtin/vgit.nvim', branch = 'v1.0.x',
         -- or               , tag = 'v1.0.2',
@@ -114,16 +99,6 @@ local PKGS = {
         opts = { open_mapping = [[<c-\>]], direction = 'float' },
         keys = [[<c-\>]],
     },
-    {
-        "neoclide/coc.nvim",
-        branch = 'release',
-        init = function()
-            vim.g.coc_global_extensions = {
-                'coc-json', 'coc-git', 'coc-kotlin', 'coc-pyright', 'coc-lists', 'coc-highlight', 'coc-markdownlint',
-                'coc-vimlsp', 'coc-diagnostic', 'coc-lightbulb', 'coc-cmake', 'coc-sumneko-lua', 'coc-clangd'
-            }
-        end,
-    },
     "nvim-lualine/lualine.nvim",      -- status line
     {
         'fei6409/log-highlight.nvim',  -- log highlights
@@ -163,127 +138,6 @@ local PKGS = {
         }
     },
     {
-        "copilotlsp-nvim/copilot-lsp",
-        init = function()
-            vim.g.copilot_nes_debounce = 500
-            vim.lsp.enable("copilot_ls")
-            vim.keymap.set("n", "<tab>", function()
-                local bufnr = vim.api.nvim_get_current_buf()
-                local state = vim.b[bufnr].nes_state
-                if state then
-                    -- Try to jump to the start of the suggestion edit.
-                    -- If already at the start, then apply the pending suggestion and jump to the end of the edit.
-                    local _ = require("copilot-lsp.nes").walk_cursor_start_edit()
-                        or (
-                            require("copilot-lsp.nes").apply_pending_nes()
-                            and require("copilot-lsp.nes").walk_cursor_end_edit()
-                        )
-                    return nil
-                else
-                    -- Resolving the terminal's inability to distinguish between `TAB` and `<C-i>` in normal mode
-                    return "<C-i>"
-                end
-            end, { desc = "Accept Copilot NES suggestion", expr = true })
-        end,
-    },
-    {
-        "zbirenbaum/copilot.lua",
-        requires = {
-            "copilotlsp-nvim/copilot-lsp",
-        },
-        cmd = "Copilot",
-        event = "InsertEnter",
-        config = function()
-            require("copilot").setup({
-                suggestion = {
-                    auto_trigger = true
-                },
-                nes = {
-                    enabled = false,
-                    keymap = {
-                        accept_and_goto = "<M-p>",
-                        accept = false,
-                        next = "<M-}>",
-                        prev = "<M-{>",
-                        dismiss = "<Esc>",
-                    }
-                }
-            })
-        end,
-    },
-    -- {
-    --     "olimorris/codecompanion.nvim",
-    --     config = true,
-    --     dependencies = {
-    --         "nvim-lua/plenary.nvim",
-    --         "nvim-treesitter/nvim-treesitter",
-    --         "j-hui/fidget.nvim",
-    --         "echasnovski/mini.diff"
-    --     },
-    --     opts = {
-    --         strategies = {
-    --             chat = {
-    --                 adapter = "copilot"
-    --             },
-    --             inline = {
-    --                 adapter = "copilot",
-    --                 keymaps = {
-    --                   accept_change = {
-    --                     modes = { n = "<leader>ca" },
-    --                     description = "Accept the suggested change",
-    --                   },
-    --                   reject_change = {
-    --                     modes = { n = "<leader>cr" },
-    --                     description = "Reject the suggested change",
-    --                   },
-    --                 }
-    --             }
-    --         },
-    --     },
-    --     init = function()
-    --       require("plugins.codecompanion.fidget-spinner"):init()
-    --     end,
-    -- },
-    -- {
-    --   "yetone/avante.nvim",
-    --   event = "VeryLazy",
-    --   version = "v0.0.21", -- Never set this value to "*"! Never!
-    --   opts = {
-    --       provider = "copilot",
-    --       auto_suggestions_provider = "copilot",
-    --       copilot = {
-    --           max_tokens = nil
-    --       },
-    --   },
-    --   build = "make",
-    --   dependencies = {
-    --     "stevearc/dressing.nvim",
-    --     "MunifTanjim/nui.nvim",
-    --     --- The below dependencies are optional,
-    --     "echasnovski/mini.pick", -- for file_selector provider mini.pick
-    --     "ibhagwan/fzf-lua", -- for file_selector provider fzf
-    --     "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
-    --     "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-    --     {
-    --       -- support for image pasting
-    --       "HakonHarnes/img-clip.nvim",
-    --       event = "VeryLazy",
-    --       opts = {
-    --         -- recommended settings
-    --         default = {
-    --           embed_image_as_base64 = false,
-    --           prompt_for_file_name = false,
-    --           drag_and_drop = {
-    --             insert_mode = true,
-    --           },
-    --           -- required for Windows users
-    --           use_absolute_path = true,
-    --         },
-    --       },
-    --     },
-    --   },
-    -- },
-    {
       -- Make sure to set this up properly if you have lazy=true
       'MeanderingProgrammer/render-markdown.nvim',
       opts = {
@@ -291,22 +145,7 @@ local PKGS = {
       },
       ft = { "markdown", "Avante", "codecompanion" },
     },
-    {
-        "CopilotC-Nvim/CopilotChat.nvim",
-        dependencies = {
-          { "zbirenbaum/copilot.lua" }, -- or zbirenbaum/copilot.lua
-          { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
-        },
-        build = "make tiktoken", -- Only on MacOS or Linux
-        opts = {
-            chat_autocomplete = true,
-            sticky = {
-                '#filenames:`**/*.cpp`',
-                '#filenames:`**/*.h`'
-            }
-        },
-        -- See Commands section for default commands if you want to lazy load on them
-    },
+    { import = "plugins" },
 }
 
 -- Install packages and package manager if not installed
@@ -394,95 +233,6 @@ neotest.setup({
 vim.keymap.set('n', ',nt', neotest.summary.toggle, {})
 
 ------------------------------
--- Telescope
-------------------------------
-require('telescope').setup {
-  defaults = {
-    -- Default configuration for telescope goes here:
-    -- config_key = value,
-    mappings = {
-        n = {
-            ['<c-d>'] = require('telescope.actions').delete_buffer
-        },
-        i = {
-            ['<c-d>'] = require('telescope.actions').delete_buffer
-        },
-    },
-  },
-  pickers = {
-    -- Default configuration for builtin pickers goes here:
-    -- picker_name = {
-    --   picker_config_key = value,
-    --   ...
-    -- }
-    -- Now the picker_config_key will be applied every time you call this
-    -- builtin picker
-  },
-  extensions = {
-    coc = {
-        prefer_location = true
-    }
-  }
-}
-
-require('telescope').load_extension('coc')
-require('telescope').load_extension('dap')
-require('telescope').load_extension('projects')
-require('telescope').load_extension('cmake_tools')
-require('telescope').load_extension('ui-select')
-
-local easypick = require("easypick")
-easypick.setup({
-    pickers = {
-        {
-            name = "ls",
-            command = "ls",
-            previewer = easypick.previewers.default(),
-            action = easypick.actions.nvim_commandf("~/.config/nvim/cmake_build.py %s")
-        },
-    }
-})
-
-local telescope = require('telescope')
-local telescope_builtin = require('telescope.builtin')
-vim.keymap.set('n', '<C-p>', telescope_builtin.find_files, {})
-vim.keymap.set('n', '<C-g>', telescope_builtin.live_grep, {})
-vim.keymap.set('n', '<C-c>', telescope_builtin.colorscheme, {})
-vim.keymap.set('n', '<C-w>', telescope.extensions.projects.projects , {})
-vim.keymap.set('i', '<C-w>', telescope.extensions.projects.projects , {})
-vim.keymap.set('t', '<C-w>', telescope.extensions.projects.projects , {})
-vim.keymap.set('n', '<C-s>', function () vim.api.nvim_command('Telescope coc workspace_symbols') end , {})
-vim.keymap.set('n', '<C-t>', function () vim.api.nvim_command('Telescope coc document_symbols') end , {})
-vim.keymap.set('n', 'gt', function () vim.api.nvim_command('Telescope coc definitions') end , {})
-vim.keymap.set('n', 'gi', function () vim.api.nvim_command('Telescope coc implementations') end , {})
-vim.keymap.set('n', 'gr', function () vim.api.nvim_command('Telescope coc references') end , {})
-vim.keymap.set('n', '<space>a', function () vim.api.nvim_command('Telescope coc diagnostics') end, { silent = true })
-vim.keymap.set('n', '<space>A', function () vim.api.nvim_command('Telescope coc workspace_diagnostics') end, { silent = true })
-vim.keymap.set('n', '<space>c', function () vim.api.nvim_command('Telescope coc commands') end, { silent = true })
-vim.keymap.set('n', '<space>b', function () vim.api.nvim_command('Telescope buffers') end, { silent = true })
-
-------------------------------
--- Coc
-------------------------------
-
-vim.keymap.set('n', '<leader>rn', '<plug>(coc-rename)', {})
-vim.keymap.set('n', '<leader><leader>f', '<plug>(coc-format-selected)', {})
-vim.keymap.set('x', '<leader><leader>f', '<plug>(coc-format-selected)', {})
-vim.keymap.set('n', '<leader>x', '<plug>(coc-codeaction-cursor)', {})
-vim.keymap.set('x', '<leader>x', '<plug>(coc-codeaction-cursor)', {})
-vim.keymap.set('n', '<tab>', '<plug>(coc-range-select)', { silent = true })
-vim.keymap.set('x', '<tab>', '<plug>(coc-range-select)', { silent = true })
-vim.keymap.set('x', '<s-tab>', '<plug>(coc-range-select-backword)', { silent = true })
-vim.keymap.set('n', '<leader>ih', function () vim.api.nvim_command('CocCommand document.toggleInlayHint') end, { silent = true, expr = true })
-vim.keymap.set('i', '<c-l>', function () vim.fn["coc#refresh"]() end, { silent = true })
-
-------------------------------
--- Coc
-------------------------------
-vim.keymap.set('n', '<leader>dv', function() vim.api.nvim_command('DiffviewOpen') end, {})
-vim.keymap.set('n', '<leader>df', function() vim.api.nvim_command('DiffviewFileHistory % --no-merges') end, {})
-
-------------------------------
 -- General maps
 ------------------------------
 
@@ -531,8 +281,6 @@ vim.keymap.set('n', '<A-o>', function()
 end)
 
 vim.keymap.set('n', '<space>', 'za')
-
-vim.keymap.set('n', 'K', utils.show_documentation)
 
 -- Resize
 vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { silent = true, desc = "Increase window height" })

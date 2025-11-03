@@ -66,19 +66,5 @@ function utils.contains(table, val)
     return false
 end
 
-function utils.show_documentation()
-    if utils.contains({'vim', 'help'}, vim.bo.filetype) then
-        local cword = vim.fn.expand('<cword>')
-        vim.cmd("execute 'h " .. cword .. "'")
-    else
-        vim.cmd("call CocAction('doHover')")
-    end
-end
-
-function utils.check_backspace()
-    local col = vim.fn.col('.') - 1
-    return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
-end
-
 return utils
 
