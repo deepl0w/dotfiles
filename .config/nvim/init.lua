@@ -1,17 +1,159 @@
 local PKGS = {
     "nvim-lua/plenary.nvim",    -- Utility functions
-    "nvim-lua/popup.nvim",      -- Popup API from vim to nvim
     "svermeulen/vimpeccable",   -- Lua API map keys
-    "nvim-treesitter/nvim-treesitter",  -- parser
+    {
+        "nvim-treesitter/nvim-treesitter",  -- parser
+        run = ':TSUpdate',
+        config = function()
+            require('nvim-treesitter.configs').setup {
+                ensure_installed = { 'c', 'cpp', 'lua', 'vim', 'bash', 'python', 'rust', 'regex', 'markdown', 'markdown_inline' },
+                sync_install = false,
+                auto_install = true,
 
-    "mfussenegger/nvim-dap",    -- Debug Adapter Protocol
+                highlight = {
+                    enable = true,
+                    -- Disable for very large files to prevent slowdowns
+                    disable = function(lang, buf)
+                        local max_filesize = 100 * 1024 -- 100 KB
+                        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+                        if ok and stats and stats.size > max_filesize then
+                            return true
+                        end
+                    end,
+                },
+                additional_vim_regex_highlighting = false,
+            }
+        end
+    },
+    {
+        "mfussenegger/nvim-dap",    -- Debug Adapter Protocol
+        cmd = { "DapContinue", "DapToggleBreakpoint", "DapStepOver", "DapStepInto", "DapStepOut", "DapRunLast", "DapRepl", "DapTerminate" },
+        config = function()
+            local Path = require('plenary.path')
+            local Scan = require('plenary.scandir')
+
+            local utils = require('utils')
+            local icons = require("icons")
+
+            local dap = require("dap")
+            local dapui = require("dapui")
+            require("dapui").setup()
+            require("nvim-dap-virtual-text").setup()
+            require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
+
+            local function vscode_debugger_path()
+                local p = Path:new(Path.path.home)
+                local vscode_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = "%.vscode"})
+                p = Path:new(vscode_dir[#vscode_dir], 'extensions')
+
+                local cpptools_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = 'ms%-vscode%.cpptools'})
+                p = Path:new(cpptools_dir[1], 'debugAdapters', 'bin', 'OpenDebugAD7')
+
+                return p
+            end
+
+            dap.adapters.cppdbg = {
+                id = "cppdbg",
+                type = "executable",
+                command = tostring(vscode_debugger_path())
+            }
+
+            dap.configurations.python = {
+                {
+                    type = 'python',
+                    request = 'launch',
+                    name = 'Launch file',
+                    program = '${file}',
+                    pythonPath = function()
+                        return '/usr/bin/python'
+                    end
+                }
+            }
+
+            dap.configurations.cpp = {
+              {
+                name = "Launch file",
+                type = "cppdbg",
+                request = "launch",
+                program = function()
+                  return vim.fn.input({'Path to executable: ', vim.fn.getcwd() .. '/', 'file'})
+                end,
+                cwd = '${workspaceFolder}',
+                stopAtEntry = true,
+
+                setupCommands = {
+                    {
+                        text = '-enable-pretty-printing',
+                        description =  'enable pretty printing',
+                        ignoreFailures = false
+                    },
+                },
+              },
+            }
+
+            vim.fn.sign_define('DapBreakpoint', {text=icons.ui.BigCircle, texthl='', linehl='', numhl=''})
+
+            -- wrapper to load launch.json if it exists when starting debug
+            local function dap_continue_with_launchjs()
+                if not dap.session() then
+                    require('dap.ext.vscode').load_launchjs(nil, { cppdbg = {'c', 'cpp'} })
+                end
+                dap.continue()
+            end
+
+            vim.keymap.set("n", "<F5>",       dap_continue_with_launchjs)
+            vim.keymap.set("n", "<F10>",      dap.step_over)
+            vim.keymap.set("n", "<F11>",      dap.step_into)
+            vim.keymap.set("n", "<F12>",      dap.step_out)
+            vim.keymap.set("n", "<F8>",       dap.toggle_breakpoint)
+            vim.keymap.set("n", "<leader>dr", dap.repl.toggle)
+            vim.keymap.set("n", "<leader>dl", dap.run_last)
+            vim.keymap.set("n", "<leader>du", dapui.toggle)
+            vim.keymap.set("n", "<space>k",   dapui.eval)
+            vim.keymap.set("v", "<space>k",   dapui.eval)
+
+
+            dap.listeners.after.event_initialized["dapui_config"] = function()
+                dapui.open()
+            end
+            dap.listeners.before.event_terminated["dapui_config"] = function()
+                dapui.close()
+            end
+            dap.listeners.before.event_exited["dapui_config"] = function()
+                dapui.close()
+            end
+
+        end
+    },
     "rcarriga/nvim-dap-python",
     {
         "nvim-neotest/neotest",
         dependencies = {
             "nvim-lua/plenary.nvim",
             "alfaix/neotest-gtest"
-        }
+        },
+        cmd = {
+            "Neotest", "NeotestRun", "NeotestSummary", "NeotestOutput", "NeotestJump", "NeotestAttach"
+        },
+        config = function()
+            local neotest = require("neotest")
+            neotest.setup({
+              adapters = {
+                require("neotest-gtest").setup({
+                    debug_adapter = "cppdbg",
+
+                    is_test_file = function(file)
+                        local p = Path:new(file)
+                        local test_path = file:match('/utest/') or file:match('/itest/') or file:match('/apitest/')
+                        local is_cpp = file:match('.cpp$')
+
+                        return is_cpp and test_path
+                    end
+                })
+              }
+            })
+            vim.keymap.set('n', ',nt', neotest.summary.toggle, {})
+        end
     },
     {
         "rcarriga/nvim-dap-ui",
@@ -22,29 +164,109 @@ local PKGS = {
     },
     "theHamsta/nvim-dap-virtual-text",
 
-    "Shatur/neovim-tasks",            -- Build/Run tasks
+    {
+        "Shatur/neovim-tasks",            -- Build/Run tasks
+        cmd = { "TaskStart", "TaskStop", "TaskRestart", "TaskEdit", "TaskDelete", "TaskList" },
+        config = function()
+            local Path = require('plenary.path')
+            require('tasks').setup({
+                default_params = {
+                    cmake = {
+                        cmd = 'cmake',
+                        build_dir = tostring(Path:new('{cwd}', 'bin')),
+                        build_type = 'Debug',
+                        dap_name = 'cppdbg',
+                        args = {
+                            configure = { '-D', 'CMAKE_EXPORT_COMPILE_COMMANDS=1' },
+                        },
+                    },
+                },
+                save_before_run = true,
+                params_file = 'neovim.json',
+                quickfix = {
+                    pos = 'botright',
+                    height = 12,
+                },
+                dap_open_command = function() return require('dap').repl.open() end,
+            })
+        end,
+    },
     {
         "Civitasv/cmake-tools.nvim",      -- CMake integration
-        commit = "643e46b"
+        commit = "643e46b",
+        config = function()
+            local cmake = require("cmake-tools")
+            local cmake_cfg = {
+                cmake_build_directory = "bin/${variant:target}/${variant:buildType}",
+                cmake_build_options = {"-j16"},
+                cmake_variants_message = {
+                    short = { show = true },
+                    long = { show = false },
+                },
+                cmake_dap_configuration = { -- debug settings for cmake
+                    name = "cpp",
+                    type = "cppdbg",
+                    request = "launch",
+                    stopOnEntry = false,
+                    setupCommands = {
+                        {
+                            text = '-enable-pretty-printing',
+                            description =  'enable pretty printing',
+                            ignoreFailures = false
+                        },
+                    },
+                },
+                cmake_executor = {
+                    name = "quickfix",
+                    default_opts = {
+                        show = "only_on_error"
+                    },
+                },
+                cmake_runner = {
+                    name = "quickfix",
+                },
+            }
+            cmake.setup(cmake_cfg)
+
+            vim.keymap.set("n", "<F7>", function() vim.api.nvim_command("CMakeBuild") end, {})
+
+            vim.api.nvim_create_autocmd({'BufWinEnter'}, {
+                    pattern = {'*.cpp', '*.txx', '*.c', '*.h', '*.hpp'},
+                    callback = function()
+                        cmake.setup(cmake_cfg)
+                    end
+            })
+
+        end
     },
-    "stevearc/overseer.nvim",
-    "ahmedkhalf/project.nvim",        -- Projects
+    {
+        "stevearc/overseer.nvim",
+        config = function()
+            require('overseer').setup()
+        end,
+
+    },
+    {
+        "ahmedkhalf/project.nvim",        -- Projects
+        config = function()
+            require("project_nvim").setup({
+                scope_chdir = 'tab',
+                patterns = { ".project_root", ">work_git", ">git", "package.json" },
+            })
+
+        end,
+    },
     "smoka7/hop.nvim",                -- better easymotion
     { 'chaoren/vim-wordmotion', event = 'VeryLazy' },
-    "folke/noice.nvim",               -- floating windows Ufolke/noice.nvim
-    "MunifTanjim/nui.nvim",           -- UI component lib
-    "rcarriga/nvim-notify",           -- fancy notification manager
     "kylechui/nvim-surround",         -- surround fommand for different brackets
 
-    "akinsho/bufferline.nvim",        -- buffer line
 
-    "nvim-tree/nvim-web-devicons",    -- dev icons
-    "lewis6991/gitsigns.nvim",        -- git signs
     {
         'tanvirtin/vgit.nvim', branch = 'v1.0.x',
         -- or               , tag = 'v1.0.2',
         dependencies = { 'nvim-lua/plenary.nvim', 'nvim-tree/nvim-web-devicons' },
         -- Lazy loading on 'VimEnter' event is necessary.
+        cmd = { "VGit", "VGitBufferHunkStage", "VGitBufferHunkReset", "VGitBufferHunkPreview", "VGitBufferBlamePreview", "VGitBufferDiffPreview", "VGitBufferHistoryPreview", "VGitBufferReset", "VGitProjectDiffPreview", "VGitToggleDiffPreference" },
         event = 'VimEnter',
         config = function() require("vgit").setup({
                 keymaps = {
@@ -62,9 +284,6 @@ local PKGS = {
         ) end,
     },
 
-    "ellisonleao/gruvbox.nvim",       -- gruvbox color scheme
-    "rebelot/kanagawa.nvim",          -- kanagawa colorscheme
-    "xiyaowong/transparent.nvim",
 
     "xolox/vim-misc",                 -- auto-load vim scripts
     "ncm2/float-preview.nvim",        -- preview in floating window
@@ -99,54 +318,47 @@ local PKGS = {
         opts = { open_mapping = [[<c-\>]], direction = 'float' },
         keys = [[<c-\>]],
     },
-    "nvim-lualine/lualine.nvim",      -- status line
-    {
-        'fei6409/log-highlight.nvim',  -- log highlights
-        config = function()
-            require('log-highlight').setup {
-                extension = 'log',
-                filename = {
-                    'mesasges',
-                },
-                pattern = {
-                    '/var/log/.*',
-                    'messages%..*',
-                    '.*Log.txt',
-                },
-            }
-        end,
-    },
     {
       'stevearc/oil.nvim',
       ---@module 'oil'
       ---@type oil.SetupOpts
       opts = {},
       dependencies = { "nvim-tree/nvim-web-devicons" },
+      config = function()
+          require('oil').setup()
+      end,
     },
     {
         "Funk66/jira.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
-        config = function()
-          require("jira").setup()
-        end,
         cond = function()
           return vim.env.JIRA_API_TOKEN ~= nil
         end,
+        cmd = { "JiraView", "JiraOpen" },
         keys = {
           { "<leader><leader>jv", ":JiraView<cr>", desc = "View Jira issue", silent = true },
           { "<leader><leader>jo", ":JiraOpen<cr>", desc = "Open Jira issue in browser", silent = true },
-        }
-    },
-    {
-      -- Make sure to set this up properly if you have lazy=true
-      'MeanderingProgrammer/render-markdown.nvim',
-      opts = {
-        file_types = { "markdown", "Avante", "codecompanion" },
-      },
-      ft = { "markdown", "Avante", "codecompanion" },
+        },
+        config = function()
+          require("jira").setup()
+        end,
     },
     { import = "plugins" },
 }
+
+vim.g.mapleader = ','
+vim.cmd('packadd termdebug')
+
+local config_path = vim.fn.stdpath('config') .. '/lua/init.lua'
+vim.api.nvim_create_user_command('Ev', function()
+  require('telescope.builtin').find_files({
+    prompt_title = 'Vim Config Lua Files',
+    cwd = vim.fn.stdpath('config'),
+    search_file = '*.lua',
+    glob_pattern = '**/*.lua',
+    hidden = true
+  })
+end, {})
 
 -- Install packages and package manager if not installed
 require("bootstrap").bootstrap(PKGS)
@@ -156,89 +368,10 @@ local Scan = require('plenary.scandir')
 
 local utils = require('utils')
 local icons = require("icons")
-local llcfg = require('lualine_cfg')
 
 utils.persistent_undo()
 
 require("nvim-surround").setup()
-
-------------------------------
--- Lualine
-------------------------------
-
-require('lualine').setup {
-    options = {
-        globalstatus = true,
-    },
-    sections = {
-        lualine_c = {
-            'filename',
-            llcfg.cmake_preset,
-            llcfg.cmake_type,
-            llcfg.cmake_kit,
-            llcfg.cmake_build,
-            llcfg.cmake_build_preset,
-            llcfg.cmake_build_target,
-            llcfg.cmake_debug
-        },
-        lualine_x = {
-            llcfg.macro,
-            'encoding',
-            'fileformat',
-            'filetype'
-        },
-    }
-}
-
-------------------------------
--- Oil
-------------------------------
-require("oil").setup()
-
-------------------------------
--- Treesitter
-------------------------------
-
-require('nvim-treesitter.configs').setup {
-    ensure_installed = { 'c', 'cpp', 'lua', 'vim', 'bash', 'python', 'rust', 'regex', 'markdown', 'markdown_inline' },
-    sync_install = false,
-    auto_install = true,
-
-    highlight = {
-        enable = true,
-        -- Disable for very large files to prevent slowdowns
-        disable = function(lang, buf)
-            local max_filesize = 100 * 1024 -- 100 KB
-            local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-            if ok and stats and stats.size > max_filesize then
-                return true
-            end
-        end,
-    },
-    additional_vim_regex_highlighting = false,
-}
-
-------------------------------
---  Neotest
-------------------------------
-
-local neotest = require("neotest")
-neotest.setup({
-  adapters = {
-    require("neotest-gtest").setup({
-        debug_adapter = "cppdbg",
-
-        is_test_file = function(file)
-            local p = Path:new(file)
-            local test_path = file:match('/utest/') or file:match('/itest/') or file:match('/apitest/')
-            local is_cpp = file:match('.cpp$')
-
-            return is_cpp and test_path
-        end
-    })
-  }
-})
-vim.keymap.set('n', ',nt', neotest.summary.toggle, {})
 
 ------------------------------
 -- General maps
@@ -296,6 +429,7 @@ vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { silent = true, desc = "Decre
 vim.keymap.set("n", "<C-Left>", ":vertical :resize -2<CR>", { silent = true, desc = "Decrease window width" })
 vim.keymap.set("n", "<C-Right>", ":vertical :resize +2<CR>", { silent = true, desc = "Increase window width" })
 
+------------------------------
 -- HOP
 ------------------------------
 local hop = require('hop')
@@ -327,239 +461,6 @@ end, { remap = true })
 
 hop.setup {
     keys = 'asdfjklghvncmxturiewo'
-}
-
-------------------------------
--- DAP
-------------------------------
-local dap = require("dap")
-local dapui = require("dapui")
-require("dapui").setup()
-require("nvim-dap-virtual-text").setup()
-require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
-
-local function vscode_debugger_path()
-    local p = Path:new(Path.path.home)
-    local vscode_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = "%.vscode"})
-    p = Path:new(vscode_dir[#vscode_dir], 'extensions')
-
-    local cpptools_dir = Scan.scan_dir(tostring(p), {depth = 1, hidden = true, add_dirs = true, search_pattern = 'ms%-vscode%.cpptools'})
-    p = Path:new(cpptools_dir[1], 'debugAdapters', 'bin', 'OpenDebugAD7')
-
-    return p
-end
-
-dap.adapters.cppdbg = {
-    id = "cppdbg",
-    type = "executable",
-    command = tostring(vscode_debugger_path())
-}
-
-dap.configurations.python = {
-    {
-        type = 'python',
-        request = 'launch',
-        name = 'Launch file',
-        program = '${file}',
-        pythonPath = function()
-            return '/usr/bin/python'
-        end
-    }
-}
-
-dap.configurations.cpp = {
-  {
-    name = "Launch file",
-    type = "cppdbg",
-    request = "launch",
-    program = function()
-      return vim.fn.input({'Path to executable: ', vim.fn.getcwd() .. '/', 'file'})
-    end,
-    cwd = '${workspaceFolder}',
-    stopAtEntry = true,
-
-    setupCommands = {
-        {
-            text = '-enable-pretty-printing',
-            description =  'enable pretty printing',
-            ignoreFailures = false
-        },
-    },
-  },
-}
-
-vim.fn.sign_define('DapBreakpoint', {text=icons.ui.BigCircle, texthl='', linehl='', numhl=''})
-
--- wrapper to load launch.json if it exists when starting debug
-local function dap_continue_with_launchjs()
-    if not dap.session() then
-        require('dap.ext.vscode').load_launchjs(nil, { cppdbg = {'c', 'cpp'} })
-    end
-    dap.continue()
-end
-
-vim.keymap.set("n", "<F5>",       dap_continue_with_launchjs)
-vim.keymap.set("n", "<F10>",      dap.step_over)
-vim.keymap.set("n", "<F11>",      dap.step_into)
-vim.keymap.set("n", "<F12>",      dap.step_out)
-vim.keymap.set("n", "<F8>",       dap.toggle_breakpoint)
-vim.keymap.set("n", "<leader>dr", dap.repl.toggle)
-vim.keymap.set("n", "<leader>dl", dap.run_last)
-vim.keymap.set("n", "<leader>du", dapui.toggle)
-vim.keymap.set("n", "<space>k",   dapui.eval)
-vim.keymap.set("v", "<space>k",   dapui.eval)
-
-
-dap.listeners.after.event_initialized["dapui_config"] = function()
-    dapui.open()
-end
-dap.listeners.before.event_terminated["dapui_config"] = function()
-    dapui.close()
-end
-dap.listeners.before.event_exited["dapui_config"] = function()
-    dapui.close()
-end
-
-------------------------------
--- CMake Tools
-------------------------------
-require('overseer').setup()
-local cmake = require("cmake-tools")
-local cmake_cfg = {
-    cmake_build_directory = "bin/${variant:target}/${variant:buildType}",
-    cmake_build_options = {"-j16"},
-    cmake_variants_message = {
-        short = { show = true },
-        long = { show = false },
-    },
-    cmake_dap_configuration = { -- debug settings for cmake
-        name = "cpp",
-        type = "cppdbg",
-        request = "launch",
-        stopOnEntry = false,
-        setupCommands = {
-            {
-                text = '-enable-pretty-printing',
-                description =  'enable pretty printing',
-                ignoreFailures = false
-            },
-        },
-    },
-    cmake_executor = {
-        name = "quickfix",
-        default_opts = {
-            show = "only_on_error"
-        },
-    },
-    cmake_runner = {
-        name = "quickfix",
-    },
-}
-cmake.setup(cmake_cfg)
-
-vim.keymap.set("n", "<F7>", function() vim.api.nvim_command("CMakeBuild") end, {})
-
-------------------------------
--- Tasks
-------------------------------
-require('tasks').setup({
-  default_params = {
-    cmake = {
-      cmd = 'cmake',
-      build_dir = tostring(Path:new('{cwd}', 'bin')),
-      build_type = 'Debug',
-      dap_name = 'cppdbg',
-      args = {
-        configure = { '-D', 'CMAKE_EXPORT_COMPILE_COMMANDS=1' },
-      },
-    },
-  },
-  save_before_run = true, -- If true, all files will be saved before executing a task.
-  params_file = 'neovim.json', -- JSON file to store module and task parameters.
-  quickfix = {
-    pos = 'botright', -- Default quickfix position.
-    height = 12, -- Default height.
-  },
-  dap_open_command = function() return require('dap').repl.open() end,
-})
-
-require("project_nvim").setup({
-    scope_chdir = 'tab',
-    patterns = { ".project_root", ">work_git", ">git", "package.json" },
-})
-
-------------------------------
--- noice
-------------------------------
-
-require("noice").setup({
-  lsp = {
-    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-    override = {
-      ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-      ["vim.lsp.util.stylize_markdown"] = true,
-      ["cmp.entry.get_documentation"] = true,
-    },
-  },
-  -- you can enable a preset for easier configuration
-  presets = {
-    command_palette = true,         -- position the cmdline and popupmenu together
-    long_message_to_split = true,   -- long messages will be sent to a split
-    inc_rename = false,             -- enables an input dialog for inc-rename.nvim
-    lsp_doc_border = false,         -- add a border to hover docs and signature help
-  },
-})
-
-------------------------------
--- UI
-------------------------------
-vim.o.termguicolors = true
-
-require'nvim-web-devicons'.setup()
-require('gitsigns').setup()
-
-require("gruvbox").setup {
-    contrast = "medium"
-}
-require('kanagawa').setup {
-    dimInactive = true,
-    transparent = false,
-    theme = "wave"
-}
-
-vim.api.nvim_command("colorscheme kanagawa")
-
-vim.o.cursorline = true
-vim.o.report = 1
-vim.o.number = false
-
-vim.opt.wildmenu = true
-vim.opt.wildmode = "list:longest,full"
-
--- ignore compiled files and executables
-vim.opt.wildignore = {"*.obj", "*.o", "*~", "*.pyc", "*.out", "*.exe"}
-if vim.fn.has("win16") or vim.fn.has("win32") then
-    table.insert(vim.opt.wildignore, ".git\\*")
-    table.insert(vim.opt.wildignore, ",.hg\\*")
-    table.insert(vim.opt.wildignore, ".svn\\*")
-else
-    table.insert(vim.opt.wildignore, "*/.git/*")
-    table.insert(vim.opt.wildignore, "*/.hg/*")
-    table.insert(vim.opt.wildignore, "*/.svn/*")
-    table.insert(vim.opt.wildignore, "*/.DS_Store")
-end
-
-vim.opt.fillchars = vim.opt.fillchars + { vert = '|' }
-vim.opt.shortmess = vim.opt.shortmess + 'I'
-
-require('bufferline').setup {
-    options = {
-        mode = "tabs",
-        separator_style = "slope",
-        tab_size = 20,
-        show_buffer_close_icons = false,
-        show_close_icon = false,
-    },
 }
 
 ------------------------------
@@ -678,13 +579,6 @@ vim.api.nvim_create_autocmd({'BufNewFile','BufRead'}, {
         end
 })
 
-vim.api.nvim_create_autocmd({'BufWinEnter'}, {
-        pattern = {'*.cpp', '*.txx', '*.c', '*.h', '*.hpp'},
-        callback = function()
-            cmake.setup(cmake_cfg)
-        end
-})
-
 -- Delete trailing whitespaces at write
 vim.api.nvim_create_autocmd({'BufWritePre'}, {
         pattern = '*',
@@ -739,8 +633,6 @@ vim.api.nvim_create_autocmd({'BufEnter'}, {
 ------------------------------
 -- Log highlight
 ------------------------------
--- nvim.api.nvim_command("au Syntax log syn keyword logLvError Error")
--- nvim.api.nvim_command("au Syntax log syn keyword logLvInfo Info")
 
 vim.api.nvim_create_autocmd({'BufNewFile','BufRead'}, {
         pattern = '*Log.txt',

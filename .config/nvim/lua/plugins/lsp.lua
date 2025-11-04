@@ -1,5 +1,16 @@
+-- Don't load LSP plugins when running inside VSCode
+if vim.g.vscode then
+    return {}
+end
+
 return {
-    "mason-org/mason.nvim",
+    {
+        "mason-org/mason.nvim",
+        config = function()
+            require("mason").setup()
+
+        end,
+    },
     {
         "mason-org/mason-lspconfig.nvim",
         opts = {},
@@ -7,6 +18,11 @@ return {
             { "mason-org/mason.nvim", opts = {} },
             "neovim/nvim-lspconfig",
         },
+        config = function()
+            require("mason-lspconfig").setup({
+                ensure_installed = { "clangd", "pyright", "lua_ls" },
+            })
+        end,
     },
     {
         "folke/neodev.nvim",
@@ -47,7 +63,7 @@ return {
                     max_view_entries = 50,      -- Limit completion items shown
                 },
                 completion = {
-                    autocomplete = { 
+                    autocomplete = {
                         require('cmp.types').cmp.TriggerEvent.TextChanged,
                     },
                     completeopt = 'menu,menuone,noinsert',
@@ -82,15 +98,10 @@ return {
                 },
             })
 
-            require("mason").setup()
-            require("mason-lspconfig").setup({
-                ensure_installed = { "clangd", "pyright", "lua_ls" },
-            })
-
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
             vim.lsp.config("clangd", {
-                cmd = { 
+                cmd = {
                     "clangd",
                     "--background-index",           -- Index in background for better perf
                     "--clang-tidy=false",           -- Disable clang-tidy for performance (enable manually if needed)
@@ -122,11 +133,8 @@ return {
                 cmd = { "vim-language-server", "--stdio" },
                 filetypes = { "vim" },
                 root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1] or vim.loop.cwd()),
-                capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+                capabilities = capabilities,
             })
-
-            -- Extend capabilities for nvim-cmp
-            local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
             -- Lua LSP for general Lua files
             vim.lsp.config("lua_ls", {

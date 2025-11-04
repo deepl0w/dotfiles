@@ -1,3 +1,8 @@
+-- Don't load AI/Copilot plugins when running inside VSCode
+if vim.g.vscode then
+    return {}
+end
+
 return {
     -- Copilot Lua plugin (core)
     {
@@ -75,7 +80,7 @@ return {
             }
         },
         init = function()
-            require("plugins.codecompanion.fidget-spinner").init()
+            require("fidget-spinner").init()
         end,
     },
     {
