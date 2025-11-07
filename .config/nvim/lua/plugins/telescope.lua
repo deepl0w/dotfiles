@@ -41,7 +41,7 @@ return {
     },
     {
         "nvim-telescope/telescope.nvim",
-        dependencies = { "nvim-lua/plenary.nvim", "ahmedkhalf/project.nvim", "Civitasv/cmake-tools.nvim" },
+        dependencies = { "nvim-lua/plenary.nvim", "DrKJeff16/project.nvim", "Civitasv/cmake-tools.nvim" },
         cmd = "Telescope",
         config = function()
             local telescope = require('telescope')

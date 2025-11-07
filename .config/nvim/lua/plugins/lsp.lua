@@ -178,6 +178,7 @@ return {
                 vim.notify("Inlay hints " .. (inlay_hints_enabled and "enabled" or "disabled"))
             end, { desc = "Toggle inlay hints" })
 
+            
             -- Pretty diagnostic signs
             local signs = {
                 Error = " ",  -- nf-fa-times_circle
@@ -186,15 +187,17 @@ return {
                 Info  = " ",  -- nf-fa-question_circle
             }
 
-            for type, icon in pairs(signs) do
-                local hl = "DiagnosticSign" .. type
-                vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-            end
-
             -- Virtual text diagnostics configuration
             vim.diagnostic.config({
                 virtual_text = false,
-                signs = true,
+                signs = {
+                    text = {
+                        [vim.diagnostic.severity.ERROR] = signs.Error,
+                        [vim.diagnostic.severity.WARN] = signs.Warn,
+                        [vim.diagnostic.severity.HINT] = signs.Hint,
+                        [vim.diagnostic.severity.INFO] = signs.Info,
+                    }
+                },
                 underline = true,
                 update_in_insert = false,  -- Don't update diagnostics while typing
                 severity_sort = true,

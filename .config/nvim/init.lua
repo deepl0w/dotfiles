@@ -247,9 +247,9 @@ local PKGS = {
 
     },
     {
-        "ahmedkhalf/project.nvim",        -- Projects
+        "DrKJeff16/project.nvim",        -- Projects
         config = function()
-            require("project_nvim").setup({
+            require("project").setup({
                 scope_chdir = 'tab',
                 patterns = { ".project_root", ">work_git", ">git", "package.json" },
             })
@@ -346,6 +346,7 @@ local PKGS = {
     { import = "plugins" },
 }
 
+vim.opt.swapfile = false
 vim.g.mapleader = ','
 vim.cmd('packadd termdebug')
 
