@@ -22,6 +22,7 @@ return {
             require("mason-lspconfig").setup({
                 ensure_installed = { "clangd", "pyright", "lua_ls" },
             })
+
         end,
     },
     {
@@ -152,6 +153,10 @@ return {
                 capabilities = capabilities,
             })
 
+            vim.lsp.config("hls", {
+              cmd = { "haskell-language-server-wrapper", "--lsp" },
+            })
+
             local opts = { noremap = true, silent = true }
             vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
             vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
@@ -178,7 +183,7 @@ return {
                 vim.notify("Inlay hints " .. (inlay_hints_enabled and "enabled" or "disabled"))
             end, { desc = "Toggle inlay hints" })
 
-            
+
             -- Pretty diagnostic signs
             local signs = {
                 Error = " ",  -- nf-fa-times_circle

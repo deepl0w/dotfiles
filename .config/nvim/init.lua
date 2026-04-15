@@ -1,3 +1,5 @@
+vim.env.PATH = vim.env.HOME .. "/.ghcup/bin:" .. vim.env.PATH
+
 local PKGS = {
     "nvim-lua/plenary.nvim",    -- Utility functions
     "svermeulen/vimpeccable",   -- Lua API map keys
