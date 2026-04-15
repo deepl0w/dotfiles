@@ -11,7 +11,6 @@ export ANDROID_HOME=$HOME/Android/Sdk
 
 # zplug plugins
 [[ -f ~/.zplug/init.zsh ]] && source ~/.zplug/init.zsh
-zplug "loiccoyle/zsh-github-copilot"
 zplug "plugins/fzf", from:oh-my-zsh
 zplug "plugins/wd", from:oh-my-zsh
 zplug "plugins/z", from:oh-my-zsh
@@ -60,6 +59,26 @@ function remake {
     else
         make $@
     fi
+}
+
+# AI Command Generator with gemma 4
+ai() {
+  # Join all arguments into a single string (your prompt)
+  local user_prompt="$*"
+
+  # The system instructions to ensure Gemma only returns the command
+  local system_instruction="You are a Zsh command generator.
+  Return ONLY the command that performs the user's request.
+  Do not include markdown backticks, explanations, or warnings.
+  Only output the raw command."
+
+  # Call Gemma via Ollama
+  # Note: Use 'gemma4' or your specific model tag
+  local generated_command=$(ollama run gemma4 "$system_instruction Request: $user_prompt")
+
+  # Place the command into the current command-line buffer (LBUFFER)
+  # This lets you see the command before running it
+  print -z "$generated_command"
 }
 
 # Zsh quick shorcut ref
@@ -114,6 +133,8 @@ if command -v nvr > /dev/null; then
     }
 fi
 
+export TERMINFO=/usr/lib/terminfo
+
 bindkey '^[|' zsh_gh_copilot_explain  # bind Alt+shift+\ to explain
 bindkey '^[\' zsh_gh_copilot_suggest  # bind Alt+\ to suggest
 
@@ -122,7 +143,7 @@ alias chfont="gconftool-2 --set /apps/gnome-terminal/profiles/Default/font --typ
 export QNX_HOST=/home/deeplow/qnx/qnx710/host/linux/x86_64
 export QNX_TARGET=/home/deeplow/qnx/qnx710/target/qnx7
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:${QNX_HOST}/usr/bin:$PATH"
+export PATH="$HOME/.ghcup/bin:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:${QNX_HOST}/usr/bin:$PATH"
 export CRYPTOGRAPHY_OPENSSL_NO_LEGACY=1
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
