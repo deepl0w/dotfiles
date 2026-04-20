@@ -53,40 +53,63 @@ return {
         end,
     },
     {
-        "CopilotC-Nvim/CopilotChat.nvim",
-        dependencies = {
-            { "zbirenbaum/copilot.lua" }, -- or zbirenbaum/copilot.lua
-            { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
-        },
-        build = "make tiktoken", -- Only on MacOS or Linux
-        opts = {
-            chat_autocomplete = true,
-            sticky = {
-                '#filenames:`**/*.cpp`',
-                '#filenames:`**/*.h`'
-            }
-        },
-        -- See Commands section for default commands if you want to lazy load on them
-    },
-    {
         "olimorris/codecompanion.nvim",
-        dependencies = { "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter", },
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-treesitter/nvim-treesitter",
+            -- "dyamon/codecompanion-filewise.nvim"
+        },
         opts = {
             strategies = {
                 chat = {
                     adapter = "copilot",
-                    model = "claude-sonnet-4.5",
+                    model = "claude-sonnet-4.6",
                 },
-            }
+            },
         },
         init = function()
-            require("fidget-spinner").init()
+            require("codecompanion").setup({
+                -- extensions = {
+                --     custom_instructions = {
+                --         enabled = true,
+                --         opts = {
+                --             simple = {
+                --                 '.github/copilot-instructions.md',
+                --                 'AGENT.md', 'AGENTS.md', 'CLAUDE.md',
+                --             },
+                --             conditional = {
+                --                 '.github/instructions/*.instructions.md'
+                --             },
+                --             triggers = {
+                --                 user_events = { "CodeCompanionChatCreated", "CodeCompanionChatSubmitted" },
+                --                 variable_buffer = false,
+                --                 slash_file = true,
+                --                 slash_buffer = true,
+                --             },
+                --             keymaps = {
+                --                 sync_context = 'gi',
+                --             },
+                --             root_markers = { '.git', '.github' },
+                --         }
+                --     },
+                --     custom_prompts = {
+                --         enabled = true,
+                --         opts = {
+                --             prompt_dirs = {
+                --                 ".github/prompts",
+                --             },
+                --             prompt_role = "user",
+                --             model_map = {},
+                --             tool_map = {},
+                --             format_content = function(body)
+                --                 return body:gsub('%f[#]#','###')
+                --             end,
+                --             root_markers = { '.git', '.github' },
+                --         }
+                --     }
+                -- }
+            })
+            vim.g.codecompanion_auto_tool_mode = true
         end,
-    },
-    {
-        "j-hui/fidget.nvim",
-        opts = {
-            -- options
-        },
-    },
+    }
 }

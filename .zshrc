@@ -112,7 +112,24 @@ if command -v nvr > /dev/null; then
     man() {
         nvr -c "lcd $PWD | Man $@"
     }
+
+    export EDITOR='nvr --remote-tab-wait'
 fi
+
+#if inside wsl
+if command -v wslinfo > /dev/null; then
+    git-bcdiff() {
+      git difftool --no-prompt --extcmd="bcompare" "$@"
+    }
+fi
+
+fgc() {
+  local branch
+  branch=$(git branch --all | sed 's/^[* ] //' | sort -u | fzf) || return
+  git checkout "${branch#remotes/origin/}"
+}
+
+export TERMINFO=/usr/lib/terminfo
 
 bindkey '^[|' zsh_gh_copilot_explain  # bind Alt+shift+\ to explain
 bindkey '^[\' zsh_gh_copilot_suggest  # bind Alt+\ to suggest

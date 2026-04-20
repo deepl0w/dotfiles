@@ -178,7 +178,7 @@ return {
                 vim.notify("Inlay hints " .. (inlay_hints_enabled and "enabled" or "disabled"))
             end, { desc = "Toggle inlay hints" })
 
-            
+
             -- Pretty diagnostic signs
             local signs = {
                 Error = " ",  -- nf-fa-times_circle

@@ -1,3 +1,6 @@
+local ghcup_bin = vim.env.HOME .. "/.ghcup/bin"
+vim.env.PATH = ghcup_bin .. ":" .. vim.env.PATH
+
 local PKGS = {
     "nvim-lua/plenary.nvim",    -- Utility functions
     "svermeulen/vimpeccable",   -- Lua API map keys
@@ -586,37 +589,48 @@ vim.api.nvim_create_autocmd({'BufWritePre'}, {
         command = '%s/\\s\\+$//e'
 })
 
--- Periodic cleanup for long-running sessions (every 30 mins)
-vim.api.nvim_create_autocmd({'CursorHold'}, {
-    group = vim.api.nvim_create_augroup('PeriodicCleanup', { clear = true }),
-    callback = function()
-        -- Track last cleanup time
-        if not vim.g.last_cleanup_time then
-            vim.g.last_cleanup_time = os.time()
-        end
-
-        local now = os.time()
-        local elapsed = now - vim.g.last_cleanup_time
-
-        -- Clean up every 30 minutes
-        if elapsed > 1800 then
-            -- Close hidden, unmodified buffers to free memory
-            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                if vim.api.nvim_buf_is_loaded(buf) and
-                   not vim.api.nvim_buf_get_option(buf, 'modified') and
-                   #vim.fn.win_findbuf(buf) == 0 then
-                    vim.api.nvim_buf_delete(buf, { force = false })
-                end
-            end
-
-            -- Request garbage collection
-            collectgarbage('collect')
-
-            vim.g.last_cleanup_time = now
-            vim.notify('Performed periodic cleanup', vim.log.levels.INFO)
-        end
-    end,
+-- Auto-close buffers opened via nvr --remote-*-wait after write
+vim.api.nvim_create_autocmd("BufWritePost", {
+callback = function()
+  if vim.b.nvr then
+    vim.schedule(function()
+      vim.cmd("bwipeout!")
+    end)
+  end
+end,
 })
+
+-- Periodic cleanup for long-running sessions (every 30 mins)
+-- vim.api.nvim_create_autocmd({'CursorHold'}, {
+--     group = vim.api.nvim_create_augroup('PeriodicCleanup', { clear = true }),
+--     callback = function()
+--         -- Track last cleanup time
+--         if not vim.g.last_cleanup_time then
+--             vim.g.last_cleanup_time = os.time()
+--         end
+--
+--         local now = os.time()
+--         local elapsed = now - vim.g.last_cleanup_time
+--
+--         -- Clean up every 30 minutes
+--         if elapsed > 1800 then
+--             -- Close hidden, unmodified buffers to free memory
+--             for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+--                 if vim.api.nvim_buf_is_loaded(buf) and
+--                    not vim.api.nvim_buf_get_option(buf, 'modified') and
+--                    #vim.fn.win_findbuf(buf) == 0 then
+--                     vim.api.nvim_buf_delete(buf, { force = false })
+--                 end
+--             end
+--
+--             -- Request garbage collection
+--             collectgarbage('collect')
+--
+--             vim.g.last_cleanup_time = now
+--             vim.notify('Performed periodic cleanup', vim.log.levels.INFO)
+--         end
+--     end,
+-- })
 
 vim.api.nvim_create_autocmd({'BufEnter'}, {
         pattern = '*',
