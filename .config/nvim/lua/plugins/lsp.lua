@@ -22,6 +22,7 @@ return {
             require("mason-lspconfig").setup({
                 ensure_installed = { "clangd", "pyright", "lua_ls" },
             })
+
         end,
     },
     {
@@ -150,6 +151,10 @@ return {
                     },
                 },
                 capabilities = capabilities,
+            })
+
+            vim.lsp.config("hls", {
+              cmd = { "haskell-language-server-wrapper", "--lsp" },
             })
 
             local opts = { noremap = true, silent = true }

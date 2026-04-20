@@ -13,3 +13,5 @@ set history expansion on
 # Demangle C++ names.
 set print asm-demangle
 set debuginfod enabled on
+set source open off
+#set exception-verbose on
