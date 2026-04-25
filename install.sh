@@ -13,6 +13,10 @@ install_nvim() {
     yay -S neovim-remote
 }
 
+install_nvim_plugins() {
+    nvim --headless "+Lazy sync" +qa
+}
+
 install_zsh() {
     sudo pacman -S zsh
 
@@ -20,6 +24,9 @@ install_zsh() {
 
     # make zsh default shell
     chsh -s `which zsh`
+
+    # install zplug plugins
+    zsh -c "zplug install"
 }
 
 create_links() {
@@ -90,6 +97,9 @@ install_pwndbg
 # create links from the repo directory to the required paths
 create_links
 /bin/echo -e "\e[32mCreate links................................\e[32mDONE!\e[39m"
+# install nvim plugins
+install_nvim_plugins
+/bin/echo -e "\e[32mNeovim plugins..............................\e[32mDONE!\e[39m"
 # install special fonts for powerline, some fonts don't render some unicode
 # characters the same way
 install_fonts
