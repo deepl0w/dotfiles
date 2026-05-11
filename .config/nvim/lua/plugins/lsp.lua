@@ -141,12 +141,18 @@ return {
             vim.lsp.config("lua_ls", {
                 cmd = { "lua-language-server" },
                 filetypes = { "lua" },
-                root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1] or vim.loop.cwd()),
+                root_markers = { ".luarc.json", ".luarc.jsonc", ".stylua.toml", "stylua.toml", "selene.toml", "selene.yml" },
                 settings = {
                     Lua = {
-                        runtime = { version = "LuaJIT", path = vim.split(package.path, ";") },
+                        runtime = { version = "LuaJIT" },
                         diagnostics = { globals = { "vim" } },
-                        workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+                        workspace = {
+                            library = { vim.env.VIMRUNTIME .. "/lua" },
+                            checkThirdParty = false,
+                            maxPreload = 10000,
+                            preloadFileSize = 1000,
+                            ignoreDir = { ".git", "node_modules", ".venv", "venv", "build", "dist", "target", "pwndbg" },
+                        },
                         telemetry = { enable = false },
                     },
                 },
