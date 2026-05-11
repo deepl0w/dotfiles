@@ -79,9 +79,26 @@ return {
             local opts = { noremap = true, silent = true }
 
             vim.keymap.set("n", "<C-p>", builtin.find_files, opts)
+            vim.keymap.set('n', '<C-c>', function()
+                                                builtin.find_files({
+                                                    prompt_title = "Find Code files",
+                                                    find_command = { 'fd', '--type', 'f',
+                                                        '--extension', 'lua',
+                                                        '--extension', 'cpp',
+                                                        '--extension', 'h',
+                                                        '--extension', 'c',
+                                                        '--extension', 'py',
+                                                        '--extension', 'cmake',
+                                                        '--extension', 'sh',
+                                                        '--exclude', 'build',
+                                                        '--exclude', 'bin',
+                                                        '--exclude', 'node_modules'
+                                                    }
+                                                }) end,
+            opts)
+
             vim.keymap.set("n", "<C-g>", builtin.live_grep, opts)
             vim.keymap.set('n', '<space>b', builtin.buffers, opts)
-            vim.keymap.set('n', '<C-c>', builtin.colorscheme, opts)
 
             vim.keymap.set("n", "gt", builtin.lsp_definitions, opts)
             vim.keymap.set("n", "gi", builtin.lsp_implementations, opts)
