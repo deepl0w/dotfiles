@@ -5,27 +5,29 @@ local PKGS = {
     "nvim-lua/plenary.nvim",    -- Utility functions
     "svermeulen/vimpeccable",   -- Lua API map keys
     {
-        "nvim-treesitter/nvim-treesitter",  -- parser
+        "nvim-treesitter/nvim-treesitter", -- parser
+        lazy = false,
         run = ':TSUpdate',
         config = function()
-            require('nvim-treesitter.configs').setup {
-                ensure_installed = { 'c', 'cpp', 'lua', 'vim', 'bash', 'python', 'rust', 'regex', 'markdown', 'markdown_inline' },
-                sync_install = false,
-                auto_install = true,
-
-                highlight = {
-                    enable = true,
-                    -- Disable for very large files to prevent slowdowns
-                    disable = function(lang, buf)
-                        local max_filesize = 100 * 1024 -- 100 KB
-                        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-                        if ok and stats and stats.size > max_filesize then
-                            return true
-                        end
-                    end,
-                },
-                additional_vim_regex_highlighting = false,
+            treesitter = require('nvim-treesitter')
+            treesitter.setup {
+                -- sync_install = false,
+                -- auto_install = true,
+                --
+                -- highlight = {
+                --     enable = true,
+                --     -- Disable for very large files to prevent slowdowns
+                --     disable = function(lang, buf)
+                --         local max_filesize = 100 * 1024 -- 100 KB
+                --         local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+                --         if ok and stats and stats.size > max_filesize then
+                --             return true
+                --         end
+                --     end,
+                -- },
+                -- additional_vim_regex_highlighting = false,
             }
+            treesitter.install { 'c', 'cpp', 'lua', 'vim', 'bash', 'python', 'rust', 'regex', 'markdown', 'markdown_inline' }
         end
     },
     {
@@ -94,17 +96,21 @@ local PKGS = {
               },
             }
 
-            vim.fn.sign_define('DapBreakpoint', {text=icons.ui.BigCircle, texthl='', linehl='', numhl=''})
-
-            -- wrapper to load launch.json if it exists when starting debug
-            local function dap_continue_with_launchjs()
-                if not dap.session() then
-                    require('dap.ext.vscode').load_launchjs(nil, { cppdbg = {'c', 'cpp'} })
+            local function smart_dap_continue()
+                if last_config_name then
+                    -- Directly runs what you did last without asking any questions
+                    dap.run_last()
+                else
+                    -- Fallback to the selection menu if it's the first run of the session
+                    dap.continue()
                 end
-                dap.continue()
             end
 
-            vim.keymap.set("n", "<F5>",       dap_continue_with_launchjs)
+
+            vim.fn.sign_define('DapBreakpoint', {text=icons.ui.BigCircle, texthl='', linehl='', numhl=''})
+
+            vim.keymap.set("n", "<F5>",       smart_dap_continue)
+            vim.keymap.set("n", "<s-F5>",     dap.continue)
             vim.keymap.set("n", "<F10>",      dap.step_over)
             vim.keymap.set("n", "<F11>",      dap.step_into)
             vim.keymap.set("n", "<F12>",      dap.step_out)
@@ -126,6 +132,15 @@ local PKGS = {
                 dapui.close()
             end
 
+        end
+    },
+    {
+        "Weissle/persistent-breakpoints.nvim",
+        config = function()
+            require("persistent-breakpoints").setup({
+                -- Reloads saved points right when a file opens
+                load_breakpoints_event = { "BufReadPost" }
+            })
         end
     },
     "rcarriga/nvim-dap-python",
@@ -472,7 +487,7 @@ hop.setup {
 ------------------------------
 vim.o.history = 1000
 vim.o.mouse = 'a'
-vim.o.ttimeoutlen = 0
+vim.o.ttimeoutlen = 10
 vim.o.timeoutlen = 500
 vim.o.updatetime = 1000  -- Increased from 300ms to reduce frequent CursorHold triggers
 vim.o.splitbelow = true

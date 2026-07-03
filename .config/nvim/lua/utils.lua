@@ -26,8 +26,8 @@ end
 
 function utils.is_wsl()
     if vim.fn.has("unix") then
-        local lines = utils.read_file("/proc/version")
-        if lines[0] == "Microsoft" then
+        local content = utils.read_file("/proc/version")
+        if content:lower():find("microsoft", 1, true) then
             return true
         end
     end

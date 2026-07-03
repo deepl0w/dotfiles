@@ -44,7 +44,6 @@ return {
             "L3MON4D3/LuaSnip",
             "saadparwaiz1/cmp_luasnip",
             "onsails/lspkind.nvim",
-            "zbirenbaum/copilot-cmp",  -- Copilot source for nvim-cmp
         },
         config = function()
             local cmp = require("cmp")
@@ -82,20 +81,13 @@ return {
                     ["<S-Tab>"] = cmp.mapping.select_prev_item(),
                 }),
                 sources = cmp.config.sources({
-                    { name = "copilot", max_item_count = 3 },  -- Limit Copilot suggestions
                     { name = "nvim_lsp", max_item_count = 20 },
                     { name = "luasnip", max_item_count = 5 },
                     { name = "buffer", max_item_count = 5 },
                     { name = "path", max_item_count = 5 },
                 }),
                 formatting = {
-                    format = function(entry, vim_item)
-                        if entry.source.name == "copilot" then
-                            vim_item.kind = "  Copilot"
-                            vim_item.kind_hl_group = "CmpItemKindCopilot"
-                        end
-                        return lspkind.cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
-                    end,
+                    format = lspkind.cmp_format({ mode = "symbol_text", maxwidth = 50 }),
                 },
             })
 
