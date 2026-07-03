@@ -27,6 +27,20 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
+# history
+HISTSIZE=10000
+SAVEHIST=10000
+
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt HIST_IGNORE_SPACE
+setopt EXTENDED_HISTORY
+
+HISTORY_IGNORE="(ls|cd|pwd|clear|exit|history|* --help)"
+
 # Vars, aliases
 export BROWSER='firefox'
 export EDITOR='vi'
@@ -74,7 +88,7 @@ ai() {
 
   # Call Gemma via Ollama
   # Note: Use 'gemma4' or your specific model tag
-  local generated_command=$(ollama run gemma4 "$system_instruction Request: $user_prompt")
+  local generated_command=$(ollama run $OLLAMA_MODEL "$system_instruction Request: $user_prompt")
 
   # Place the command into the current command-line buffer (LBUFFER)
   # This lets you see the command before running it
