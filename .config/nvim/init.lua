@@ -305,7 +305,15 @@ local PKGS = {
 
     "xolox/vim-misc",                 -- auto-load vim scripts
     "ncm2/float-preview.nvim",        -- preview in floating window
-    "sindrets/diffview.nvim",         -- Diff integration
+    {
+        "sindrets/diffview.nvim",         -- Diff integration
+        lazy = true,
+        cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
+        init = function()
+            vim.keymap.set("n", "<leader>dv", function() vim.api.nvim_command("DiffviewOpen") end, {})
+            vim.keymap.set("n", "<leader>dV", function() vim.api.nvim_command("DiffviewClose") end, {})
+        end
+    },
     "ku1ik/vim-pasta",
     {
         "numToStr/Comment.nvim",          -- commenting plugin
