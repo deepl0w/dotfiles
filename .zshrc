@@ -189,6 +189,17 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+# The block above only knows /opt/miniconda3; fall back to a per-user install
+if ! command -v conda > /dev/null; then
+    for __conda_dir in ~/miniforge3 ~/miniconda3; do
+        if [ -f "$__conda_dir/etc/profile.d/conda.sh" ]; then
+            . "$__conda_dir/etc/profile.d/conda.sh"
+            break
+        fi
+    done
+    unset __conda_dir
+fi
+
 # conda only exists on some machines
 if command -v conda > /dev/null; then
     conda activate base
