@@ -1,16 +1,87 @@
 #!/bin/bash
+set -e
+
+# Paths below are relative to the repo root
+cd "$(dirname "$(realpath "$0")")"
+
+# Supported: arch (and Arch-based), ubuntu (and Debian-based)
+detect_distro() {
+    . /etc/os-release
+    case " $ID $ID_LIKE " in
+        *" arch "*) echo arch ;;
+        *" ubuntu "*|*" debian "*) echo ubuntu ;;
+        *)
+            echo "Unsupported distribution: ${PRETTY_NAME:-$ID}" >&2
+            exit 1
+            ;;
+    esac
+}
+
+DISTRO=$(detect_distro)
+
+pkg_install() {
+    case $DISTRO in
+        arch) sudo pacman -S --needed "$@" ;;
+        ubuntu) sudo apt-get install -y "$@" ;;
+    esac
+}
 
 update_packages() {
-    sudo pacman -Syy
+    case $DISTRO in
+        arch) sudo pacman -Syy ;;
+        ubuntu) sudo apt-get update ;;
+    esac
 }
 
 install_prerequisites() {
-    sudo pacman -S yay
+    case $DISTRO in
+        arch)
+            pkg_install git curl base-devel
+
+            # yay lives in the AUR, so it has to be built with makepkg
+            if ! command -v yay &>/dev/null; then
+                local tmp
+                tmp=$(mktemp -d)
+                git clone https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin"
+                (cd "$tmp/yay-bin" && makepkg -si --noconfirm)
+                rm -rf "$tmp"
+            fi
+            ;;
+        ubuntu)
+            pkg_install git curl build-essential pipx
+            ;;
+    esac
+}
+
+# The config needs Neovim >= 0.11 (vim.lsp.config), newer than Ubuntu's package, so
+# install the official release build there instead.
+install_nvim_release() {
+    local arch
+    case $(uname -m) in
+        x86_64) arch=x86_64 ;;
+        aarch64|arm64) arch=arm64 ;;
+        *) echo "No Neovim release build for $(uname -m)" >&2; exit 1 ;;
+    esac
+    local dir=nvim-linux-$arch
+
+    sudo rm -rf "/opt/$dir"
+    curl -fL "https://github.com/neovim/neovim/releases/latest/download/$dir.tar.gz" | sudo tar -xz -C /opt
+    sudo ln -sf "/opt/$dir/bin/nvim" /usr/local/bin/nvim
 }
 
 install_nvim() {
-    sudo pacman -S lua nodejs yarn neovim
-    yay -S neovim-remote
+    case $DISTRO in
+        arch)
+            pkg_install lua nodejs yarn neovim
+            yay -S neovim-remote
+            ;;
+        ubuntu)
+            pkg_install lua5.4 nodejs npm yarnpkg
+            install_nvim_release
+            # neovim-remote isn't packaged; pipx puts nvr in ~/.local/bin
+            pipx install --force neovim-remote
+            ;;
+    esac
 }
 
 install_nvim_plugins() {
@@ -18,23 +89,21 @@ install_nvim_plugins() {
 }
 
 install_zsh() {
-    sudo pacman -S zsh
+    pkg_install zsh
 
     curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 
     # make zsh default shell
     chsh -s `which zsh`
+}
 
-    # install zplug plugins
-    zsh -c "zplug install"
+install_zsh_plugins() {
+    # A plain `zsh -c` doesn't read .zshrc, and an interactive one would start nvim
+    # from it, so load zplug and the plugin list from .zshrc by hand.
+    zsh -c 'source ~/.zplug/init.zsh && eval "$(grep "^zplug " ~/.zshrc)" && zplug install'
 }
 
 create_links() {
-    # install realpath if not already installed
-    if ! command -v realpath &> /dev/null; then
-        sudo pacman -S realpath
-    fi
-
     ln -fs `realpath ./.zsh` ~
     ln -fs `realpath ./.zshrc` ~
     ln -fs `realpath ./.gdbinit` ~
@@ -51,17 +120,14 @@ create_links() {
     ln -fs `realpath ./.config/alacritty` ~/.config/
     ln -fs `realpath ./.config/nitrogen` ~/.config/
     ln -fs `realpath ./.config/polybar` ~/.config/
-
-    ln -fs ~/.config/nvim/init.vim ~/.vimrc
-
 }
 
 nvim_python() {
-    if ! command -v pip &>/dev/null; then
-        sudo pacman -S python python-pip
-    fi
-
-    pip install --user neovim
+    # pip --user is refused for the externally managed system python (PEP 668)
+    case $DISTRO in
+        arch) pkg_install python python-pynvim ;;
+        ubuntu) pkg_install python3 python3-pynvim ;;
+    esac
 }
 
 install_fonts() {
@@ -71,9 +137,16 @@ install_fonts() {
 }
 
 install_pwndbg() {
-    if ! command -v gdb &>/dev/null; then
-        sudo pacman -S gdb pwndbg
+    if command -v gdb &>/dev/null; then
+        return
     fi
+    case $DISTRO in
+        arch) pkg_install gdb pwndbg ;;
+        ubuntu)
+            pkg_install gdb
+            /bin/echo -e "\e[33mpwndbg isn't packaged for Ubuntu; .gdbinit expects it in /usr/share/pwndbg\e[39m"
+            ;;
+    esac
 }
 
 
@@ -97,6 +170,9 @@ install_pwndbg
 # create links from the repo directory to the required paths
 create_links
 /bin/echo -e "\e[32mCreate links................................\e[32mDONE!\e[39m"
+# install zplug plugins listed in the linked .zshrc
+install_zsh_plugins
+/bin/echo -e "\e[32mZsh plugins.................................\e[32mDONE!\e[39m"
 # install nvim plugins
 install_nvim_plugins
 /bin/echo -e "\e[32mNeovim plugins..............................\e[32mDONE!\e[39m"
