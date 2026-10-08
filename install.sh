@@ -107,7 +107,10 @@ install_nvim() {
 }
 
 install_nvim_plugins() {
-    nvim --headless "+Lazy sync" +qa
+    nvim --headless "+Lazy! sync" +qa
+    # mason-lspconfig's ensure_installed runs async and a headless nvim quits first;
+    # :MasonInstall blocks in headless mode (same servers as plugins/lsp.lua)
+    nvim --headless "+MasonInstall clangd pyright lua-language-server" +qa
 }
 
 install_zsh() {
