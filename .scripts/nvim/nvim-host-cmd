@@ -8,10 +8,10 @@ import neovim, os, sys, time
 if len(sys.argv) != 2:
     raise Exception("Usage: nvim-host-cmd <nvim-command>")
 
-try:
-    nvim_socket = os.environ["NVIM_LISTEN_ADDRESS"]
-except KeyError:
-    raise Exception("Couldn't read variable $NVIM_LISTEN_ADDRESS")
+# Neovim >= 0.7 exports $NVIM to :terminal jobs; $NVIM_LISTEN_ADDRESS is legacy
+nvim_socket = os.environ.get("NVIM") or os.environ.get("NVIM_LISTEN_ADDRESS")
+if not nvim_socket:
+    raise Exception("Couldn't read variable $NVIM or $NVIM_LISTEN_ADDRESS")
 nvim = neovim.attach('socket', path=nvim_socket)
 
 nvim.command(sys.argv[1])

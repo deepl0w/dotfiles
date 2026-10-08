@@ -116,11 +116,18 @@ end
 local function claude_cli(args, opts, cb)
     local cmd = vim.list_extend({ "claude" }, args)
     opts = vim.tbl_extend("keep", opts or {}, { text = true })
-    vim.system(cmd, opts, function(res)
+    -- vim.system throws synchronously when `claude` is not on PATH; report that as
+    -- a failed run so callers' cleanup (open_session's `resolving`) still happens.
+    local ok, err = pcall(vim.system, cmd, opts, function(res)
         vim.schedule(function()
             cb(res)
         end)
     end)
+    if not ok then
+        vim.schedule(function()
+            cb({ code = -1, stdout = "", stderr = tostring(err) })
+        end)
+    end
 end
 
 -- root nil lists every background session, whatever project it belongs to.

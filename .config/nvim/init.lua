@@ -81,7 +81,7 @@ local PKGS = {
                 type = "cppdbg",
                 request = "launch",
                 program = function()
-                  return vim.fn.input({'Path to executable: ', vim.fn.getcwd() .. '/', 'file'})
+                  return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
                 end,
                 cwd = '${workspaceFolder}',
                 stopAtEntry = true,
@@ -161,9 +161,8 @@ local PKGS = {
                     debug_adapter = "cppdbg",
 
                     is_test_file = function(file)
-                        local p = Path:new(file)
                         local test_path = file:match('/utest/') or file:match('/itest/') or file:match('/apitest/')
-                        local is_cpp = file:match('.cpp$')
+                        local is_cpp = file:match('%.cpp$')
 
                         return is_cpp and test_path
                     end
@@ -208,54 +207,6 @@ local PKGS = {
                 dap_open_command = function() return require('dap').repl.open() end,
             })
         end,
-    },
-    {
-        "Civitasv/cmake-tools.nvim",      -- CMake integration
-        commit = "643e46b",
-        config = function()
-            local cmake = require("cmake-tools")
-            local cmake_cfg = {
-                cmake_build_directory = "bin/${variant:target}/${variant:buildType}",
-                cmake_build_options = {"-j16"},
-                cmake_variants_message = {
-                    short = { show = true },
-                    long = { show = false },
-                },
-                cmake_dap_configuration = { -- debug settings for cmake
-                    name = "cpp",
-                    type = "cppdbg",
-                    request = "launch",
-                    stopOnEntry = false,
-                    setupCommands = {
-                        {
-                            text = '-enable-pretty-printing',
-                            description =  'enable pretty printing',
-                            ignoreFailures = false
-                        },
-                    },
-                },
-                cmake_executor = {
-                    name = "quickfix",
-                    default_opts = {
-                        show = "only_on_error"
-                    },
-                },
-                cmake_runner = {
-                    name = "quickfix",
-                },
-            }
-            cmake.setup(cmake_cfg)
-
-            vim.keymap.set("n", "<F7>", function() vim.api.nvim_command("CMakeBuild") end, {})
-
-            vim.api.nvim_create_autocmd({'BufWinEnter'}, {
-                    pattern = {'*.cpp', '*.txx', '*.c', '*.h', '*.hpp'},
-                    callback = function()
-                        cmake.setup(cmake_cfg)
-                    end
-            })
-
-        end
     },
     {
         "stevearc/overseer.nvim",
