@@ -131,8 +131,8 @@ cat << XXX
 XXX
 }
 
-# Nvim as terminal multiplexer
-if [ "$TERM_PROGRAM" != "vscode" ]; then
+# Nvim as terminal multiplexer; set NVIM_AUTOSTART=0 (e.g. in ~/.profile) to opt out
+if [ "$TERM_PROGRAM" != "vscode" ] && [[ $NVIM_AUTOSTART != 0 ]]; then
     if command -v nvim > /dev/null && \
             [[ -z $NVIM ]]; then
                 nvim -c "terminal"
@@ -201,4 +201,18 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-conda activate base
+# The block above only knows /opt/miniconda3; fall back to a per-user install
+if ! command -v conda > /dev/null; then
+    for __conda_dir in ~/miniforge3 ~/miniconda3; do
+        if [ -f "$__conda_dir/etc/profile.d/conda.sh" ]; then
+            . "$__conda_dir/etc/profile.d/conda.sh"
+            break
+        fi
+    done
+    unset __conda_dir
+fi
+
+# conda only exists on some machines
+if command -v conda > /dev/null; then
+    conda activate base
+fi

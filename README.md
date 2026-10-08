@@ -1,6 +1,6 @@
 ## About
 ---
-Full `zsh` and `nvim` configuration and a handy installation script for Arch based distributions.
+Full `zsh` and `nvim` configuration and a handy installation script for Arch and Ubuntu (or other Debian based) distributions.
 
 This configuration lets you run your shell by default inside a `nvim` window with full vim controlls and comes with a bunch of useful plugins and extra configurations for `nvim` as well as for `zsh`.
 
@@ -47,8 +47,6 @@ Create symbolic links to the files (or alternatively you could move the files in
     ln -fs `realpath ./.config/alacritty` ~/.config/
     ln -fs `realpath ./.config/nitrogen` ~/.config/
     ln -fs `realpath ./.config/polybar` ~/.config/
-
-    ln -fs ~/.config/nvim/init.vim ~/.vimrc
 
 You might need to install some `python` and `pip` if you don't have them:
 

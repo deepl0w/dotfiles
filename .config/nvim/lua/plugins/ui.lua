@@ -9,15 +9,10 @@ vim.opt.wildmode = "list:longest,full"
 
 -- ignore compiled files and executables
 vim.opt.wildignore = {"*.obj", "*.o", "*~", "*.pyc", "*.out", "*.exe"}
-if vim.fn.has("win16") or vim.fn.has("win32") then
-    table.insert(vim.opt.wildignore, ".git\\*")
-    table.insert(vim.opt.wildignore, ",.hg\\*")
-    table.insert(vim.opt.wildignore, ".svn\\*")
+if vim.fn.has("win32") == 1 then
+    vim.opt.wildignore:append({ ".git\\*", ".hg\\*", ".svn\\*" })
 else
-    table.insert(vim.opt.wildignore, "*/.git/*")
-    table.insert(vim.opt.wildignore, "*/.hg/*")
-    table.insert(vim.opt.wildignore, "*/.svn/*")
-    table.insert(vim.opt.wildignore, "*/.DS_Store")
+    vim.opt.wildignore:append({ "*/.git/*", "*/.hg/*", "*/.svn/*", "*/.DS_Store" })
 end
 
 vim.opt.fillchars = vim.opt.fillchars + { vert = '|' }

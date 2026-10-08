@@ -106,7 +106,8 @@ return {
                     "--limit-results=20",           -- Limit completion results
                 },
                 filetypes = { "c", "cpp", "objc", "objcpp" },
-                root_dir = vim.fs.dirname(vim.fs.find({ ".git", "compile_commands.json" }, { upward = true })[1] or vim.loop.cwd()),
+                -- Resolved per buffer from the file's own location
+                root_markers = { "compile_commands.json", ".git" },
                 capabilities = capabilities,
                 -- Add debouncing to reduce frequent updates
                 flags = {
@@ -125,7 +126,7 @@ return {
             vim.lsp.config("vimls", {
                 cmd = { "vim-language-server", "--stdio" },
                 filetypes = { "vim" },
-                root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1] or vim.loop.cwd()),
+                root_markers = { ".git" },
                 capabilities = capabilities,
             })
 

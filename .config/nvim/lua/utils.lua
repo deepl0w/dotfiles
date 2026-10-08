@@ -17,21 +17,8 @@ function utils.persistent_undo()
     end
 end
 
-function utils.read_file(path)
-    local f = assert(io.open(path, 'rb'))
-    local content = f:read('*all')
-    f:close()
-    return content
-end
-
 function utils.is_wsl()
-    if vim.fn.has("unix") then
-        local content = utils.read_file("/proc/version")
-        if content:lower():find("microsoft", 1, true) then
-            return true
-        end
-    end
-  return false
+    return vim.fn.has("wsl") == 1
 end
 
 function utils.wipeout()
@@ -49,10 +36,10 @@ function utils.wipeout()
     end
 
     for _, buf in ipairs(buffers) do
-        -- Check if the buffer is loaded and not open in any window or floating window
-        if vim.api.nvim_buf_is_loaded(buf) and not open_buffers[buf] then
-            -- Delete the buffer
-            vim.api.nvim_buf_delete(buf, { force = true })
+        -- Check if the buffer is loaded, unmodified and not open in any window or floating window
+        if vim.api.nvim_buf_is_loaded(buf) and not open_buffers[buf] and not vim.bo[buf].modified then
+            -- Delete the buffer; without force, terminals with a running job are kept
+            pcall(vim.api.nvim_buf_delete, buf, { force = false })
         end
     end
 end
