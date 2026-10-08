@@ -42,7 +42,7 @@ setopt EXTENDED_HISTORY
 HISTORY_IGNORE="(ls|cd|pwd|clear|exit|history|* --help)"
 
 # Vars, aliases
-export BROWSER='firefox'
+export BROWSER='brave'
 export EDITOR='vi'
 export XDG_CONFIG_HOME=$HOME/.config
 
@@ -75,24 +75,36 @@ function remake {
     fi
 }
 
-# AI Command Generator with gemma 4
+# AI Command Generator (model: $OLLAMA_MODEL, set in ~/.profile)
+# The few-shot examples that keep output bare are baked into the model's
+# TEMPLATE -- see ~/workspace/llm/Modelfile.fast-cli.
 ai() {
-  # Join all arguments into a single string (your prompt)
   local user_prompt="$*"
+  [[ -z "$user_prompt" ]] && { print -u2 "usage: ai <what you want to do>"; return 1; }
 
-  # The system instructions to ensure Gemma only returns the command
-  local system_instruction="You are a Zsh command generator.
-  Return ONLY the command that performs the user's request.
-  Do not include markdown backticks, explanations, or warnings.
-  Only output the raw command."
+  # Use the HTTP API, not `ollama run`: the CLI writes spinner/cursor ANSI
+  # escapes to stdout even when piped, and $(...) captures them as invisible
+  # junk in the command buffer.
+  local raw
+  raw=$(curl -sS --max-time 120 "${OLLAMA_HOST_URL:-http://localhost:11434}/api/generate" \
+        -d "$(jq -nc --arg m "${OLLAMA_MODEL:-fast-cli}" --arg p "$user_prompt" \
+              '{model:$m, prompt:$p, stream:false}')" 2>/dev/null \
+        | jq -r '.response // empty')
+  [[ -z "$raw" ]] && { print -u2 "ai: no response from ${OLLAMA_MODEL:-fast-cli}"; return 1; }
 
-  # Call Gemma via Ollama
-  # Note: Use 'gemma4' or your specific model tag
-  local generated_command=$(ollama run $OLLAMA_MODEL "$system_instruction Request: $user_prompt")
+  # Strip ANSI, code fences and comment lines, drop stray backticks, then keep
+  # only the first non-empty line.
+  local cmd
+  cmd=$(print -r -- "$raw" \
+    | sed -E 's/\x1b\[[0-9;?]*[a-zA-Z]//g' \
+    | grep -vE '^[[:space:]]*```' \
+    | grep -vE '^[[:space:]]*(#|//)' \
+    | sed -E 's/^[[:space:]]*[`$][[:space:]]*//; s/[`[:space:]]+$//' \
+    | grep -vE '^[[:space:]]*$' \
+    | head -n 1)
 
-  # Place the command into the current command-line buffer (LBUFFER)
-  # This lets you see the command before running it
-  print -z "$generated_command"
+  [[ -z "$cmd" ]] && { print -u2 "ai: no command found in:\n$raw"; return 1; }
+  print -z -- "$cmd"
 }
 
 # Zsh quick shorcut ref
