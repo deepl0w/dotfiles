@@ -119,8 +119,8 @@ cat << XXX
 XXX
 }
 
-# Nvim as terminal multiplexer
-if [ "$TERM_PROGRAM" != "vscode" ]; then
+# Nvim as terminal multiplexer; set NVIM_AUTOSTART=0 (e.g. in ~/.profile) to opt out
+if [ "$TERM_PROGRAM" != "vscode" ] && [[ $NVIM_AUTOSTART != 0 ]]; then
     if command -v nvim > /dev/null && \
             [[ -z $NVIM ]]; then
                 nvim -c "terminal"
