@@ -69,15 +69,37 @@ install_nvim_release() {
     sudo ln -sf "/opt/$dir/bin/nvim" /usr/local/bin/nvim
 }
 
+# nvim-treesitter compiles parsers with the tree-sitter CLI (>= 0.26.1). The release
+# binary needs glibc 2.39 (Ubuntu 24.04+); on older releases build it with cargo.
+install_tree_sitter_release() {
+    if command -v tree-sitter &>/dev/null; then
+        return
+    fi
+    local tmp
+    tmp=$(mktemp -d)
+    curl -fsSL https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-x64.gz | gunzip > "$tmp/tree-sitter"
+    chmod +x "$tmp/tree-sitter"
+    if "$tmp/tree-sitter" --version &>/dev/null; then
+        sudo install "$tmp/tree-sitter" /usr/local/bin/tree-sitter
+    else
+        if [ ! -x ~/.cargo/bin/cargo ]; then
+            curl -fsSL --proto '=https' https://sh.rustup.rs | sh -s -- -y --profile minimal --no-modify-path
+        fi
+        ~/.cargo/bin/cargo install --locked --root ~/.local tree-sitter-cli
+    fi
+    rm -rf "$tmp"
+}
+
 install_nvim() {
     case $DISTRO in
         arch)
-            pkg_install lua nodejs yarn neovim
+            pkg_install lua nodejs yarn neovim tree-sitter-cli
             yay -S neovim-remote
             ;;
         ubuntu)
             pkg_install lua5.4 nodejs npm yarnpkg
             install_nvim_release
+            install_tree_sitter_release
             # neovim-remote isn't packaged; pipx puts nvr in ~/.local/bin
             pipx install --force neovim-remote
             ;;
@@ -101,9 +123,9 @@ install_zsh() {
 }
 
 install_zsh_plugins() {
-    # A plain `zsh -c` doesn't read .zshrc, and an interactive one would start nvim
-    # from it, so load zplug and the plugin list from .zshrc by hand.
-    zsh -c 'source ~/.zplug/init.zsh && eval "$(grep "^zplug " ~/.zshrc)" && zplug install'
+    # Load the plugin list from the real .zshrc; a set $NVIM keeps it from starting
+    # nvim, and a closed stdin answers its "Install? [y/N]" prompt.
+    NVIM=skip zsh -ic 'zplug install' </dev/null
 }
 
 create_links() {
