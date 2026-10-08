@@ -189,4 +189,7 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-conda activate base
+# conda only exists on some machines
+if command -v conda > /dev/null; then
+    conda activate base
+fi
