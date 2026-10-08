@@ -93,8 +93,11 @@ install_zsh() {
 
     curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 
-    # make zsh default shell
-    chsh -s `which zsh`
+    # make zsh default shell; chsh can't change domain (LDAP/SSSD) accounts that
+    # aren't in /etc/passwd, so don't abort the install over it
+    if ! chsh -s "$(command -v zsh)"; then
+        /bin/echo -e "\e[33mCouldn't change the login shell; start zsh from ~/.bashrc instead (e.g. exec zsh)\e[39m"
+    fi
 }
 
 install_zsh_plugins() {
