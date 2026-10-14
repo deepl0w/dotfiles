@@ -133,7 +133,8 @@ XXX
 
 # Nvim as terminal multiplexer; set NVIM_AUTOSTART=0 (e.g. in ~/.profile) to opt out
 # Only on a real TTY: apps that spawn `zsh -i` headless (e.g. Claude Desktop env probes) otherwise leak nvim
-if [[ -o interactive && -t 0 && -t 1 ]] && [ "$TERM_PROGRAM" != "vscode" ] \
+# Claude Desktop's Terminal panel sets TERM_PROGRAM=claude-desktop but not CLAUDECODE
+if [[ -o interactive && -t 0 && -t 1 ]] && [[ $TERM_PROGRAM != (vscode|claude-desktop) ]] \
         && [[ $NVIM_AUTOSTART != 0 && -z $NVIM && -z $CLAUDECODE ]]; then
     command -v nvim > /dev/null && nvim -c "terminal"
 fi
